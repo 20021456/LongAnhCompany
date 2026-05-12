@@ -431,7 +431,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    P[/about] --> A1["GET /api/pages/about"]
+    P["/about"] --> A1["GET /api/pages/about"]
     P --> A2["GET /api/timeline-events"]
     P --> A3["GET /api/core-values?scope=about"]
     P --> A4["GET /api/stats?scope=about"]
@@ -456,7 +456,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    P[/products] --> A1["GET /api/product-categories"]
+    P["/products"] --> A1["GET /api/product-categories"]
     P --> A2["GET /api/products"]
 
     A1 --> T1[("product_categories")]
@@ -499,7 +499,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    L[/news] --> A1["GET /api/news-categories"]
+    L["/news"] --> A1["GET /api/news-categories"]
     L --> A2["GET /api/news?category=&page="]
     D["/news/[slug]"] --> A3["GET /api/news/[slug]"]
     D --> A4["GET /api/news?related=true"]
@@ -521,7 +521,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    L[/career] --> A1["GET /api/departments"]
+    L["/career"] --> A1["GET /api/departments"]
     L --> A2["GET /api/jobs?department=&active=true"]
     L --> A3["GET /api/pages/career"]
     D["/career/[slug]"] --> A4["GET /api/jobs/[slug]"]
@@ -547,7 +547,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    P[/contact] --> A1["GET /api/settings?group=contact"]
+    P["/contact"] --> A1["GET /api/settings?group=contact"]
     P --> A2["POST /api/contact"]
 
     A1 --> T1[("settings")]
