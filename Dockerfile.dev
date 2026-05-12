@@ -1,0 +1,20 @@
+# Long Anh Corp — Development Dockerfile
+# Hot-reload + Prisma CLI; source code is mounted via docker-compose volume.
+
+FROM node:20-alpine
+WORKDIR /app
+
+RUN apk add --no-cache libc6-compat openssl
+
+# Cache deps layer
+COPY package.json package-lock.json* ./
+COPY prisma ./prisma
+RUN npm install --no-audit --no-fund
+
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV CHOKIDAR_USEPOLLING=true
+
+EXPOSE 3000
+
+# Source code is mounted at /app via compose, so just start dev server
+CMD ["npm", "run", "dev"]

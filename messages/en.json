@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "products": "Products",
+    "career": "Career",
+    "news": "News",
+    "contact": "Contact"
+  },
+  "common": {
+    "viewMore": "View more",
+    "requestQuote": "Request a quote",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "error": "Something went wrong"
+  },
+  "home": {
+    "eyebrow": "Industrial Minerals · Global Export",
+    "titleLine1": "Pure mineral stone",
+    "titleLine2": "from the heart of Nghe An",
+    "subtitle": "Long Anh manufactures coated and uncoated CaCO₃ powder, slab stone, cut-to-size tile and decorative stone — serving plastics, paint, paper, construction, and global export markets."
+  },
+  "footer": {
+    "copyright": "© 2026 Long Anh Mineral Co., Ltd"
+  }
+}

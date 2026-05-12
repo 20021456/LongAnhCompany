@@ -1,0 +1,56 @@
+# Local development stack for Long Anh Corp
+# Run: docker compose up
+# App at http://localhost:3000, Postgres at localhost:5432
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: longanh-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: longanh
+      POSTGRES_PASSWORD: longanh
+      POSTGRES_DB: longanh
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U longanh -d longanh']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: longanh-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    profiles: [cache]
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: longanh-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.docker
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: sh -c "npx prisma migrate deploy && npm run dev"
+
+volumes:
+  postgres_data:
+  redis_data:

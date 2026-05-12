@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "home": "Trang chủ",
+    "about": "Giới thiệu",
+    "products": "Sản phẩm",
+    "career": "Tuyển dụng",
+    "news": "Tin tức",
+    "contact": "Liên hệ"
+  },
+  "common": {
+    "viewMore": "Xem thêm",
+    "requestQuote": "Yêu cầu báo giá",
+    "submit": "Gửi",
+    "loading": "Đang tải...",
+    "error": "Có lỗi xảy ra"
+  },
+  "home": {
+    "eyebrow": "Khoáng sản công nghiệp · Xuất khẩu quốc tế",
+    "titleLine1": "Khoáng đá nguyên sinh",
+    "titleLine2": "từ trái tim Nghệ An",
+    "subtitle": "Long Anh chuyên sản xuất bột đá CaCO₃ phủ và không phủ Stearic Acid, đá Slab, đá xẻ quy cách và đá trang trí — phục vụ ngành nhựa, sơn, giấy, xây dựng và xuất khẩu trên toàn cầu."
+  },
+  "footer": {
+    "copyright": "© 2026 Công ty TNHH KS Long Anh"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "home": "首页",
+    "about": "关于我们",
+    "products": "产品",
+    "career": "招聘",
+    "news": "新闻",
+    "contact": "联系"
+  },
+  "common": {
+    "viewMore": "查看更多",
+    "requestQuote": "请求报价",
+    "submit": "提交",
+    "loading": "加载中...",
+    "error": "发生错误"
+  },
+  "home": {
+    "eyebrow": "工业矿产 · 全球出口",
+    "titleLine1": "原始矿物石材",
+    "titleLine2": "源自义安省核心地带",
+    "subtitle": "龙英专业生产涂层和未涂层硬脂酸碳酸钙粉、板材、定制石材和装饰石材 — 服务塑料、涂料、造纸、建筑及全球出口市场。"
+  },
+  "footer": {
+    "copyright": "© 2026 龙英矿业有限公司"
+  }
+}
