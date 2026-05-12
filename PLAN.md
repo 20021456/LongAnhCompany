@@ -94,10 +94,38 @@ LongAnhCompany/
 ├── messages/                  # next-intl JSON (vi.json, en.json, zh.json)
 ├── scripts/
 │   └── import-content.ts      # parse CONTENT.md → JSON cho seed
-├── .env.example
+├── docker/
+│   ├── postgres-init.sql      # tạo extensions: pgcrypto, citext, unaccent
+│   ├── nginx.conf             # (tuỳ chọn) reverse proxy nếu self-host
+│   └── README.md
+├── Dockerfile                 # multi-stage build cho production (Next.js standalone)
+├── Dockerfile.dev             # image dev có hot-reload + Prisma CLI
+├── docker-compose.yml         # dev: app + postgres + (redis tuỳ chọn)
+├── docker-compose.prod.yml    # prod self-host: app + postgres + nginx (tuỳ chọn)
+├── .dockerignore
+├── .env.example               # template env vars
+├── .env.docker                # env mặc định cho docker-compose
 ├── package.json
 └── tsconfig.json
 ```
+
+### Tóm tắt vai trò các file Docker
+
+| File                       | Dùng khi nào                                                                |
+| -------------------------- | --------------------------------------------------------------------------- |
+| `Dockerfile`               | Build production image (multi-stage: deps → build → runtime, Next.js standalone output) |
+| `Dockerfile.dev`           | Image dev (hot-reload, mount source, Prisma CLI sẵn) — chỉ dùng nội bộ      |
+| `docker-compose.yml`       | **Dev local**: 1 lệnh `docker compose up` là có app + Postgres + (Redis) chạy ngay, không cần cài Postgres trên máy |
+| `docker-compose.prod.yml`  | Khi cần self-host trên VPS (không dùng Vercel). Gồm app + Postgres + Nginx + volume cho media |
+| `docker/postgres-init.sql` | Chạy lần đầu khi Postgres container khởi tạo: tạo extension `pgcrypto`, `citext`, `unaccent` (full-text search Tiếng Việt) |
+| `docker/nginx.conf`        | Reverse proxy + SSL termination cho prod self-host                          |
+| `.dockerignore`            | Bỏ `node_modules`, `.next`, `.git`, `.env*` khỏi build context              |
+| `.env.docker`              | Env mặc định cho compose (DATABASE_URL trỏ tới service `postgres:5432`)     |
+
+> **Lưu ý hosting:** plan mặc định deploy lên **Vercel + Supabase** (không
+> cần Docker prod). Docker files vẫn được giữ để: (1) chạy dev offline
+> dễ dàng, (2) phương án self-host backup nếu sau này khách hàng muốn
+> chạy trên VPS riêng.
 
 ---
 
@@ -108,10 +136,15 @@ LongAnhCompany/
 - [ ] `npx create-next-app@latest` + TypeScript + Tailwind + ESLint
 - [ ] Cài dependencies: `prisma`, `@prisma/client`, `next-auth`, `next-intl`,
       `zod`, `react-hook-form`, `@tiptap/react`, `socket.io`, `bcryptjs`
-- [ ] Khởi tạo Prisma + connect tới PostgreSQL local
+- [ ] **Docker dev env**: `Dockerfile.dev`, `docker-compose.yml` với services
+      `app` + `postgres` (+ optional `redis`); `docker/postgres-init.sql` bật
+      extension `pgcrypto`, `citext`, `unaccent`
+- [ ] Khởi tạo Prisma + `DATABASE_URL` trỏ tới container postgres
 - [ ] Migration đầu tiên: `users`, `roles`, `languages`, `settings`
 - [ ] Setup `middleware.ts` cho locale routing
 - [ ] Cấu hình ESLint, Prettier, Husky pre-commit
+- [ ] `Dockerfile` production (multi-stage, Next.js `output: "standalone"`)
+- [ ] `.dockerignore` + `.env.docker`
 - [ ] Copy `LongAnhCorp/assets/` → `public/`
 
 ### Phase 2 — Public site (5–7 ngày)
@@ -193,8 +226,12 @@ LongAnhCompany/
 
 ### Phase 8 — Deploy & monitor (2–3 ngày)
 
-- [ ] Vercel project + custom domain + SSL
-- [ ] Supabase / Railway Postgres + connection pooling
+- [ ] **Path A — Vercel + Supabase (mặc định):**
+      Vercel project + custom domain + SSL, Supabase/Railway Postgres,
+      connection pooling, không cần Docker prod.
+- [ ] **Path B — Self-host bằng Docker (backup option):**
+      `docker compose -f docker-compose.prod.yml up -d` trên VPS (Nginx +
+      Postgres + app container), Let's Encrypt SSL.
 - [ ] S3 bucket + Cloudfront (hoặc Cloudinary)
 - [ ] Migrate seed lên production
 - [ ] Sentry, Vercel Analytics, GA4
