@@ -1,31 +1,30 @@
 import { setRequestLocale } from 'next-intl/server';
-import { getTranslations } from 'next-intl/server';
+import type { Locale } from '@/lib/i18n/config';
+import { Hero } from '@/components/sections/Hero';
+import { StatsStrip } from '@/components/sections/StatsStrip';
+import { ProductsCarousel } from '@/components/sections/ProductsCarousel';
+import { Capabilities } from '@/components/sections/Capabilities';
+import { Certifications } from '@/components/sections/Certifications';
+import { ExportMarkets } from '@/components/sections/ExportMarkets';
+import { ContactCTA } from '@/components/sections/ContactCTA';
 
-export default async function HomePage({
+export default function HomePage({
   params: { locale },
 }: {
   params: { locale: string };
 }) {
   setRequestLocale(locale);
-  const t = await getTranslations('home');
+  const loc = locale as Locale;
 
   return (
-    <main className="container mx-auto px-4 py-16">
-      <section className="text-center">
-        <p className="text-sm font-semibold uppercase tracking-wider text-brand-500">
-          {t('eyebrow')}
-        </p>
-        <h1 className="mt-4 text-4xl font-bold sm:text-6xl">
-          {t('titleLine1')}{' '}
-          <span className="text-brand-500">{t('titleLine2')}</span>
-        </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600">{t('subtitle')}</p>
-      </section>
-
-      <section className="mt-16 rounded-lg border border-dashed border-slate-300 p-8 text-center text-slate-500">
-        🚧 Phase 1 scaffold ready — phases 2 onwards will fill this in with real data from the
-        database.
-      </section>
+    <main>
+      <Hero locale={loc} />
+      <StatsStrip locale={loc} />
+      <ProductsCarousel locale={loc} />
+      <Capabilities locale={loc} />
+      <Certifications locale={loc} />
+      <ExportMarkets locale={loc} />
+      <ContactCTA locale={loc} />
     </main>
   );
 }
