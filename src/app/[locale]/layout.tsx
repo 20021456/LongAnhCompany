@@ -21,11 +21,11 @@ const fraunces = Fraunces({
 
 export const metadata: Metadata = {
   title: {
-    default: 'KS Long Anh — Bột đá Canxi Cacbonat & Đá tự nhiên',
+    default: 'KS Long Anh — Khoáng đá nguyên sinh từ Nghệ An',
     template: '%s · KS Long Anh',
   },
   description:
-    'Nhà sản xuất bột đá Canxi Cacbonat và đá tự nhiên hàng đầu Bắc Trung Bộ.',
+    'Long Anh chuyên sản xuất bột đá CaCO₃ và đá tự nhiên — phục vụ ngành nhựa, sơn, giấy, xây dựng và xuất khẩu toàn cầu.',
 };
 
 export function generateStaticParams() {
@@ -46,14 +46,15 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className={`${inter.variable} ${fraunces.variable}`}>
-      <body className="min-h-screen bg-canvas text-ink antialiased">
+      <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <SiteHeader locale={locale as Locale} />
-          {children}
-          <SiteFooter />
+          <div className="va">
+            <SiteHeader locale={locale as Locale} />
+            {children}
+            <SiteFooter locale={locale as Locale} />
+          </div>
         </NextIntlClientProvider>
       </body>
     </html>
   );
 }
-

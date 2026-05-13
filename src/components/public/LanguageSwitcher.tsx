@@ -2,12 +2,17 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import { useTransition } from 'react';
-import { locales, localeFlags, type Locale } from '@/lib/i18n/config';
-import { cn } from '@/lib/utils';
+import { locales, type Locale } from '@/lib/i18n/config';
 
 interface Props {
   current: Locale;
 }
+
+const labels: Record<Locale, string> = {
+  vi: 'VI',
+  en: 'EN',
+  zh: '中',
+};
 
 export function LanguageSwitcher({ current }: Props) {
   const router = useRouter();
@@ -15,6 +20,7 @@ export function LanguageSwitcher({ current }: Props) {
   const [isPending, startTransition] = useTransition();
 
   const switchTo = (next: Locale) => {
+    if (next === current) return;
     const segments = pathname.split('/');
     if (locales.includes(segments[1] as Locale)) segments[1] = next;
     else segments.splice(1, 0, next);
@@ -23,27 +29,16 @@ export function LanguageSwitcher({ current }: Props) {
   };
 
   return (
-    <div
-      role="group"
-      aria-label="Language"
-      className="inline-flex items-center gap-1 rounded-full border border-ink/10 bg-white p-1 text-xs font-semibold"
-    >
+    <div className="va-lang">
       {locales.map((loc) => (
         <button
           key={loc}
           type="button"
           onClick={() => switchTo(loc)}
           disabled={isPending}
-          aria-current={current === loc ? 'true' : undefined}
-          className={cn(
-            'flex h-7 items-center gap-1 rounded-full px-3 uppercase transition',
-            current === loc
-              ? 'bg-navy-600 text-white'
-              : 'text-ink-muted hover:bg-ink/5 hover:text-ink',
-          )}
+          className={current === loc ? 'on' : ''}
         >
-          <span aria-hidden>{localeFlags[loc]}</span>
-          <span>{loc}</span>
+          {labels[loc]}
         </button>
       ))}
     </div>

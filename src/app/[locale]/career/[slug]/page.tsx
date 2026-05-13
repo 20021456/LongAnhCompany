@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
-import { Container } from '@/components/ui/Container';
+import { COPY } from '@/data/copy';
 import { Icon } from '@/components/ui/Icon';
 
 export default function JobDetailPage({
@@ -11,109 +11,153 @@ export default function JobDetailPage({
 }) {
   setRequestLocale(params.locale);
   const loc = params.locale as Locale;
+  const C = COPY[loc];
 
-  // Phase 4 will fetch real job from DB. For now show placeholder.
   return (
-    <main>
-      <section className="border-b border-ink/5 bg-white py-6">
-        <Container>
-          <nav className="flex items-center gap-2 text-xs text-ink-muted">
-            <Link href={`/${loc}`} className="hover:text-brand-600">
-              {loc === 'vi' ? 'Trang chủ' : loc === 'en' ? 'Home' : '首页'}
+    <>
+      <section style={{ background: 'var(--va-bg-alt)', borderBottom: '1px solid var(--va-line)' }}>
+        <div className="va-wrap" style={{ padding: '14px 0' }}>
+          <nav style={{ fontSize: 12.5, opacity: 0.7, display: 'flex', gap: 6, alignItems: 'center' }}>
+            <Link href={`/${loc}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+              {C.nav[0]}
             </Link>
-            <Icon name="chevron-right" size={12} />
-            <Link href={`/${loc}/career`} className="hover:text-brand-600">
-              {loc === 'vi' ? 'Tuyển dụng' : loc === 'en' ? 'Career' : '招聘'}
+            <Icon name="chevron" size={12} />
+            <Link href={`/${loc}/career`} style={{ color: 'inherit', textDecoration: 'none' }}>
+              {C.nav[3]}
             </Link>
-            <Icon name="chevron-right" size={12} />
-            <span className="text-ink">{params.slug.replace(/-/g, ' ')}</span>
           </nav>
-        </Container>
+        </div>
       </section>
 
-      <section className="py-16">
-        <Container size="md">
-          <p className="text-xs font-semibold uppercase tracking-eyebrow text-brand-600">
-            {loc === 'vi' ? 'Sản xuất' : loc === 'en' ? 'Manufacturing' : '生产'}
-          </p>
-          <h1 className="mt-3 text-3xl font-bold tracking-tighter sm:text-4xl">
+      <section className="va-section">
+        <div className="va-wrap" style={{ maxWidth: 920, margin: '0 auto' }}>
+          <div className="va-eyebrow">{loc === 'vi' ? 'Sản xuất' : loc === 'en' ? 'Manufacturing' : '生产'}</div>
+          <h1 style={{ fontSize: 'clamp(28px,3.2vw,44px)', margin: '12px 0 24px' }}>
             {params.slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
           </h1>
 
-          <div className="mt-8 grid gap-4 rounded-2xl bg-white p-6 ring-1 ring-ink/5 sm:grid-cols-4">
-            <Spec label="Location" value="Quỳ Hợp, Nghệ An" />
-            <Spec label="Salary" value="18 – 30 M" />
-            <Spec label="Experience" value="2–5 years" />
-            <Spec label="Deadline" value="30/06/2026" />
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: 12,
+              padding: '20px 24px',
+              border: '1px solid var(--va-line)',
+              borderRadius: 14,
+              background: 'var(--va-card)',
+              marginBottom: 36,
+            }}
+          >
+            <SpecItem label="Location" value="Quỳ Hợp, Nghệ An" />
+            <SpecItem label="Salary" value="18 – 30M" />
+            <SpecItem label="Experience" value="2–5 years" />
+            <SpecItem label="Deadline" value="30/06/2026" />
           </div>
 
-          <div className="prose prose-slate mt-10 max-w-none">
-            <h2>
-              {loc === 'vi' ? 'Mô tả công việc' : loc === 'en' ? 'Job description' : '工作描述'}
-            </h2>
+          <Section title={loc === 'vi' ? 'Mô tả công việc' : 'Job description'}>
             <p>
               {loc === 'vi'
                 ? 'Vận hành và giám sát dây chuyền nghiền bột đá CaCO₃, đảm bảo chất lượng sản phẩm và an toàn lao động theo tiêu chuẩn ISO 9001.'
                 : 'Operate and supervise CaCO₃ grinding lines, ensuring product quality and workplace safety to ISO 9001 standards.'}
             </p>
+          </Section>
 
-            <h2>{loc === 'vi' ? 'Trách nhiệm chính' : 'Key responsibilities'}</h2>
-            <ul>
-              <li>Vận hành dây chuyền sản xuất 8-tiếng/ca theo SOP</li>
-              <li>Kiểm tra thông số kỹ thuật từng lô (cỡ hạt, độ trắng, độ ẩm)</li>
-              <li>Phối hợp với phòng QC khi có lô không đạt</li>
-              <li>Đào tạo công nhân mới về vận hành thiết bị</li>
-            </ul>
+          <Section title={loc === 'vi' ? 'Trách nhiệm chính' : 'Key responsibilities'}>
+            <List
+              items={[
+                'Vận hành dây chuyền sản xuất 8 tiếng/ca theo SOP',
+                'Kiểm tra thông số kỹ thuật từng lô (cỡ hạt, độ trắng, độ ẩm)',
+                'Phối hợp với phòng QC khi có lô không đạt',
+                'Đào tạo công nhân mới về vận hành thiết bị',
+                'Bảo trì cấp 1 thiết bị, ghi nhận sự cố vào hệ thống',
+              ]}
+            />
+          </Section>
 
-            <h2>{loc === 'vi' ? 'Yêu cầu' : 'Requirements'}</h2>
-            <ul>
-              <li>Tốt nghiệp Đại học chuyên ngành Cơ khí / Hóa / Công nghệ vật liệu</li>
-              <li>2-5 năm kinh nghiệm trong sản xuất công nghiệp</li>
-              <li>Thành thạo PLC, biến tần, hệ thống điều khiển dây chuyền</li>
-              <li>Tiếng Anh giao tiếp cơ bản (đọc tài liệu kỹ thuật)</li>
-            </ul>
+          <Section title={loc === 'vi' ? 'Yêu cầu' : 'Requirements'}>
+            <List
+              items={[
+                'Tốt nghiệp Đại học chuyên ngành Cơ khí / Hóa / Công nghệ vật liệu',
+                '2–5 năm kinh nghiệm trong sản xuất công nghiệp',
+                'Thành thạo PLC, biến tần, hệ thống điều khiển dây chuyền',
+                'Tiếng Anh giao tiếp cơ bản (đọc tài liệu kỹ thuật)',
+                'Sẵn sàng đi công tác Quỳ Hợp khi cần',
+              ]}
+            />
+          </Section>
 
-            <h2>{loc === 'vi' ? 'Quyền lợi' : 'Benefits'}</h2>
-            <ul>
-              <li>Lương cơ bản 18–30 triệu + phụ cấp ca + thưởng KPI</li>
-              <li>BHXH/BHYT/BHTN đóng đủ trên lương thực tế</li>
-              <li>Khám sức khoẻ định kỳ + bảo hiểm tai nạn 24/7</li>
-              <li>Du lịch hằng năm, lương tháng 13</li>
-            </ul>
-          </div>
+          <Section title={loc === 'vi' ? 'Quyền lợi' : 'Benefits'}>
+            <List
+              items={[
+                'Lương cơ bản 18–30 triệu + phụ cấp ca + thưởng KPI',
+                'BHXH / BHYT / BHTN đóng đủ trên lương thực tế',
+                'Khám sức khỏe định kỳ + bảo hiểm tai nạn 24/7',
+                'Du lịch hằng năm, lương tháng 13',
+                'Đào tạo kỹ thuật trong & ngoài nước',
+              ]}
+            />
+          </Section>
 
-          <div className="mt-12 rounded-3xl bg-navy-700 p-8 text-white sm:p-12">
-            <h2 className="text-2xl font-bold tracking-tight">
-              {loc === 'vi'
-                ? 'Sẵn sàng gia nhập?'
-                : loc === 'en'
-                  ? 'Ready to apply?'
-                  : '准备好申请了吗?'}
-            </h2>
-            <p className="mt-2 max-w-md text-white/75">
-              {loc === 'vi'
-                ? 'Gửi CV về hr@longanhcorp.com với tiêu đề [Vị trí - Họ tên].'
-                : 'Send your CV to hr@longanhcorp.com with subject [Position - Your name].'}
-            </p>
+          <div className="va-cap" style={{ marginTop: 40 }}>
+            <div>
+              <div className="va-eyebrow">
+                {loc === 'vi' ? 'Ứng tuyển' : loc === 'en' ? 'Apply' : '申请'}
+              </div>
+              <h2>
+                {loc === 'vi'
+                  ? 'Sẵn sàng gia nhập?'
+                  : loc === 'en'
+                    ? 'Ready to apply?'
+                    : '准备好申请了吗?'}
+              </h2>
+              <p>
+                {loc === 'vi'
+                  ? 'Gửi CV về hr@longanhcorp.com với tiêu đề [Vị trí - Họ tên]. Vòng phỏng vấn đầu trong 5 ngày làm việc.'
+                  : 'Send your CV to hr@longanhcorp.com with subject [Position - Your name]. First-round interview within 5 business days.'}
+              </p>
+            </div>
             <a
               href="mailto:[email protected]"
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-600"
+              className="va-btn va-btn-p"
+              style={{ alignSelf: 'center', justifySelf: 'end' }}
             >
-              <Icon name="mail" size={16} />
-              hr@longanhcorp.com
+              <Icon name="mail" size={15} /> hr@longanhcorp.com
             </a>
           </div>
-        </Container>
+        </div>
       </section>
-    </main>
+    </>
   );
 }
 
-function Spec({ label, value }: { label: string; value: string }) {
+function SpecItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-eyebrow text-ink-muted">{label}</p>
-      <p className="mt-1 text-sm font-semibold">{value}</p>
+      <div style={{ fontSize: 10.5, opacity: 0.55, letterSpacing: '.08em', textTransform: 'uppercase' }}>
+        {label}
+      </div>
+      <div style={{ fontSize: 14, fontWeight: 600, marginTop: 4 }}>{value}</div>
     </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section style={{ marginBottom: 32 }}>
+      <h2 style={{ fontSize: 22, marginBottom: 12 }}>{title}</h2>
+      <div style={{ fontSize: 14.5, lineHeight: 1.7, opacity: 0.82 }}>{children}</div>
+    </section>
+  );
+}
+
+function List({ items }: { items: string[] }) {
+  return (
+    <ul style={{ paddingLeft: 22, margin: 0 }}>
+      {items.map((it, i) => (
+        <li key={i} style={{ marginBottom: 6 }}>
+          {it}
+        </li>
+      ))}
+    </ul>
   );
 }

@@ -1,0 +1,23 @@
+<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="400" fill="#F5F9F4"/>
+  <rect x="14" y="14" width="272" height="372" fill="none" stroke="#1F6B3E" stroke-width="2"/>
+  <rect x="22" y="22" width="256" height="356" fill="none" stroke="#1F6B3E" stroke-width="0.5" opacity="0.4"/>
+
+  <text x="150" y="62" text-anchor="middle" font-family="Georgia, serif" font-size="11" letter-spacing="3" fill="#1F6B3E">CERTIFICATE OF</text>
+  <text x="150" y="80" text-anchor="middle" font-family="Georgia, serif" font-size="13" letter-spacing="2" fill="#1F6B3E" font-weight="600">COMPLIANCE</text>
+  <line x1="100" y1="92" x2="200" y2="92" stroke="#F08023" stroke-width="1.5"/>
+
+  <text x="150" y="180" text-anchor="middle" font-family="Georgia, serif" font-size="48" font-weight="700" fill="#1F6B3E">REACH</text>
+  <text x="150" y="210" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" letter-spacing="1.2" fill="#666">REGISTRATION · EVALUATION · AUTHORISATION</text>
+  <text x="150" y="225" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" letter-spacing="1.2" fill="#666">OF CHEMICALS — EU REGULATION</text>
+
+  <text x="150" y="255" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#888">Compliance verified for</text>
+  <text x="150" y="273" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#1F6B3E">CaCO₃ POWDER PRODUCTS</text>
+
+  <circle cx="150" cy="320" r="32" fill="none" stroke="#F08023" stroke-width="1.5"/>
+  <circle cx="150" cy="320" r="26" fill="none" stroke="#F08023" stroke-width="0.5"/>
+  <text x="150" y="318" text-anchor="middle" font-family="Georgia, serif" font-size="8" letter-spacing="1.5" fill="#F08023">VERIFIED</text>
+  <text x="150" y="330" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="700" fill="#F08023">EU</text>
+
+  <text x="150" y="370" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#999">Reg. No. EU-REACH-2021-0042</text>
+</svg>

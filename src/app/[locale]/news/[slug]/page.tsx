@@ -1,70 +1,92 @@
 import Link from 'next/link';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
-import { Container } from '@/components/ui/Container';
+import { COPY } from '@/data/copy';
 import { Icon } from '@/components/ui/Icon';
 
-export default function ArticleDetailPage({
+export default function ArticlePage({
   params,
 }: {
   params: { locale: string; slug: string };
 }) {
   setRequestLocale(params.locale);
   const loc = params.locale as Locale;
+  const C = COPY[loc];
 
   return (
-    <main>
-      <section className="border-b border-ink/5 bg-white py-6">
-        <Container>
-          <nav className="flex items-center gap-2 text-xs text-ink-muted">
-            <Link href={`/${loc}`} className="hover:text-brand-600">
-              {loc === 'vi' ? 'Trang chủ' : loc === 'en' ? 'Home' : '首页'}
+    <>
+      <section style={{ background: 'var(--va-bg-alt)', borderBottom: '1px solid var(--va-line)' }}>
+        <div className="va-wrap" style={{ padding: '14px 0' }}>
+          <nav style={{ fontSize: 12.5, opacity: 0.7, display: 'flex', gap: 6, alignItems: 'center' }}>
+            <Link href={`/${loc}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+              {C.nav[0]}
             </Link>
-            <Icon name="chevron-right" size={12} />
-            <Link href={`/${loc}/news`} className="hover:text-brand-600">
-              {loc === 'vi' ? 'Tin tức' : loc === 'en' ? 'News' : '新闻'}
+            <Icon name="chevron" size={12} />
+            <Link href={`/${loc}/news`} style={{ color: 'inherit', textDecoration: 'none' }}>
+              {C.nav[4]}
             </Link>
           </nav>
-        </Container>
+        </div>
       </section>
 
-      <article className="py-12 sm:py-16">
-        <Container size="md">
-          <p className="text-xs font-semibold uppercase tracking-eyebrow text-brand-600">
-            {loc === 'vi' ? 'Sự kiện' : loc === 'en' ? 'Event' : '活动'} · 15/04/2026 · 4 min read
-          </p>
-          <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tighter sm:text-4xl">
+      <article className="va-section">
+        <div className="va-wrap" style={{ maxWidth: 820, margin: '0 auto' }}>
+          <div className="va-eyebrow">
+            {loc === 'vi' ? 'Sự kiện' : loc === 'en' ? 'Event' : '活动'} · 15/04/2026 · 4 min
+          </div>
+          <h1
+            style={{
+              fontSize: 'clamp(28px,3.4vw,46px)',
+              lineHeight: 1.1,
+              margin: '14px 0 28px',
+              letterSpacing: '-0.02em',
+            }}
+          >
             {params.slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
           </h1>
 
-          <div className="mt-10 aspect-[16/9] rounded-2xl bg-gradient-to-br from-navy-100 to-canvas" />
+          <div
+            style={{
+              borderRadius: 16,
+              overflow: 'hidden',
+              aspectRatio: '16 / 9',
+              marginBottom: 32,
+              background: 'var(--va-bg-alt)',
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/nha-may-bot-sieu-min.webp"
+              alt=""
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
 
-          <div className="prose prose-slate mt-10 max-w-none">
-            <p className="lead">
+          <div style={{ fontSize: 16, lineHeight: 1.75, opacity: 0.85 }}>
+            <p>
               {loc === 'vi'
-                ? 'Bài viết đang được biên tập. Nội dung đầy đủ sẽ có sau khi hệ thống CMS hoàn tất ở Phase 6.'
-                : 'Article in progress. Full content will be available once the CMS is shipped in Phase 6.'}
+                ? 'Việc đưa xưởng đá Slab 1.6m vào vận hành nâng tổng công suất nhóm nhà máy lên 350,000 tấn/năm — đáp ứng các đơn hàng container cỡ lớn từ thị trường Hàn Quốc, Nhật Bản và Trung Đông.'
+                : 'Commissioning the 1.6m Slab workshop raises group capacity to 350,000 t/y — enabling large container orders from Korea, Japan and the Middle East.'}
             </p>
+            <h2 style={{ marginTop: 32, fontSize: 24 }}>
+              {loc === 'vi' ? 'Bước ngoặt sản lượng' : 'Capacity milestone'}
+            </h2>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus
-              hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend
-              nibh porttitor.
+              {loc === 'vi'
+                ? 'Đầu tư mới giúp tăng tỉ lệ tự động hóa và giảm thời gian giao hàng FOB còn dưới 14 ngày kể từ khi nhận đơn.'
+                : 'New investment increases automation and cuts FOB lead time to under 14 days from order.'}
             </p>
-            <h2>Bước ngoặt sản lượng</h2>
-            <p>
-              Việc đưa xưởng đá Slab 1.6m vào vận hành nâng tổng công suất nhóm nhà máy lên 350,000
-              tấn/năm — đáp ứng các đơn hàng container cỡ lớn từ thị trường Hàn Quốc, Nhật Bản và Trung
-              Đông.
-            </p>
-            <h2>Kế hoạch xuất khẩu 2026</h2>
-            <ul>
-              <li>Tăng 35% sản lượng xuất sang Ấn Độ và Bangladesh</li>
-              <li>Triển khai dây chuyền đóng gói jumbo bag 1 tấn cho thị trường EU</li>
-              <li>Mở rộng kho FOB tại cảng Cửa Lò 4500 m²</li>
+            <h2 style={{ marginTop: 24, fontSize: 24 }}>
+              {loc === 'vi' ? 'Kế hoạch xuất khẩu 2026' : 'Export plan 2026'}
+            </h2>
+            <ul style={{ paddingLeft: 22 }}>
+              <li>{loc === 'vi' ? 'Tăng 35% sản lượng xuất sang Ấn Độ và Bangladesh' : '+35% volume to India and Bangladesh'}</li>
+              <li>{loc === 'vi' ? 'Triển khai dây chuyền đóng gói jumbo bag 1 tấn cho thị trường EU' : '1-ton jumbo bag packaging line for EU markets'}</li>
+              <li>{loc === 'vi' ? 'Mở rộng kho FOB tại cảng Cửa Lò 4500 m²' : 'Expand FOB warehouse at Cua Lo port to 4,500 m²'}</li>
             </ul>
           </div>
-        </Container>
+        </div>
       </article>
-    </main>
+    </>
   );
 }

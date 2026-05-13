@@ -1,93 +1,150 @@
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
-import { Container } from '@/components/ui/Container';
-import { Icon } from '@/components/ui/Icon';
+import { COPY } from '@/data/copy';
+import { Icon, Logo } from '@/components/ui/Icon';
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { MobileNav } from './MobileNav';
 
 interface Props {
   locale: Locale;
+  active?: 'home' | 'about' | 'products' | 'career' | 'news' | 'contact';
 }
 
-export async function SiteHeader({ locale }: Props) {
-  const t = await getTranslations({ locale, namespace: 'nav' });
-  const tCommon = await getTranslations({ locale, namespace: 'common' });
-
-  const navItems = [
-    { href: `/${locale}`, label: t('home') },
-    { href: `/${locale}/about`, label: t('about') },
-    { href: `/${locale}/products`, label: t('products') },
-    { href: `/${locale}/news`, label: t('news') },
-    { href: `/${locale}/career`, label: t('career') },
-    { href: `/${locale}/contact`, label: t('contact') },
+export function SiteHeader({ locale, active }: Props) {
+  const C = COPY[locale];
+  const navIds = ['home', 'about', 'products', 'career', 'news', 'contact'] as const;
+  const navHrefs = [
+    `/${locale}`,
+    `/${locale}/about`,
+    `/${locale}/products`,
+    `/${locale}/career`,
+    `/${locale}/news`,
+    `/${locale}/contact`,
   ];
+
+  const shortBrand =
+    locale === 'zh' ? '龙英矿业' : locale === 'en' ? 'LONG ANH MINERAL' : 'KS LONG ANH';
 
   return (
     <>
-      {/* Top strip — hotline + email */}
-      <div className="hidden bg-navy-700 text-xs text-white/90 md:block">
-        <Container className="flex h-9 items-center justify-between">
-          <div className="flex items-center gap-5">
-            <a href="tel:+84912779799" className="flex items-center gap-1.5 hover:text-white">
-              <Icon name="phone" size={13} />
-              <span className="opacity-75">Hotline:</span>
-              <span className="font-medium">(+84) 912 779 799</span>
+      {/* Top strip */}
+      <div className="va-strip">
+        <div className="va-wrap va-strip-in">
+          <span>
+            {locale === 'zh' ? '销售热线:' : locale === 'en' ? 'Sales hotline:' : 'Hotline kinh doanh:'}{' '}
+            <b style={{ color: '#fff' }}>{C.phone[0]}</b>
+          </span>
+          <div className="va-strip-r">
+            <a href={`mailto:${C.email}`}>
+              <Icon name="mail" size={13} /> {C.email}
             </a>
-            <a
-              href="mailto:info@longanhcorp.com"
-              className="hidden items-center gap-1.5 hover:text-white lg:flex"
-            >
-              <Icon name="mail" size={13} />
-              <span>info@longanhcorp.com</span>
-            </a>
+            <span style={{ opacity: 0.4 }}>·</span>
+            <a href={`/${locale}/contact`}>ISO 9001 : 2015</a>
           </div>
-          <div className="flex items-center gap-1.5 text-white/70">
-            <Icon name="award" size={13} />
-            <span>ISO 9001:2015 · REACH · SGS</span>
-          </div>
-        </Container>
+        </div>
       </div>
 
-      {/* Main header */}
-      <header className="sticky top-0 z-40 border-b border-ink/5 bg-white/85 backdrop-blur-md">
-        <Container className="flex h-16 items-center justify-between gap-6">
-          <Link href={`/${locale}`} className="flex items-center gap-2.5">
-            <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-navy-600 to-navy-800 text-sm font-bold text-white">
-              LA
-            </div>
-            <div className="leading-tight">
-              <div className="text-sm font-bold tracking-tight text-ink">KS LONG ANH</div>
-              <div className="text-[10px] uppercase tracking-eyebrow text-ink-muted">
-                Mineral · Vietnam
-              </div>
-            </div>
+      {/* Header */}
+      <header className="va-hd">
+        <div className="va-wrap va-hd-in">
+          <Link href={`/${locale}`} className="va-brand">
+            <span className="va-brand-mark">
+              <Logo size={48} />
+            </span>
+            <span className="va-brand-name">
+              <b>{shortBrand}</b>
+              <span>{C.tagline}</span>
+            </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-full px-3.5 py-2 text-sm font-medium text-ink-muted transition hover:bg-ink/5 hover:text-ink"
-              >
-                {item.label}
-              </Link>
-            ))}
+          <nav className="va-nav">
+            {C.nav.map((label: string, i: number) => {
+              const id = navIds[i];
+              const href = navHrefs[i];
+              const isActive = active === id;
+
+              if (id === 'products') {
+                return (
+                  <div key={i} className="va-nav-item">
+                    <Link href={href} className={isActive ? 'is-active' : ''}>
+                      {label}
+                    </Link>
+                    <div className="va-nav-dropdown">
+                      <Link href={`/${locale}/products#powder`}>
+                        <b>
+                          {locale === 'zh'
+                            ? '碳酸钙粉'
+                            : locale === 'en'
+                              ? 'CaCO₃ Powder'
+                              : 'Bột đá CaCO₃'}
+                        </b>
+                        <span>Coated · Uncoated · 3–20 µm</span>
+                      </Link>
+                      <Link href={`/${locale}/products#stone`}>
+                        <b>
+                          {locale === 'zh'
+                            ? '天然石材饰面'
+                            : locale === 'en'
+                              ? 'Natural cladding stone'
+                              : 'Đá ốp lát tự nhiên'}
+                        </b>
+                        <span>
+                          {locale === 'zh'
+                            ? '大板 · 定制石材 · 装饰石材'
+                            : locale === 'en'
+                              ? 'Slab · Cut tile · Decorative'
+                              : 'Slab · Đá xẻ · Đá trang trí'}
+                        </span>
+                      </Link>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (id === 'career') {
+                const cdept = [
+                  ['Sản xuất', 'Manufacturing', '生产', 'san-xuat'],
+                  ['Kinh doanh', 'Sales', '销售', 'kinh-doanh'],
+                  ['Kỹ thuật', 'Engineering', '工程', 'ky-thuat'],
+                  ['Chất lượng', 'Quality', '质量', 'chat-luong'],
+                  ['Hành chính', 'Admin', '行政', 'hanh-chinh'],
+                ];
+                const cdepSubs = [
+                  ['Vận hành nhà máy · Bảo trì thiết bị', 'Plant ops · Equipment maintenance', '工厂运营 · 设备维护'],
+                  ['Xuất khẩu · Bán hàng nội địa', 'Export sales · Domestic sales', '出口销售 · 国内销售'],
+                  ['Cải tiến quy trình · PLC', 'Process · PLC', '工艺改进 · PLC'],
+                  ['Kỹ thuật QC · ISO', 'QC lab · ISO', 'QC实验室 · ISO'],
+                  ['Nhân sự · Kế toán', 'HR · Accounting', '人力资源 · 会计'],
+                ];
+                const li = locale === 'vi' ? 0 : locale === 'en' ? 1 : 2;
+                return (
+                  <div key={i} className="va-nav-item">
+                    <Link href={href} className={isActive ? 'is-active' : ''}>
+                      {label}
+                    </Link>
+                    <div className="va-nav-dropdown">
+                      {cdept.map((d, j) => (
+                        <Link key={j} href={`/${locale}/career?dept=${d[3]}`}>
+                          <b>{d[li]}</b>
+                          <span>{cdepSubs[j][li]}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <Link key={i} href={href} className={isActive ? 'is-active' : ''}>
+                  {label}
+                </Link>
+              );
+            })}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="va-cta-row">
             <LanguageSwitcher current={locale} />
-            <Link
-              href={`/${locale}/contact`}
-              className="hidden items-center gap-1.5 rounded-full bg-brand-500 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-brand-600 md:inline-flex"
-            >
-              {tCommon('requestQuote')}
-              <Icon name="arrow-right" size={14} />
-            </Link>
-            <MobileNav items={navItems} />
           </div>
-        </Container>
+        </div>
       </header>
     </>
   );

@@ -1,0 +1,23 @@
+<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="400" fill="#F4F7FB"/>
+  <rect x="14" y="14" width="272" height="372" fill="none" stroke="#1A4480" stroke-width="2"/>
+  <rect x="22" y="22" width="256" height="356" fill="none" stroke="#1A4480" stroke-width="0.5" opacity="0.4"/>
+
+  <text x="150" y="62" text-anchor="middle" font-family="Georgia, serif" font-size="11" letter-spacing="3" fill="#1A4480">INSPECTION REPORT</text>
+  <text x="150" y="80" text-anchor="middle" font-family="Georgia, serif" font-size="11" letter-spacing="2" fill="#1A4480" opacity="0.8">·  INDEPENDENT  ·</text>
+  <line x1="100" y1="92" x2="200" y2="92" stroke="#C8A24B" stroke-width="1.5"/>
+
+  <text x="150" y="170" text-anchor="middle" font-family="Georgia, serif" font-size="56" font-weight="700" fill="#1A4480">SGS</text>
+  <text x="150" y="195" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" letter-spacing="1.2" fill="#666">SOCIÉTÉ GÉNÉRALE DE SURVEILLANCE</text>
+  <text x="150" y="215" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" letter-spacing="1" fill="#1A4480" font-weight="500">Whiteness · CaCO₃ · Particle Size</text>
+
+  <text x="150" y="248" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#888">Independent quality test for</text>
+  <text x="150" y="266" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#1A4480">LONG ANH MINERAL CO., LTD</text>
+
+  <circle cx="150" cy="320" r="32" fill="none" stroke="#C8A24B" stroke-width="1.5"/>
+  <circle cx="150" cy="320" r="26" fill="none" stroke="#C8A24B" stroke-width="0.5"/>
+  <text x="150" y="318" text-anchor="middle" font-family="Georgia, serif" font-size="8" letter-spacing="1.5" fill="#C8A24B">TESTED</text>
+  <text x="150" y="330" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="700" fill="#C8A24B">2024</text>
+
+  <text x="150" y="370" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#999">Report No. SGS-VN-2024-1108</text>
+</svg>

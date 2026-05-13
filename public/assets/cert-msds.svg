@@ -1,0 +1,26 @@
+<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="400" fill="#FAF6F4"/>
+  <rect x="14" y="14" width="272" height="372" fill="none" stroke="#8C2C2A" stroke-width="2"/>
+  <rect x="22" y="22" width="256" height="356" fill="none" stroke="#8C2C2A" stroke-width="0.5" opacity="0.4"/>
+
+  <text x="150" y="62" text-anchor="middle" font-family="Georgia, serif" font-size="11" letter-spacing="3" fill="#8C2C2A">SAFETY DATA SHEET</text>
+  <text x="150" y="80" text-anchor="middle" font-family="Georgia, serif" font-size="10" letter-spacing="1.5" fill="#8C2C2A" opacity="0.8">PER GHS / OSHA STANDARD</text>
+  <line x1="100" y1="92" x2="200" y2="92" stroke="#F08023" stroke-width="1.5"/>
+
+  <text x="150" y="170" text-anchor="middle" font-family="Georgia, serif" font-size="48" font-weight="700" fill="#8C2C2A">MSDS</text>
+  <text x="150" y="200" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" letter-spacing="1.2" fill="#666">MATERIAL SAFETY DATA SHEET</text>
+
+  <text x="60" y="240" font-family="Inter, sans-serif" font-size="9" fill="#666">§ 1. Identification</text>
+  <text x="60" y="256" font-family="Inter, sans-serif" font-size="9" fill="#666">§ 2. Hazard ID</text>
+  <text x="60" y="272" font-family="Inter, sans-serif" font-size="9" fill="#666">§ 3. Composition</text>
+  <text x="180" y="240" font-family="Inter, sans-serif" font-size="9" fill="#666">§ 4. First-aid</text>
+  <text x="180" y="256" font-family="Inter, sans-serif" font-size="9" fill="#666">§ 5. Firefighting</text>
+  <text x="180" y="272" font-family="Inter, sans-serif" font-size="9" fill="#666">§ 6. Handling</text>
+
+  <circle cx="150" cy="325" r="32" fill="none" stroke="#F08023" stroke-width="1.5"/>
+  <circle cx="150" cy="325" r="26" fill="none" stroke="#F08023" stroke-width="0.5"/>
+  <text x="150" y="323" text-anchor="middle" font-family="Georgia, serif" font-size="8" letter-spacing="1.5" fill="#F08023">APPROVED</text>
+  <text x="150" y="335" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="700" fill="#F08023">GHS</text>
+
+  <text x="150" y="372" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#999">Doc. No. MSDS-LAM-CaCO3-001</text>
+</svg>
