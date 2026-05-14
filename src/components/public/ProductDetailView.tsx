@@ -131,6 +131,11 @@ function fmtPrice(vnd: number, lang: Locale) {
   return new Intl.NumberFormat('vi-VN').format(vnd) + ' ₫';
 }
 
+/** Variant labels may be a plain string ('3 µm') or an i18n object ({ vi, en, zh }). */
+function variantLabel(label: string | Record<string, string>, lang: Locale) {
+  return typeof label === 'string' ? label : label[lang] || label.vi || '';
+}
+
 export function ProductDetailView({ locale, product, related }: Props) {
   const t = L[locale];
   const isPowder = product.cat === 0;
@@ -217,7 +222,7 @@ export function ProductDetailView({ locale, product, related }: Props) {
                 <div className="pd-price-note">{t.priceNote}</div>
                 <div className="pd-price-subtotal">
                   <span>
-                    {t.total} ({qty} {product.unit[locale]} × {v.label})
+                    {t.total} ({qty} {product.unit[locale]} × {variantLabel(v.label, locale)})
                   </span>
                   <b>{fmtPrice(v.vnd * qty, locale)}</b>
                 </div>
@@ -229,7 +234,7 @@ export function ProductDetailView({ locale, product, related }: Props) {
                   <div className="pd-variants-label">
                     {t.classification}:{' '}
                     <span style={{ color: 'var(--brand-accent,#F08023)', fontWeight: 700 }}>
-                      {v.label}
+                      {variantLabel(v.label, locale)}
                     </span>
                   </div>
                   <div className={'pd-variants-stock' + (v.stock < 200 ? ' low' : '')}>
@@ -250,7 +255,7 @@ export function ProductDetailView({ locale, product, related }: Props) {
                       {variant.popular ? (
                         <span className="pd-variant-popular">{t.popular}</span>
                       ) : null}
-                      {variant.label}
+                      {variantLabel(variant.label, locale)}
                     </button>
                   ))}
                 </div>
