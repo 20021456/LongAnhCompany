@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { AdminIcon } from '@/components/admin/AdminIcon';
 
 export function LoginForm() {
   const router = useRouter();
-  const params = useSearchParams();
-  const callbackUrl = params.get('callbackUrl') || '/admin/dashboard';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,6 +28,10 @@ export function LoginForm() {
       setError('Email hoặc mật khẩu không đúng.');
       return;
     }
+    // Read callbackUrl on the client only — avoids useSearchParams() and
+    // the Suspense boundary it would require.
+    const callbackUrl =
+      new URLSearchParams(window.location.search).get('callbackUrl') || '/admin/dashboard';
     router.replace(callbackUrl);
     router.refresh();
   }

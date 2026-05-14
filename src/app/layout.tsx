@@ -30,7 +30,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" className={`${inter.variable} ${fraunces.variable}`}>
-      <body>{children}</body>
+      {/* suppressHydrationWarning: password managers / browser extensions
+          inject attributes into <body> and form inputs before hydration */}
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }
