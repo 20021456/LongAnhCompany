@@ -2,12 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
-import { JOBS } from '@/data/jobs';
+import { getJobs } from '@/lib/queries';
 import { Icon } from '@/components/ui/Icon';
-
-export function generateStaticParams() {
-  return Object.keys(JOBS).map((id) => ({ slug: id }));
-}
 
 const L = {
   vi: {
@@ -95,7 +91,7 @@ function fmtDate(d: string, lang: Locale) {
   return d;
 }
 
-export default function JobDetailPage({
+export default async function JobDetailPage({
   params,
 }: {
   params: { locale: string; slug: string };
@@ -104,14 +100,16 @@ export default function JobDetailPage({
   const loc = params.locale as Locale;
   const t = L[loc];
 
-  const job = JOBS[params.slug];
+  // Phase 4: job comes from the database
+  const jobs = await getJobs();
+  const job = jobs[params.slug];
   if (!job) notFound();
 
   const title = job.title[loc] || job.title.vi;
   const deptLabel = job.deptLabel[loc];
   const mailto = `mailto:[email protected]?subject=${encodeURIComponent(`[${job.id}] ${title}`)}`;
 
-  const related = Object.values(JOBS)
+  const related = Object.values(jobs)
     .filter((j) => j.id !== job.id)
     .sort((a, b) => (a.dept === job.dept ? -1 : 1) - (b.dept === job.dept ? -1 : 1))
     .slice(0, 3);

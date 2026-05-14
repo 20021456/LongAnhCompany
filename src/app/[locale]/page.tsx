@@ -6,6 +6,7 @@ import { Icon } from '@/components/ui/Icon';
 import { ProductCarousel } from '@/components/public/ProductCarousel';
 import { ExportMap } from '@/components/public/ExportMap';
 import { ContactForm } from '@/components/public/ContactForm';
+import { getProducts, getStats } from '@/lib/queries';
 
 const ABOUT_TILES = [
   {
@@ -107,10 +108,27 @@ const CERT_TILES = [
   },
 ];
 
-export default function HomePage({ params: { locale } }: { params: { locale: string } }) {
+export default async function HomePage({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
   setRequestLocale(locale);
   const loc = locale as Locale;
   const C = COPY[loc];
+
+  // Phase 4: products carousel + stats strip come from the database
+  const productMap = await getProducts();
+  const carouselProducts = Object.values(productMap).map((p) => ({
+    code: p.code,
+    cat: p.cat,
+    img: p.images[0] ?? '',
+    name: p.name[loc],
+    meta: p.meta[loc],
+    desc: p.desc[loc],
+    tags: p.tags[loc] ?? [],
+  }));
+  const stats = await getStats('home');
   const lang = loc;
 
   return (
@@ -146,10 +164,10 @@ export default function HomePage({ params: { locale } }: { params: { locale: str
       <section className="va-stats">
         <div className="va-wrap">
           <div className="va-stats-in">
-            {C.statVals.map((v: string, i: number) => (
-              <div key={i} className="va-stat">
-                <b>{v}</b>
-                <span>{C.statLabels[i]}</span>
+            {stats.map((s) => (
+              <div key={s.key} className="va-stat">
+                <b>{s.value}</b>
+                <span>{s.label[loc]}</span>
               </div>
             ))}
           </div>
@@ -166,7 +184,7 @@ export default function HomePage({ params: { locale } }: { params: { locale: str
             </div>
             <p>{C.productsSub}</p>
           </div>
-          <ProductCarousel products={C.products} locale={loc} sideArrows />
+          <ProductCarousel products={carouselProducts} locale={loc} sideArrows />
         </div>
       </section>
 

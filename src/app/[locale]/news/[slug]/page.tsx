@@ -3,14 +3,10 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
-import { NEWS } from '@/data/news';
+import { getArticles } from '@/lib/queries';
 import { Icon } from '@/components/ui/Icon';
 
-export function generateStaticParams() {
-  return NEWS.map((n) => ({ slug: String(n.id) }));
-}
-
-export default function ArticlePage({
+export default async function ArticlePage({
   params,
 }: {
   params: { locale: string; slug: string };
@@ -19,10 +15,14 @@ export default function ArticlePage({
   const loc = params.locale as Locale;
   const C = COPY[loc];
 
-  const article = NEWS.find((n) => String(n.id) === params.slug);
+  // Phase 4: articles come from the database
+  const allNews = await getArticles();
+  const article = allNews.find((n) => String(n.id) === params.slug);
   if (!article) notFound();
 
-  const related = NEWS.filter((n) => n.id !== article.id && n.cat === article.cat).slice(0, 3);
+  const related = allNews
+    .filter((n) => n.id !== article.id && n.cat === article.cat)
+    .slice(0, 3);
   const fmtDate = (iso: string) => {
     const [y, m, d] = iso.split('-');
     if (loc === 'en') {

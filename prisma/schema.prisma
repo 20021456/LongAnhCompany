@@ -149,6 +149,9 @@ model Product {
   nameVi         String
   nameEn         String?
   nameZh         String?
+  summaryVi      String?                     // "Uncoated · 3–20 µm" — short spec line under name
+  summaryEn      String?
+  summaryZh      String?
   shortDescVi    String?
   shortDescEn    String?
   shortDescZh    String?
@@ -159,10 +162,19 @@ model Product {
   coverImageUrl  String?
   gallery        Json?                       // ["url1","url2",...]
 
-  moq            String?                     // "25 tấn"
+  unitVi         String?                     // 'tấn' | 'tấm' | 'm²'
+  unitEn         String?
+  unitZh         String?
+  moq            String?                     // "25 tấn" (vi)
+  moqEn          String?
+  moqZh          String?
   moqValue       Decimal? @db.Decimal(12, 2)
   moqUnit        String?
-  productionTime String?                     // "7–14 ngày"
+  productionTime String?                     // "7–14 ngày" (vi)
+  productionTimeEn String?
+  productionTimeZh String?
+  tags           Json?                        // { vi:[], en:[], zh:[] }
+  features       Json?                        // { vi:[], en:[], zh:[] }
 
   coaFileUrl     String?
   msdsFileUrl    String?
@@ -242,12 +254,14 @@ model ProductSpec {
   id        String  @id @default(uuid())
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  specKey   String?                              // 'caco3' | 'white' | 'd50' …
   labelVi   String
   labelEn   String?
   labelZh   String?
   valueVi   String
   valueEn   String?
   valueZh   String?
+  unitText  String?                              // '%' | 'g/cm³' | 'µm'
   sortOrder Int     @default(0)
 
   @@map("product_specs")
@@ -394,6 +408,7 @@ model Article {
   author        User?    @relation("ArticleAuthor", fields: [authorId], references: [id])
   tags          Json?                              // ["industry","export"]
   views         Int      @default(0)
+  commentCount  Int      @default(0)
   readTimeMin   Int?
 
   metaTitleVi   String?
@@ -444,17 +459,28 @@ model Job {
   salaryMin       Decimal? @db.Decimal(14, 2)
   salaryMax       Decimal? @db.Decimal(14, 2)
   salaryCurrency  String   @default("VND")
+  salaryTextVi    String?                         // raw label e.g. "18 – 30 triệu VND"
+  salaryTextEn    String?
+  salaryTextZh    String?
   experienceVi    String?
   experienceEn    String?
   experienceZh    String?
+  levelVi         String?                         // 'Nhân viên / Chuyên viên'
+  levelEn         String?
+  levelZh         String?
+  typeVi          String?                         // display label e.g. 'Toàn thời gian'
+  typeEn          String?
+  typeZh          String?
   employmentType  String   @default("full_time")  // full_time | part_time | contract
+  tags            Json?                           // ["Cơ khí", "ISO", ...]
   descriptionVi   String?  @db.Text
   descriptionEn   String?  @db.Text
   descriptionZh   String?  @db.Text
-  responsibilities Json?                          // [{vi,en,zh}, ...]
+  responsibilities Json?                          // {vi:[],en:[],zh:[]}
   requirements    Json?
   benefits        Json?
   deadline        DateTime?
+  deadlineText    String?                         // raw "30/06/2026"
   slots           Int      @default(1)
   views           Int      @default(0)
   isActive        Boolean  @default(true)

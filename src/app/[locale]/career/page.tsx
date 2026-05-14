@@ -3,49 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { Icon, type IconName } from '@/components/ui/Icon';
-
-interface Job {
-  id: number;
-  dept: string;
-  title: string;
-  loc: string;
-  type: string;
-  exp: string;
-  tags: string[];
-}
-
-const JOBS: Record<Locale, Job[]> = {
-  vi: [
-    { id: 1, dept: 'Sản xuất', title: 'Kỹ sư Vận hành nhà máy', loc: 'Quỳ Hợp, Nghệ An', type: 'Toàn thời gian', exp: '2–5 năm', tags: ['Cơ khí', 'Vận hành dây chuyền', 'ISO'] },
-    { id: 2, dept: 'Kinh doanh', title: 'Chuyên viên Kinh doanh Xuất khẩu', loc: 'TP. Vinh, Nghệ An', type: 'Toàn thời gian', exp: '1–3 năm', tags: ['Tiếng Anh', 'B2B Export', 'CaCO₃'] },
-    { id: 3, dept: 'Chất lượng', title: 'Kỹ thuật viên Phòng QC', loc: 'Quỳ Hợp, Nghệ An', type: 'Toàn thời gian', exp: '1–3 năm', tags: ['ISO 9001', 'Phân tích hóa', 'Kiểm tra hạt'] },
-    { id: 4, dept: 'Kỹ thuật', title: 'Kỹ sư Bảo trì thiết bị', loc: 'Quỳ Hợp, Nghệ An', type: 'Toàn thời gian', exp: '3–5 năm', tags: ['Điện – cơ', 'PLC', 'Bảo trì phòng ngừa'] },
-    { id: 5, dept: 'Hành chính', title: 'Chuyên viên Nhân sự & Tuyển dụng', loc: 'TP. Vinh, Nghệ An', type: 'Toàn thời gian', exp: '1–3 năm', tags: ['HR', 'Tuyển dụng', 'Lương thưởng'] },
-    { id: 6, dept: 'Kinh doanh', title: 'Trưởng phòng Kinh doanh Nội địa', loc: 'TP. Vinh, Nghệ An', type: 'Toàn thời gian', exp: '5+ năm', tags: ['Quản lý đội nhóm', 'Bột đá', 'KPI'] },
-    { id: 7, dept: 'Kỹ thuật', title: 'Kỹ sư Quy trình & Cải tiến', loc: 'Quỳ Hợp, Nghệ An', type: 'Toàn thời gian', exp: '2–4 năm', tags: ['Kaizen', 'Lean', 'Khoáng sản'] },
-    { id: 8, dept: 'Hành chính', title: 'Kế toán Tổng hợp', loc: 'TP. Vinh, Nghệ An', type: 'Toàn thời gian', exp: '2–4 năm', tags: ['MISA', 'Thuế', 'BCTC'] },
-  ],
-  en: [
-    { id: 1, dept: 'Manufacturing', title: 'Plant Operations Engineer', loc: 'Quy Hop, Nghe An', type: 'Full-time', exp: '2–5 years', tags: ['Mechanical', 'Line operations', 'ISO'] },
-    { id: 2, dept: 'Sales', title: 'Export Sales Specialist', loc: 'Vinh City, Nghe An', type: 'Full-time', exp: '1–3 years', tags: ['English', 'B2B Export', 'CaCO₃'] },
-    { id: 3, dept: 'Quality', title: 'QC Lab Technician', loc: 'Quy Hop, Nghe An', type: 'Full-time', exp: '1–3 years', tags: ['ISO 9001', 'Chemical analysis', 'Particle testing'] },
-    { id: 4, dept: 'Engineering', title: 'Equipment Maintenance Engineer', loc: 'Quy Hop, Nghe An', type: 'Full-time', exp: '3–5 years', tags: ['Electro-mechanical', 'PLC', 'Preventive maintenance'] },
-    { id: 5, dept: 'Admin', title: 'HR & Recruitment Specialist', loc: 'Vinh City, Nghe An', type: 'Full-time', exp: '1–3 years', tags: ['HR', 'Recruitment', 'Compensation'] },
-    { id: 6, dept: 'Sales', title: 'Domestic Sales Manager', loc: 'Vinh City, Nghe An', type: 'Full-time', exp: '5+ years', tags: ['Team management', 'Stone powder', 'KPI'] },
-    { id: 7, dept: 'Engineering', title: 'Process & Improvement Engineer', loc: 'Quy Hop, Nghe An', type: 'Full-time', exp: '2–4 years', tags: ['Kaizen', 'Lean', 'Minerals'] },
-    { id: 8, dept: 'Admin', title: 'General Accountant', loc: 'Vinh City, Nghe An', type: 'Full-time', exp: '2–4 years', tags: ['MISA', 'Tax', 'Financial reports'] },
-  ],
-  zh: [
-    { id: 1, dept: '生产', title: '工厂运营工程师', loc: '义安省归合县', type: '全职', exp: '2–5年', tags: ['机械', '生产线运营', 'ISO'] },
-    { id: 2, dept: '销售', title: '出口销售专员', loc: '义安省荣市', type: '全职', exp: '1–3年', tags: ['英语', 'B2B出口', '碳酸钙'] },
-    { id: 3, dept: '质量', title: 'QC实验室技术员', loc: '义安省归合县', type: '全职', exp: '1–3年', tags: ['ISO 9001', '化学分析', '粒径检测'] },
-    { id: 4, dept: '工程', title: '设备维护工程师', loc: '义安省归合县', type: '全职', exp: '3–5年', tags: ['机电', 'PLC', '预防性维护'] },
-    { id: 5, dept: '行政', title: '人力资源与招聘专员', loc: '义安省荣市', type: '全职', exp: '1–3年', tags: ['人力资源', '招聘', '薪酬'] },
-    { id: 6, dept: '销售', title: '国内销售经理', loc: '义安省荣市', type: '全职', exp: '5年以上', tags: ['团队管理', '石粉', 'KPI'] },
-    { id: 7, dept: '工程', title: '工艺改进工程师', loc: '义安省归合县', type: '全职', exp: '2–4年', tags: ['Kaizen', '精益', '矿产'] },
-    { id: 8, dept: '行政', title: '综合会计', loc: '义安省荣市', type: '全职', exp: '2–4年', tags: ['MISA', '税务', '财务报表'] },
-  ],
-};
+import { getJobs } from '@/lib/queries';
 
 const VALUES: Record<Locale, [IconName, string, string][]> = {
   vi: [
@@ -122,11 +80,26 @@ const PROCESS: Record<Locale, [string, string][]> = {
   ],
 };
 
-export default function CareerPage({ params: { locale } }: { params: { locale: string } }) {
+export default async function CareerPage({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
   setRequestLocale(locale);
   const loc = locale as Locale;
   const C = COPY[loc];
-  const jobs = JOBS[loc];
+
+  // Phase 4: job listings come from the database
+  const jobMap = await getJobs();
+  const jobs = Object.values(jobMap).map((j) => ({
+    id: j.id,
+    dept: j.deptLabel[loc],
+    title: j.title[loc],
+    loc: j.loc[loc],
+    type: j.type[loc],
+    exp: j.exp[loc],
+    tags: j.tags,
+  }));
 
   return (
     <div className="cr">

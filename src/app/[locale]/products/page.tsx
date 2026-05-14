@@ -5,6 +5,7 @@ import { COPY } from '@/data/copy';
 import { Icon } from '@/components/ui/Icon';
 import { PageHeader } from '@/components/public/PageHeader';
 import { ProductsBrowser } from '@/components/public/ProductsBrowser';
+import { getProducts } from '@/lib/queries';
 
 interface Product {
   code: string;
@@ -52,12 +53,27 @@ const SPECS: Record<Locale, { head: string[]; rows: string[][] }> = {
   },
 };
 
-export default function ProductsPage({ params: { locale } }: { params: { locale: string } }) {
+export default async function ProductsPage({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
   setRequestLocale(locale);
   const loc = locale as Locale;
   const C = COPY[loc];
   const cats: string[] = C.catTitles ?? ['Bột đá CaCO₃', 'Đá ốp lát tự nhiên'];
-  const products: Product[] = C.products;
+
+  // Phase 4: products now come from the database (was COPY[loc].products)
+  const productMap = await getProducts();
+  const products: Product[] = Object.values(productMap).map((p) => ({
+    code: p.code,
+    cat: p.cat,
+    img: p.images[0] ?? '',
+    name: p.name[loc],
+    meta: p.meta[loc],
+    desc: p.desc[loc],
+    tags: p.tags[loc] ?? [],
+  }));
 
   return (
     <div className="pr">
