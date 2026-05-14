@@ -5,76 +5,9 @@ import { useRouter } from 'next/navigation';
 import { AdminIcon } from './AdminIcon';
 import { Field } from './FormBits';
 import { saveSeoSettings, type ActionResult } from '@/app/admin/(panel)/seo/actions';
+import { SEO_FIELDS } from './seo-fields';
 
 type LocaleVal = { vi: string; en: string; zh: string };
-
-export interface SeoFieldDef {
-  key: string;
-  label: string;
-  help?: string;
-  localized: boolean;
-  type?: 'text' | 'textarea' | 'bool';
-}
-
-/** Field catalogue — also defines the order shown in the form. */
-export const SEO_FIELDS: SeoFieldDef[] = [
-  {
-    key: 'seo.meta_title_default',
-    label: 'Tiêu đề mặc định',
-    help: 'Dùng khi một trang không có tiêu đề SEO riêng.',
-    localized: true,
-  },
-  {
-    key: 'seo.meta_desc_default',
-    label: 'Mô tả mặc định',
-    help: 'Đoạn mô tả hiển thị trên kết quả tìm kiếm (~155 ký tự).',
-    localized: true,
-    type: 'textarea',
-  },
-  {
-    key: 'seo.keywords',
-    label: 'Từ khoá',
-    help: 'Phân tách bằng dấu phẩy.',
-    localized: true,
-  },
-  {
-    key: 'seo.og_image',
-    label: 'Ảnh chia sẻ mặc định (OG image)',
-    help: 'URL ảnh hiển thị khi chia sẻ lên mạng xã hội (1200×630).',
-    localized: false,
-  },
-  {
-    key: 'seo.canonical_base_url',
-    label: 'Tên miền chuẩn (canonical)',
-    help: 'VD: https://longanhcorp.com',
-    localized: false,
-  },
-  {
-    key: 'seo.twitter_handle',
-    label: 'Tài khoản X / Twitter',
-    help: 'VD: @longanhcorp',
-    localized: false,
-  },
-  {
-    key: 'seo.ga_measurement_id',
-    label: 'Google Analytics ID',
-    help: 'VD: G-XXXXXXXXXX',
-    localized: false,
-  },
-  {
-    key: 'seo.gtm_id',
-    label: 'Google Tag Manager ID',
-    help: 'VD: GTM-XXXXXXX',
-    localized: false,
-  },
-  {
-    key: 'seo.robots_indexable',
-    label: 'Cho phép công cụ tìm kiếm lập chỉ mục',
-    help: 'Tắt khi site đang chạy thử / chưa công bố.',
-    localized: false,
-    type: 'bool',
-  },
-];
 
 export function SeoForm({ initial }: { initial: Record<string, LocaleVal> }) {
   const router = useRouter();

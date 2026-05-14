@@ -1,7 +1,8 @@
 import { requirePermission } from '@/lib/auth-helpers';
 import { db } from '@/lib/db';
 import { AdminPageHead } from '@/components/admin/AdminPageHead';
-import { SeoForm, SEO_FIELDS } from '@/components/admin/SeoForm';
+import { SeoForm } from '@/components/admin/SeoForm';
+import { SEO_FIELDS } from '@/components/admin/seo-fields';
 
 export default async function AdminSeoPage() {
   await requirePermission('seo.update');
