@@ -36,7 +36,8 @@ export type AdminIconName =
   | 'copy'
   | 'filter'
   | 'star'
-  | 'layers';
+  | 'layers'
+  | 'chevron';
 
 const ICONS: Record<AdminIconName, JSX.Element> = {
   home: <path d="M3 12l9-9 9 9M5 10v10h14V10" />,
@@ -193,6 +194,7 @@ const ICONS: Record<AdminIconName, JSX.Element> = {
       <path d="M2 17l10 6 10-6M2 12l10 6 10-6" />
     </>
   ),
+  chevron: <path d="M9 18l6-6-6-6" />,
 };
 
 interface Props extends Omit<SVGProps<SVGSVGElement>, 'name'> {

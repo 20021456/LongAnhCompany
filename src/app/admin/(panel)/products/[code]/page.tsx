@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import { requirePermission } from '@/lib/auth-helpers';
 import { db } from '@/lib/db';
-import { AdminPageHead } from '@/components/admin/AdminPageHead';
 import { ProductForm, type ProductFormValue } from '@/components/admin/ProductForm';
 
 const EMPTY: ProductFormValue = {
@@ -29,7 +28,8 @@ const EMPTY: ProductFormValue = {
   productionTime: '',
   productionTimeEn: '',
   productionTimeZh: '',
-  gallery: '',
+  coverImageUrl: '',
+  gallery: [],
   isFeatured: false,
   isActive: true,
   sortOrder: 0,
@@ -77,7 +77,8 @@ export default async function ProductEditPage({ params }: { params: { code: stri
       productionTime: p.productionTime ?? '',
       productionTimeEn: p.productionTimeEn ?? '',
       productionTimeZh: p.productionTimeZh ?? '',
-      gallery: ((p.gallery as unknown as string[] | null) ?? []).join('\n'),
+      coverImageUrl: p.coverImageUrl ?? '',
+      gallery: (p.gallery as unknown as string[] | null) ?? [],
       isFeatured: p.isFeatured,
       isActive: p.isActive,
       sortOrder: p.sortOrder,
@@ -92,17 +93,5 @@ export default async function ProductEditPage({ params }: { params: { code: stri
     };
   }
 
-  return (
-    <>
-      <AdminPageHead
-        crumbs={[
-          { label: 'Sản phẩm', href: '/admin/products' },
-          { label: isNew ? 'Thêm mới' : initial.code },
-        ]}
-        title={isNew ? 'Thêm sản phẩm' : `Sửa: ${initial.nameVi}`}
-        sub={isNew ? 'Tạo một sản phẩm mới trong catalogue' : `Mã ${initial.code}`}
-      />
-      <ProductForm initial={initial} categories={categories} isNew={isNew} />
-    </>
-  );
+  return <ProductForm initial={initial} categories={categories} isNew={isNew} />;
 }

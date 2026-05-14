@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import { requirePermission } from '@/lib/auth-helpers';
 import { db } from '@/lib/db';
-import { AdminPageHead } from '@/components/admin/AdminPageHead';
 import { PageForm, type PageFormValue } from '@/components/admin/PageForm';
 import { KNOWN_PAGES } from '../known';
 
@@ -28,14 +27,5 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
     isPublished: row?.isPublished ?? true,
   };
 
-  return (
-    <>
-      <AdminPageHead
-        crumbs={[{ label: 'Trang', href: '/admin/pages' }, { label: known.label }]}
-        title={`Sửa trang — ${known.label}`}
-        sub={known.path}
-      />
-      <PageForm initial={initial} label={known.label} />
-    </>
-  );
+  return <PageForm initial={initial} label={known.label} path={known.path} />;
 }

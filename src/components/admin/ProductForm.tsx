@@ -3,8 +3,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AdminIcon } from './AdminIcon';
-import { Field, FieldRow } from './FormBits';
-import { saveProduct, type ProductInput, type ActionResult } from '@/app/admin/(panel)/products/actions';
+import { AdminPageHead } from './AdminPageHead';
+import { Field } from './FormBits';
+import { LangTabs, EditorSection, StatusRadioGroup, ToggleRow, type Lang } from './EditorChrome';
+import {
+  saveProduct,
+  type ProductInput,
+  type ActionResult,
+} from '@/app/admin/(panel)/products/actions';
 
 interface VariantRow {
   variantCode: string;
@@ -41,11 +47,18 @@ export interface ProductFormValue {
   productionTime: string;
   productionTimeEn: string;
   productionTimeZh: string;
-  gallery: string;
+  coverImageUrl: string;
+  gallery: string[];
   isFeatured: boolean;
   isActive: boolean;
   sortOrder: number;
   variants: VariantRow[];
+}
+
+/** Resolve a locale-suffixed field key. `bareVi` fields use the bare key for VI. */
+function lf(base: string, lang: Lang, bareVi = false): keyof ProductFormValue {
+  if (lang === 'vi') return (bareVi ? base : base + 'Vi') as keyof ProductFormValue;
+  return (base + (lang === 'en' ? 'En' : 'Zh')) as keyof ProductFormValue;
 }
 
 export function ProductForm({
@@ -60,11 +73,15 @@ export function ProductForm({
   const router = useRouter();
   const [v, setV] = useState<ProductFormValue>(initial);
   const [variants, setVariants] = useState<VariantRow[]>(initial.variants);
+  const [gallery, setGallery] = useState<string[]>(initial.gallery);
+  const [galleryInput, setGalleryInput] = useState('');
+  const [lang, setLang] = useState<Lang>('vi');
   const [state, setState] = useState<ActionResult | null>(null);
   const [busy, setBusy] = useState(false);
 
   const set = <K extends keyof ProductFormValue>(k: K, val: ProductFormValue[K]) =>
     setV((p) => ({ ...p, [k]: val }));
+  const str = (k: keyof ProductFormValue) => (v[k] as string) ?? '';
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -96,10 +113,8 @@ export function ProductForm({
       productionTime: v.productionTime,
       productionTimeEn: v.productionTimeEn,
       productionTimeZh: v.productionTimeZh,
-      gallery: v.gallery
-        .split(/[\n,]/)
-        .map((s) => s.trim())
-        .filter(Boolean),
+      coverImageUrl: v.coverImageUrl || gallery[0] || '',
+      gallery,
       isFeatured: v.isFeatured,
       isActive: v.isActive,
       sortOrder: v.sortOrder,
@@ -123,8 +138,45 @@ export function ProductForm({
     setVariants((vs) => vs.map((row, j) => (j === i ? { ...row, ...patch } : row)));
   const removeVariant = (i: number) => setVariants((vs) => vs.filter((_, j) => j !== i));
 
+  const addGalleryImage = () => {
+    const url = galleryInput.trim();
+    if (!url) return;
+    setGallery((g) => [...g, url]);
+    setGalleryInput('');
+  };
+  const removeGalleryImage = (i: number) => setGallery((g) => g.filter((_, j) => j !== i));
+
+  const L = lang.toUpperCase();
+
   return (
     <form onSubmit={onSubmit}>
+      <AdminPageHead
+        crumbs={[
+          { label: 'Sản phẩm', href: '/admin/products' },
+          { label: isNew ? 'Thêm mới' : v.code },
+        ]}
+        title={isNew ? 'Thêm sản phẩm' : `Sửa: ${v.nameVi || v.code}`}
+        sub={isNew ? 'Tạo một sản phẩm mới trong catalogue' : `Mã ${v.code}`}
+        actions={
+          !isNew && v.slug ? (
+            <>
+              <a href={`/products/${v.slug}`} target="_blank" rel="noreferrer" className="ad-btn">
+                <AdminIcon name="eye" size={14} /> Xem website
+              </a>
+              <button type="submit" className="ad-btn primary" disabled={busy}>
+                <AdminIcon name="check" size={15} />
+                {busy ? 'Đang lưu…' : 'Lưu & Xuất bản'}
+              </button>
+            </>
+          ) : (
+            <button type="submit" className="ad-btn primary" disabled={busy}>
+              <AdminIcon name="check" size={15} />
+              {busy ? 'Đang lưu…' : 'Lưu sản phẩm'}
+            </button>
+          )
+        }
+      />
+
       {state?.error ? (
         <div className="lg-err" style={{ marginBottom: 16 }}>
           <AdminIcon name="shield" size={14} />
@@ -132,119 +184,151 @@ export function ProductForm({
         </div>
       ) : null}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20, alignItems: 'start' }}>
-        {/* MAIN COLUMN */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="ad-card">
-            <div className="ad-card-head">
-              <h3>Thông tin chính</h3>
-            </div>
-            <div className="ad-card-body">
-              <FieldRow>
-                <Field label="Mã sản phẩm" required help="VD: P-06">
-                  <input
-                    className="ad-input"
-                    value={v.code}
-                    disabled={!isNew}
-                    onChange={(e) => set('code', e.target.value)}
-                    required
-                  />
-                </Field>
-                <Field label="Slug (URL)" required>
-                  <input
-                    className="ad-input"
-                    value={v.slug}
-                    onChange={(e) => set('slug', e.target.value)}
-                    required
-                  />
-                </Field>
-              </FieldRow>
+      <LangTabs lang={lang} setLang={setLang} />
 
-              <Field label="Danh mục" required>
-                <select
-                  className="ad-select"
-                  value={v.categoryId}
-                  onChange={(e) => set('categoryId', e.target.value)}
+      <div className="pe-grid">
+        <div className="pe-main">
+          {/* 01 — Basic info */}
+          <EditorSection
+            num="01"
+            icon="file"
+            title="Thông tin cơ bản"
+            sub="Mã, đường dẫn và tên sản phẩm"
+          >
+            <div className="pe-row">
+              <Field label="Mã sản phẩm" required help="VD: P-06">
+                <input
+                  className="ad-input"
+                  value={v.code}
+                  disabled={!isNew}
+                  onChange={(e) => set('code', e.target.value)}
                   required
-                >
-                  <option value="">— Chọn danh mục —</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-
-              <Field label="Tên sản phẩm (VI)" required>
-                <input className="ad-input" value={v.nameVi} onChange={(e) => set('nameVi', e.target.value)} required />
-              </Field>
-              <FieldRow>
-                <Field label="Tên (EN)">
-                  <input className="ad-input" value={v.nameEn} onChange={(e) => set('nameEn', e.target.value)} />
-                </Field>
-                <Field label="Tên (ZH)">
-                  <input className="ad-input" value={v.nameZh} onChange={(e) => set('nameZh', e.target.value)} />
-                </Field>
-              </FieldRow>
-
-              <Field label="Tóm tắt / spec line (VI)" help="VD: Uncoated · 3–20 µm">
-                <input className="ad-input" value={v.summaryVi} onChange={(e) => set('summaryVi', e.target.value)} />
-              </Field>
-              <FieldRow>
-                <Field label="Tóm tắt (EN)">
-                  <input className="ad-input" value={v.summaryEn} onChange={(e) => set('summaryEn', e.target.value)} />
-                </Field>
-                <Field label="Tóm tắt (ZH)">
-                  <input className="ad-input" value={v.summaryZh} onChange={(e) => set('summaryZh', e.target.value)} />
-                </Field>
-              </FieldRow>
-
-              <Field label="Mô tả ngắn (VI)">
-                <textarea className="ad-textarea" value={v.shortDescVi} onChange={(e) => set('shortDescVi', e.target.value)} />
-              </Field>
-              <FieldRow>
-                <Field label="Mô tả ngắn (EN)">
-                  <textarea className="ad-textarea" value={v.shortDescEn} onChange={(e) => set('shortDescEn', e.target.value)} />
-                </Field>
-                <Field label="Mô tả ngắn (ZH)">
-                  <textarea className="ad-textarea" value={v.shortDescZh} onChange={(e) => set('shortDescZh', e.target.value)} />
-                </Field>
-              </FieldRow>
-
-              <Field label="Mô tả chi tiết (VI)">
-                <textarea
-                  className="ad-textarea"
-                  style={{ minHeight: 120 }}
-                  value={v.longDescVi}
-                  onChange={(e) => set('longDescVi', e.target.value)}
                 />
               </Field>
-              <FieldRow>
-                <Field label="Mô tả chi tiết (EN)">
-                  <textarea className="ad-textarea" value={v.longDescEn} onChange={(e) => set('longDescEn', e.target.value)} />
-                </Field>
-                <Field label="Mô tả chi tiết (ZH)">
-                  <textarea className="ad-textarea" value={v.longDescZh} onChange={(e) => set('longDescZh', e.target.value)} />
-                </Field>
-              </FieldRow>
+              <Field label="Slug (URL)" required>
+                <input
+                  className="ad-input"
+                  value={v.slug}
+                  onChange={(e) => set('slug', e.target.value)}
+                  required
+                />
+              </Field>
             </div>
-          </div>
+            <Field label={`Tên sản phẩm (${L})`} required={lang === 'vi'}>
+              <input
+                className="ad-input"
+                value={str(lf('name', lang))}
+                onChange={(e) => set(lf('name', lang), e.target.value)}
+                required={lang === 'vi'}
+              />
+            </Field>
+            <Field label={`Tóm tắt / spec line (${L})`} help="VD: Uncoated · 3–20 µm">
+              <input
+                className="ad-input"
+                value={str(lf('summary', lang))}
+                onChange={(e) => set(lf('summary', lang), e.target.value)}
+              />
+            </Field>
+            <Field
+              label={`Mô tả ngắn (${L})`}
+              help="Hiển thị ở thẻ sản phẩm trên trang chủ và danh sách."
+            >
+              <textarea
+                className="ad-textarea"
+                value={str(lf('shortDesc', lang))}
+                onChange={(e) => set(lf('shortDesc', lang), e.target.value)}
+              />
+            </Field>
+          </EditorSection>
 
-          {/* VARIANTS */}
-          <div className="ad-card">
-            <div className="ad-card-head">
-              <div>
-                <h3>Quy cách / Variants</h3>
-                <p>Mỗi quy cách có giá riêng. Đánh dấu "Phổ biến" để hiển thị badge.</p>
+          {/* 02 — Detail content */}
+          <EditorSection
+            num="02"
+            icon="news"
+            title="Nội dung chi tiết"
+            sub="Mô tả đầy đủ trên trang sản phẩm"
+          >
+            <Field label={`Mô tả chi tiết (${L})`}>
+              <textarea
+                className="ad-textarea"
+                style={{ minHeight: 160 }}
+                value={str(lf('longDesc', lang))}
+                onChange={(e) => set(lf('longDesc', lang), e.target.value)}
+              />
+            </Field>
+          </EditorSection>
+
+          {/* 03 — Images */}
+          <EditorSection
+            num="03"
+            icon="image"
+            title="Thư viện ảnh sản phẩm"
+            sub={`${gallery.length} ảnh · ảnh đầu là ảnh đại diện`}
+          >
+            <Field label="Ảnh đại diện (cover)" help="Để trống → dùng ảnh đầu tiên trong thư viện.">
+              <input
+                className="ad-input"
+                value={v.coverImageUrl}
+                onChange={(e) => set('coverImageUrl', e.target.value)}
+                placeholder="/assets/bot-caco3-sieu-min.webp"
+              />
+            </Field>
+            {gallery.length > 0 ? (
+              <div className="pe-gallery">
+                {gallery.map((src, i) => (
+                  <div key={`${src}-${i}`} className="pe-gallery-item">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={src} alt="" />
+                    {i === 0 && !v.coverImageUrl ? (
+                      <span className="cover-tag">Đại diện</span>
+                    ) : null}
+                    <button
+                      type="button"
+                      className="x"
+                      onClick={() => removeGalleryImage(i)}
+                      title="Xoá ảnh"
+                    >
+                      <AdminIcon name="x" size={11} />
+                    </button>
+                  </div>
+                ))}
               </div>
-              <button type="button" className="ad-btn sm" onClick={addVariant}>
-                <AdminIcon name="plus" size={14} /> Thêm dòng
+            ) : (
+              <div className="ad-empty" style={{ padding: 24 }}>
+                Chưa có ảnh nào trong thư viện sản phẩm.
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input
+                className="ad-input"
+                value={galleryInput}
+                onChange={(e) => setGalleryInput(e.target.value)}
+                placeholder="Dán đường dẫn ảnh rồi bấm Thêm…"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addGalleryImage();
+                  }
+                }}
+              />
+              <button type="button" className="ad-btn" onClick={addGalleryImage}>
+                <AdminIcon name="plus" size={14} /> Thêm ảnh
               </button>
             </div>
-            <div className="ad-card-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          </EditorSection>
+
+          {/* 04 — Variants */}
+          <EditorSection
+            num="04"
+            icon="box"
+            title="Quy cách / Variants"
+            sub='Mỗi quy cách có giá riêng. Đánh dấu "Hot" để hiển thị badge.'
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {variants.length === 0 ? (
-                <div className="ad-empty" style={{ padding: 24 }}>Chưa có quy cách nào.</div>
+                <div className="ad-empty" style={{ padding: 24 }}>
+                  Chưa có quy cách nào.
+                </div>
               ) : (
                 variants.map((row, i) => (
                   <div
@@ -289,7 +373,14 @@ export function ProductForm({
                       onChange={(e) => updateVariant(i, { stock: Number(e.target.value) })}
                     />
                     <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
-                      <label style={{ fontSize: 11.5, display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                      <label
+                        style={{
+                          fontSize: 11.5,
+                          display: 'inline-flex',
+                          gap: 4,
+                          alignItems: 'center',
+                        }}
+                      >
                         <input
                           type="checkbox"
                           checked={row.isPopular}
@@ -302,39 +393,44 @@ export function ProductForm({
                         className="ad-btn sm ghost danger"
                         onClick={() => removeVariant(i)}
                       >
-                        <AdminIcon name="logout" size={13} />
+                        <AdminIcon name="trash" size={13} />
                       </button>
                     </span>
                   </div>
                 ))
               )}
+              <button
+                type="button"
+                className="ad-btn sm"
+                style={{ width: 'fit-content' }}
+                onClick={addVariant}
+              >
+                <AdminIcon name="plus" size={14} /> Thêm quy cách
+              </button>
             </div>
-          </div>
+          </EditorSection>
         </div>
 
-        {/* SIDE COLUMN */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* SIDE */}
+        <aside className="pe-side">
           <div className="ad-card">
             <div className="ad-card-head">
               <h3>Trạng thái</h3>
             </div>
-            <div className="ad-card-body" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}>
-                <input
-                  type="checkbox"
-                  checked={v.isActive}
-                  onChange={(e) => set('isActive', e.target.checked)}
-                />
-                Đang bán (hiển thị trên web)
-              </label>
-              <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}>
-                <input
-                  type="checkbox"
-                  checked={v.isFeatured}
-                  onChange={(e) => set('isFeatured', e.target.checked)}
-                />
-                Nổi bật (carousel trang chủ)
-              </label>
+            <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <StatusRadioGroup<'pub' | 'hide'>
+                value={v.isActive ? 'pub' : 'hide'}
+                onChange={(s) => set('isActive', s === 'pub')}
+                options={[
+                  { value: 'pub', label: 'Đang bán', hint: 'Hiển thị trên website' },
+                  { value: 'hide', label: 'Đã ẩn', hint: 'Không hiển thị, vẫn giữ dữ liệu' },
+                ]}
+              />
+              <ToggleRow
+                label="Nổi bật (carousel trang chủ)"
+                checked={v.isFeatured}
+                onChange={(c) => set('isFeatured', c)}
+              />
               <Field label="Thứ tự sắp xếp">
                 <input
                   className="ad-input"
@@ -348,17 +444,23 @@ export function ProductForm({
 
           <div className="ad-card">
             <div className="ad-card-head">
-              <h3>Hình ảnh</h3>
+              <h3>Phân loại</h3>
             </div>
-            <div className="ad-card-body">
-              <Field label="Gallery" help="Mỗi URL một dòng. Ảnh đầu là ảnh bìa.">
-                <textarea
-                  className="ad-textarea"
-                  style={{ minHeight: 110, fontFamily: 'ui-monospace, monospace', fontSize: 12 }}
-                  value={v.gallery}
-                  onChange={(e) => set('gallery', e.target.value)}
-                  placeholder="/assets/bot-caco3-sieu-min.webp"
-                />
+            <div style={{ padding: 14 }}>
+              <Field label="Danh mục" required>
+                <select
+                  className="ad-select"
+                  value={v.categoryId}
+                  onChange={(e) => set('categoryId', e.target.value)}
+                  required
+                >
+                  <option value="">— Chọn danh mục —</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
               </Field>
             </div>
           </div>
@@ -367,31 +469,34 @@ export function ProductForm({
             <div className="ad-card-head">
               <h3>Thông số đơn hàng</h3>
             </div>
-            <div className="ad-card-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <Field label="Đơn vị (VI / EN / ZH)">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
-                  <input className="ad-input" placeholder="tấn" value={v.unitVi} onChange={(e) => set('unitVi', e.target.value)} />
-                  <input className="ad-input" placeholder="ton" value={v.unitEn} onChange={(e) => set('unitEn', e.target.value)} />
-                  <input className="ad-input" placeholder="吨" value={v.unitZh} onChange={(e) => set('unitZh', e.target.value)} />
-                </div>
+            <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <Field label={`Đơn vị (${L})`}>
+                <input
+                  className="ad-input"
+                  value={str(lf('unit', lang))}
+                  onChange={(e) => set(lf('unit', lang), e.target.value)}
+                  placeholder="tấn"
+                />
               </Field>
-              <Field label="MOQ (VI / EN / ZH)">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
-                  <input className="ad-input" placeholder="25 tấn" value={v.moq} onChange={(e) => set('moq', e.target.value)} />
-                  <input className="ad-input" placeholder="25 tons" value={v.moqEn} onChange={(e) => set('moqEn', e.target.value)} />
-                  <input className="ad-input" placeholder="25吨" value={v.moqZh} onChange={(e) => set('moqZh', e.target.value)} />
-                </div>
+              <Field label={`MOQ (${L})`}>
+                <input
+                  className="ad-input"
+                  value={str(lf('moq', lang, true))}
+                  onChange={(e) => set(lf('moq', lang, true), e.target.value)}
+                  placeholder="25 tấn"
+                />
               </Field>
-              <Field label="Lead time (VI / EN / ZH)">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
-                  <input className="ad-input" placeholder="7–14 ngày" value={v.productionTime} onChange={(e) => set('productionTime', e.target.value)} />
-                  <input className="ad-input" placeholder="7–14 days" value={v.productionTimeEn} onChange={(e) => set('productionTimeEn', e.target.value)} />
-                  <input className="ad-input" placeholder="7–14天" value={v.productionTimeZh} onChange={(e) => set('productionTimeZh', e.target.value)} />
-                </div>
+              <Field label={`Lead time (${L})`}>
+                <input
+                  className="ad-input"
+                  value={str(lf('productionTime', lang, true))}
+                  onChange={(e) => set(lf('productionTime', lang, true), e.target.value)}
+                  placeholder="7–14 ngày"
+                />
               </Field>
             </div>
           </div>
-        </div>
+        </aside>
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>

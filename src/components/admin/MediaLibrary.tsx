@@ -288,6 +288,8 @@ export function MediaLibrary({
   const router = useRouter();
   const [folder, setFolder] = useState<string>('all');
   const [query, setQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<string>('new');
   const [selectedId, setSelectedId] = useState<string | null>(items[0]?.id ?? null);
   const [showAdd, setShowAdd] = useState(false);
 
@@ -302,14 +304,31 @@ export function MediaLibrary({
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return items.filter((it) => {
+    const matchType = (mime: string | null): boolean => {
+      if (typeFilter === 'all') return true;
+      const m = (mime ?? '').toLowerCase();
+      if (typeFilter === 'jpg') return m.includes('jpeg') || m.includes('jpg') || m.includes('png');
+      if (typeFilter === 'webp') return m.includes('webp');
+      if (typeFilter === 'svg') return m.includes('svg');
+      if (typeFilter === 'other') return !/jpeg|jpg|png|webp|svg/.test(m);
+      return true;
+    };
+    const rows = items.filter((it) => {
       if (folder === 'none' && it.folderId !== null) return false;
       if (folder !== 'all' && folder !== 'none' && it.folderId !== folder) return false;
+      if (!matchType(it.mimeType)) return false;
       if (q && !it.filename.toLowerCase().includes(q) && !it.altVi.toLowerCase().includes(q))
         return false;
       return true;
     });
-  }, [items, folder, query]);
+    rows.sort((a, b) => {
+      if (sortBy === 'old') return a.createdAt.localeCompare(b.createdAt);
+      if (sortBy === 'name') return a.filename.localeCompare(b.filename);
+      if (sortBy === 'size') return (b.size ?? 0) - (a.size ?? 0);
+      return b.createdAt.localeCompare(a.createdAt); // 'new'
+    });
+    return rows;
+  }, [items, folder, query, typeFilter, sortBy]);
 
   const selected = filtered.find((i) => i.id === selectedId) ?? filtered[0] ?? null;
 
@@ -377,7 +396,7 @@ export function MediaLibrary({
 
           <div className="mb-main">
             <div className="ad-toolbar" style={{ background: '#fff' }}>
-              <div className="ad-search-box" style={{ width: 240 }}>
+              <div className="ad-search-box" style={{ width: 220 }}>
                 <AdminIcon name="search" size={14} />
                 <input
                   className="ad-input"
@@ -386,9 +405,32 @@ export function MediaLibrary({
                   onChange={(e) => setQuery(e.target.value)}
                 />
               </div>
+              <select
+                className="ad-select"
+                style={{ width: 130 }}
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+              >
+                <option value="all">Mọi loại</option>
+                <option value="jpg">JPG / PNG</option>
+                <option value="webp">WebP</option>
+                <option value="svg">SVG</option>
+                <option value="other">Khác</option>
+              </select>
+              <select
+                className="ad-select"
+                style={{ width: 140 }}
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="new">Mới nhất</option>
+                <option value="old">Cũ nhất</option>
+                <option value="name">Tên A→Z</option>
+                <option value="size">Kích thước</option>
+              </select>
               <div className="grow" />
               <span style={{ fontSize: 12, color: 'var(--ad-text-mute)' }}>
-                {filtered.length} ảnh
+                {selected ? `Đang chọn: ${selected.filename}` : `${filtered.length} ảnh`}
               </span>
             </div>
             {filtered.length === 0 ? (
