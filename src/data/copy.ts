@@ -82,7 +82,7 @@ export const COPY: Record<Locale, any> = {
       contactH: 'Hãy bắt đầu từ một câu hỏi.',
       contactP: 'Đội ngũ kinh doanh phản hồi trong vòng 24h làm việc — kèm bảng spec, COA và báo giá FOB.',
       addr: 'Số D1-22, Đường 2K, Khu Đô Thị Cửa Tiền, Phường Vinh Tân, TP. Vinh, Nghệ An, Việt Nam',
-      phone: ['(+84) 912 779 799', '(+84-2383) 982 555'],
+      phone: ['(+84) 942 224 499', '(+84-2383) 982 555'],
       email: 'info@longanhcorp.com',
       footnote: '© 2026 Công ty TNHH KS Long Anh · Mã số DN 2901xxxxx'
     },
@@ -157,7 +157,7 @@ export const COPY: Record<Locale, any> = {
       contactH: 'Start with a single question.',
       contactP: 'Our sales team replies within 24 business hours — with spec sheet, COA and FOB pricing.',
       addr: 'D1-22, 2K Street, Cua Tien Urban Area, Vinh Tan Ward, Vinh City, Nghe An, Vietnam',
-      phone: ['(+84) 912 779 799', '(+84-2383) 982 555'],
+      phone: ['(+84) 942 224 499', '(+84-2383) 982 555'],
       email: 'info@longanhcorp.com',
       footnote: '© 2026 Long Anh Mineral Co., Ltd · Reg. No. 2901xxxxx'
     },
@@ -233,7 +233,7 @@ export const COPY: Record<Locale, any> = {
       contactH: '从一个问题开始。',
       contactP: '我们的销售团队在24个工作小时内回复 — 提供规格表、COA和FOB报价。',
       addr: '越南义安省荣市荣新坊门巷新城区2K街D1-22号',
-      phone: ['(+84) 912 779 799', '(+84-2383) 982 555'],
+      phone: ['(+84) 942 224 499', '(+84-2383) 982 555'],
       email: 'info@longanhcorp.com',
       footnote: '© 2026 龙英矿业有限公司 · 注册号 2901xxxxx'
     }

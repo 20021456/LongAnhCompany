@@ -257,7 +257,7 @@ export default function JobDetailPage({
                   <a className="jd-btn jd-btn-p" href={mailto}>
                     <Icon name="mail" size={16} /> {t.applyNow}
                   </a>
-                  <a className="jd-btn jd-btn-g" href="tel:+84912779799">
+                  <a className="jd-btn jd-btn-g" href="tel:+84942224499">
                     <Icon name="phone" size={16} /> {t.contactHr}
                   </a>
                 </div>

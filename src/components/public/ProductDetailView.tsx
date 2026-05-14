@@ -306,8 +306,8 @@ export function ProductDetailView({ locale, product, related }: Props) {
                   <Link className="pd-cta-btn primary" href={`/${locale}/contact`}>
                     <Icon name="mail" size={16} /> {t.requestQuote}
                   </Link>
-                  <a className="pd-cta-btn secondary" href="tel:+84912779799">
-                    <Icon name="phone" size={16} /> (+84) 912 779 799
+                  <a className="pd-cta-btn secondary" href="tel:+84942224499">
+                    <Icon name="phone" size={16} /> (+84) 942 224 499
                   </a>
                 </div>
               </div>
