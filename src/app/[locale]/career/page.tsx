@@ -2,177 +2,399 @@ import Link from 'next/link';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
-import { Icon } from '@/components/ui/Icon';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
-const JOBS = [
-  {
-    id: '1',
-    dept: ['Sản xuất', 'Manufacturing', '生产'],
-    title: ['Kỹ sư Vận hành nhà máy', 'Plant Operations Engineer', '工厂运营工程师'],
-    location: 'Quỳ Hợp, Nghệ An',
-    salary: '18–30M VND',
-    exp: ['2–5 năm', '2–5 years', '2–5年'],
-    deadline: '30/06/2026',
-  },
-  {
-    id: '2',
-    dept: ['Kinh doanh', 'Sales', '销售'],
-    title: ['Chuyên viên Kinh doanh Xuất khẩu', 'Export Sales Executive', '出口销售专员'],
-    location: 'Vinh, Nghệ An',
-    salary: '15–25M + commission',
-    exp: ['3+ năm', '3+ years', '3年以上'],
-    deadline: '30/06/2026',
-  },
-  {
-    id: '3',
-    dept: ['Chất lượng', 'Quality', '质量'],
-    title: ['Kỹ thuật viên Phòng QC', 'QC Technician', '质检技术员'],
-    location: 'Quỳ Hợp, Nghệ An',
-    salary: '12–20M VND',
-    exp: ['1–3 năm', '1–3 years', '1–3年'],
-    deadline: '15/07/2026',
-  },
-  {
-    id: '4',
-    dept: ['Kỹ thuật', 'Engineering', '工程'],
-    title: ['Kỹ sư Bảo trì thiết bị', 'Equipment Maintenance Engineer', '设备维护工程师'],
-    location: 'Quỳ Hợp, Nghệ An',
-    salary: '20–35M VND',
-    exp: ['3–7 năm', '3–7 years', '3–7年'],
-    deadline: '30/07/2026',
-  },
-  {
-    id: '5',
-    dept: ['Hành chính', 'Admin', '行政'],
-    title: ['Chuyên viên Nhân sự & Tuyển dụng', 'HR & Recruitment Specialist', '人力资源专员'],
-    location: 'Vinh, Nghệ An',
-    salary: '12–18M VND',
-    exp: ['2–4 năm', '2–4 years', '2–4年'],
-    deadline: '15/07/2026',
-  },
-  {
-    id: '6',
-    dept: ['Kinh doanh', 'Sales', '销售'],
-    title: ['Trưởng phòng Kinh doanh Nội địa', 'Domestic Sales Manager', '国内销售经理'],
-    location: 'Hà Nội',
-    salary: '30–50M + bonus',
-    exp: ['5+ năm', '5+ years', '5年以上'],
-    deadline: '15/08/2026',
-  },
-];
+interface Job {
+  id: number;
+  dept: string;
+  title: string;
+  loc: string;
+  type: string;
+  exp: string;
+  tags: string[];
+}
+
+const JOBS: Record<Locale, Job[]> = {
+  vi: [
+    { id: 1, dept: 'Sản xuất', title: 'Kỹ sư Vận hành nhà máy', loc: 'Quỳ Hợp, Nghệ An', type: 'Toàn thời gian', exp: '2–5 năm', tags: ['Cơ khí', 'Vận hành dây chuyền', 'ISO'] },
+    { id: 2, dept: 'Kinh doanh', title: 'Chuyên viên Kinh doanh Xuất khẩu', loc: 'TP. Vinh, Nghệ An', type: 'Toàn thời gian', exp: '1–3 năm', tags: ['Tiếng Anh', 'B2B Export', 'CaCO₃'] },
+    { id: 3, dept: 'Chất lượng', title: 'Kỹ thuật viên Phòng QC', loc: 'Quỳ Hợp, Nghệ An', type: 'Toàn thời gian', exp: '1–3 năm', tags: ['ISO 9001', 'Phân tích hóa', 'Kiểm tra hạt'] },
+    { id: 4, dept: 'Kỹ thuật', title: 'Kỹ sư Bảo trì thiết bị', loc: 'Quỳ Hợp, Nghệ An', type: 'Toàn thời gian', exp: '3–5 năm', tags: ['Điện – cơ', 'PLC', 'Bảo trì phòng ngừa'] },
+    { id: 5, dept: 'Hành chính', title: 'Chuyên viên Nhân sự & Tuyển dụng', loc: 'TP. Vinh, Nghệ An', type: 'Toàn thời gian', exp: '1–3 năm', tags: ['HR', 'Tuyển dụng', 'Lương thưởng'] },
+    { id: 6, dept: 'Kinh doanh', title: 'Trưởng phòng Kinh doanh Nội địa', loc: 'TP. Vinh, Nghệ An', type: 'Toàn thời gian', exp: '5+ năm', tags: ['Quản lý đội nhóm', 'Bột đá', 'KPI'] },
+    { id: 7, dept: 'Kỹ thuật', title: 'Kỹ sư Quy trình & Cải tiến', loc: 'Quỳ Hợp, Nghệ An', type: 'Toàn thời gian', exp: '2–4 năm', tags: ['Kaizen', 'Lean', 'Khoáng sản'] },
+    { id: 8, dept: 'Hành chính', title: 'Kế toán Tổng hợp', loc: 'TP. Vinh, Nghệ An', type: 'Toàn thời gian', exp: '2–4 năm', tags: ['MISA', 'Thuế', 'BCTC'] },
+  ],
+  en: [
+    { id: 1, dept: 'Manufacturing', title: 'Plant Operations Engineer', loc: 'Quy Hop, Nghe An', type: 'Full-time', exp: '2–5 years', tags: ['Mechanical', 'Line operations', 'ISO'] },
+    { id: 2, dept: 'Sales', title: 'Export Sales Specialist', loc: 'Vinh City, Nghe An', type: 'Full-time', exp: '1–3 years', tags: ['English', 'B2B Export', 'CaCO₃'] },
+    { id: 3, dept: 'Quality', title: 'QC Lab Technician', loc: 'Quy Hop, Nghe An', type: 'Full-time', exp: '1–3 years', tags: ['ISO 9001', 'Chemical analysis', 'Particle testing'] },
+    { id: 4, dept: 'Engineering', title: 'Equipment Maintenance Engineer', loc: 'Quy Hop, Nghe An', type: 'Full-time', exp: '3–5 years', tags: ['Electro-mechanical', 'PLC', 'Preventive maintenance'] },
+    { id: 5, dept: 'Admin', title: 'HR & Recruitment Specialist', loc: 'Vinh City, Nghe An', type: 'Full-time', exp: '1–3 years', tags: ['HR', 'Recruitment', 'Compensation'] },
+    { id: 6, dept: 'Sales', title: 'Domestic Sales Manager', loc: 'Vinh City, Nghe An', type: 'Full-time', exp: '5+ years', tags: ['Team management', 'Stone powder', 'KPI'] },
+    { id: 7, dept: 'Engineering', title: 'Process & Improvement Engineer', loc: 'Quy Hop, Nghe An', type: 'Full-time', exp: '2–4 years', tags: ['Kaizen', 'Lean', 'Minerals'] },
+    { id: 8, dept: 'Admin', title: 'General Accountant', loc: 'Vinh City, Nghe An', type: 'Full-time', exp: '2–4 years', tags: ['MISA', 'Tax', 'Financial reports'] },
+  ],
+  zh: [
+    { id: 1, dept: '生产', title: '工厂运营工程师', loc: '义安省归合县', type: '全职', exp: '2–5年', tags: ['机械', '生产线运营', 'ISO'] },
+    { id: 2, dept: '销售', title: '出口销售专员', loc: '义安省荣市', type: '全职', exp: '1–3年', tags: ['英语', 'B2B出口', '碳酸钙'] },
+    { id: 3, dept: '质量', title: 'QC实验室技术员', loc: '义安省归合县', type: '全职', exp: '1–3年', tags: ['ISO 9001', '化学分析', '粒径检测'] },
+    { id: 4, dept: '工程', title: '设备维护工程师', loc: '义安省归合县', type: '全职', exp: '3–5年', tags: ['机电', 'PLC', '预防性维护'] },
+    { id: 5, dept: '行政', title: '人力资源与招聘专员', loc: '义安省荣市', type: '全职', exp: '1–3年', tags: ['人力资源', '招聘', '薪酬'] },
+    { id: 6, dept: '销售', title: '国内销售经理', loc: '义安省荣市', type: '全职', exp: '5年以上', tags: ['团队管理', '石粉', 'KPI'] },
+    { id: 7, dept: '工程', title: '工艺改进工程师', loc: '义安省归合县', type: '全职', exp: '2–4年', tags: ['Kaizen', '精益', '矿产'] },
+    { id: 8, dept: '行政', title: '综合会计', loc: '义安省荣市', type: '全职', exp: '2–4年', tags: ['MISA', '税务', '财务报表'] },
+  ],
+};
+
+const VALUES: Record<Locale, [IconName, string, string][]> = {
+  vi: [
+    ['drop', 'Chính trực & Minh bạch', 'Mọi quyết định đều dựa trên dữ liệu và sự thật. Chúng tôi đối thoại cởi mở và nhận trách nhiệm về kết quả.'],
+    ['globe', 'Tinh thần đồng đội', 'Thành công là kết quả của tập thể. Chúng tôi đặt lợi ích chung lên trên và hỗ trợ nhau phát triển mỗi ngày.'],
+    ['spark', 'Đổi mới liên tục', 'Chúng tôi liên tục cải tiến quy trình, nâng cấp công nghệ và tìm kiếm các giải pháp sáng tạo để dẫn đầu ngành.'],
+    ['check', 'Chất lượng là cốt lõi', 'Từ nguyên liệu đầu vào đến sản phẩm đầu ra, tiêu chuẩn ISO 9001 không phải là đích đến — mà là nền tảng tối thiểu.'],
+    ['leaf', 'Phát triển bền vững', 'Chúng tôi khai thác và sản xuất có trách nhiệm với môi trường và cộng đồng địa phương — vì một tương lai lâu dài.'],
+    ['box', 'Hướng ra thị trường quốc tế', 'Với 12 thị trường xuất khẩu, nhân viên Long Anh được tiếp xúc với tư duy và tiêu chuẩn toàn cầu ngay tại Nghệ An.'],
+  ],
+  en: [
+    ['drop', 'Integrity & Transparency', 'Every decision is based on data and truth. We communicate openly and take responsibility for outcomes.'],
+    ['globe', 'Team spirit', "Success is a collective result. We put common interests first and support each other's growth every day."],
+    ['spark', 'Continuous innovation', 'We continuously improve processes, upgrade technology and seek creative solutions to stay ahead.'],
+    ['check', 'Quality at the core', 'From raw material to finished product, ISO 9001 is not the destination — it is the minimum baseline.'],
+    ['leaf', 'Sustainable development', 'We mine and produce responsibly toward the environment and local community — for the long term.'],
+    ['box', 'Global market orientation', 'With 12 export markets, Long Anh employees engage with global thinking and standards right in Nghe An.'],
+  ],
+  zh: [
+    ['drop', '正直与透明', '所有决策均基于数据和事实。我们开放沟通,对结果负责。'],
+    ['globe', '团队精神', '成功是集体的结果。我们将共同利益放在首位,每天互相支持成长。'],
+    ['spark', '持续创新', '我们不断改进流程、升级技术,寻求创造性解决方案以保持领先。'],
+    ['check', '质量为核心', '从原料到成品,ISO 9001不是终点 — 而是最低基线。'],
+    ['leaf', '可持续发展', '我们对环境和当地社区负责任地开采和生产 — 为了长远未来。'],
+    ['box', '面向国际市场', '拥有12个出口市场,龙英员工在义安省即可接触全球思维和标准。'],
+  ],
+};
+
+const BENEFITS: Record<Locale, [string, string][]> = {
+  vi: [
+    ['Lương & Thưởng cạnh tranh', 'Mức lương theo năng lực, xét tăng lương 2 lần/năm. Thưởng hiệu suất hàng quý và thưởng cuối năm theo kết quả kinh doanh.'],
+    ['Bảo hiểm toàn diện', 'BHXH, BHYT, BHTN theo đúng quy định. Bảo hiểm sức khỏe bổ sung cho nhân viên và gia đình với hạn mức cao.'],
+    ['Đào tạo & Phát triển', 'Chương trình đào tạo nội bộ định kỳ, hỗ trợ học phí các khóa chuyên môn, cử nhân viên tiêu biểu tham gia hội thảo quốc tế.'],
+    ['Môi trường làm việc hiện đại', 'Văn phòng và nhà máy được trang bị đầy đủ thiết bị bảo hộ lao động tiêu chuẩn. Trang bị laptop và công cụ làm việc đầy đủ.'],
+    ['Nghỉ phép & Lễ tết', '12 ngày nghỉ phép có lương/năm. Nghỉ lễ theo quy định nhà nước cộng thêm các ngày nghỉ đặc biệt của công ty.'],
+    ['Hoạt động tập thể', 'Team building hàng năm, du lịch công ty, các giải thể thao nội bộ và sự kiện văn hóa gắn kết đội ngũ.'],
+  ],
+  en: [
+    ['Competitive salary & bonus', 'Performance-based pay, twice-yearly reviews. Quarterly performance bonus and year-end bonus tied to business results.'],
+    ['Comprehensive insurance', 'Full social, health and unemployment insurance. Supplementary health insurance for employees and family with high coverage.'],
+    ['Training & Development', 'Regular internal training programs, tuition support for professional courses, top employees sent to international conferences.'],
+    ['Modern working environment', 'Offices and plants fully equipped with standard PPE. Laptop and full working tools provided.'],
+    ['Leave & Holidays', '12 paid annual leave days. Public holidays per regulations plus additional company-specific days off.'],
+    ['Team activities', 'Annual team building, company trips, internal sports competitions and cultural events that build team bonds.'],
+  ],
+  zh: [
+    ['有竞争力的薪酬与奖金', '按能力定薪,每年两次调薪。季度绩效奖金和与业绩挂钩的年终奖金。'],
+    ['全面保险', '足额社保、医保、失业保险。为员工及家属提供高额补充健康保险。'],
+    ['培训与发展', '定期内部培训计划,专业课程学费支持,优秀员工参加国际会议。'],
+    ['现代化工作环境', '办公室和工厂配备齐全的标准劳保设备。提供笔记本电脑和完整工作工具。'],
+    ['休假与节假日', '每年12天带薪年假。法定节假日加上公司特别休息日。'],
+    ['团队活动', '年度团建、公司旅游、内部体育比赛和增进团队凝聚力的文化活动。'],
+  ],
+};
+
+const PROCESS: Record<Locale, [string, string][]> = {
+  vi: [
+    ['Nộp hồ sơ', 'Gửi CV qua form online hoặc email hr@longanhcorp.com. Phản hồi trong vòng 3 ngày làm việc.'],
+    ['Phỏng vấn sơ bộ', 'Trao đổi qua điện thoại hoặc video call để hiểu về kinh nghiệm và mong muốn của ứng viên.'],
+    ['Phỏng vấn chuyên sâu', 'Gặp trực tiếp với quản lý bộ phận. Có thể bao gồm bài kiểm tra kỹ năng thực tế tùy vị trí.'],
+    ['Nhận offer & Onboarding', 'Thư đề nghị làm việc trong vòng 5 ngày sau phỏng vấn cuối. Chương trình hội nhập 30 ngày đầu tiên.'],
+  ],
+  en: [
+    ['Submit application', 'Send CV via online form or email hr@longanhcorp.com. Response within 3 business days.'],
+    ['Initial interview', "Phone or video call to understand the candidate's experience and aspirations."],
+    ['In-depth interview', 'Meet in person with department manager. May include a practical skills test depending on the role.'],
+    ['Offer & Onboarding', 'Job offer letter within 5 days of final interview. 30-day onboarding program for new joiners.'],
+  ],
+  zh: [
+    ['提交申请', '通过在线表格或邮件 hr@longanhcorp.com 发送简历。3个工作日内回复。'],
+    ['初步面试', '通过电话或视频通话了解候选人的经验和期望。'],
+    ['深度面试', '与部门经理面对面会谈。根据职位可能包括实操技能测试。'],
+    ['录用与入职', '最终面试后5天内发出录用通知书。新员工30天入职培训计划。'],
+  ],
+};
 
 export default function CareerPage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
   const loc = locale as Locale;
   const C = COPY[loc];
-  const li = loc === 'vi' ? 0 : loc === 'en' ? 1 : 2;
+  const jobs = JOBS[loc];
 
   return (
-    <>
-      <section className="va-hero" style={{ background: 'var(--va-bg-alt)' }}>
-        <div className="va-wrap" style={{ padding: '90px 0', textAlign: 'center', maxWidth: 920, margin: '0 auto' }}>
-          <div className="va-eyebrow">
-            {loc === 'vi' ? 'Cơ hội nghề nghiệp' : loc === 'en' ? 'Career' : '职业机会'}
+    <div className="cr">
+      {/* HERO */}
+      <section className="cr-hero">
+        <div className="va-wrap">
+          <div className="cr-bcrumb">
+            <Link href={`/${loc}`}>{loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ'}</Link>
+            <Icon name="chevron" size={11} />
+            <span>{C.nav[3]}</span>
           </div>
-          <h1 style={{ fontSize: 'clamp(36px,4.4vw,58px)', margin: '16px 0 22px' }}>
-            {loc === 'vi'
-              ? 'Gia nhập đội ngũ Long Anh — nơi tài năng được phát triển.'
+          <div className="va-eyebrow" style={{ color: '#F08023' }}>
+            {loc === 'zh'
+              ? '职业机会'
               : loc === 'en'
-                ? 'Join the Long Anh team — where talent grows.'
-                : '加入龙英团队 — 让人才得以成长。'}
+                ? 'Career Opportunities'
+                : 'Cơ hội nghề nghiệp'}
+          </div>
+          <h1>
+            {loc === 'zh' ? (
+              <>
+                加入 <span>龙英</span> 团队 —<br />
+                让人才得以成长。
+              </>
+            ) : loc === 'en' ? (
+              <>
+                Join the <span>Long Anh</span> team —<br />
+                where talent grows.
+              </>
+            ) : (
+              <>
+                Gia nhập đội ngũ <span>Long Anh</span> —<br />
+                nơi tài năng được phát triển.
+              </>
+            )}
           </h1>
-          <p className="va-hero-sub" style={{ margin: '0 auto', maxWidth: 680 }}>
-            {loc === 'vi'
-              ? 'Môi trường chuyên nghiệp, năng động, minh bạch — mỗi cá nhân đều có cơ hội đóng góp và trưởng thành.'
+          <p>
+            {loc === 'zh'
+              ? '我们打造专业、活力、透明的工作环境,每个人都有机会贡献并与公司共同成长。'
               : loc === 'en'
-                ? 'A professional, dynamic and transparent workplace where every individual contributes and grows.'
-                : '专业、活力、透明的工作环境,每个人都有机会贡献并成长。'}
+                ? 'We build a professional, dynamic and transparent working environment where every individual has the opportunity to contribute and grow alongside the company.'
+                : 'Chúng tôi xây dựng một môi trường làm việc chuyên nghiệp, năng động và minh bạch, nơi mỗi cá nhân đều có cơ hội đóng góp và trưởng thành cùng doanh nghiệp.'}
           </p>
+          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+            <a className="va-btn va-btn-p" href="#jobs">
+              {loc === 'zh'
+                ? '查看招聘职位'
+                : loc === 'en'
+                  ? 'View open positions'
+                  : 'Xem vị trí tuyển dụng'}{' '}
+              <Icon name="arrow" size={15} />
+            </a>
+            <Link className="cr-btn-w" href={`/${loc}/contact`}>
+              {loc === 'zh'
+                ? '直接联系'
+                : loc === 'en'
+                  ? 'Contact us directly'
+                  : 'Liên hệ trực tiếp'}
+            </Link>
+          </div>
         </div>
       </section>
 
-      <section className="va-section">
+      {/* JOBS */}
+      <section className="cr-section" id="jobs">
         <div className="va-wrap">
-          <div className="va-shead">
+          <div className="cr-shead">
             <div>
               <div className="va-eyebrow">
-                {loc === 'vi' ? 'Vị trí đang tuyển' : loc === 'en' ? 'Open positions' : '招聘职位'}
+                {loc === 'zh' ? '招聘职位' : loc === 'en' ? 'Open positions' : 'Vị trí đang tuyển'}
               </div>
-              <h2>{C.nav[3]}</h2>
+              <h2>
+                {loc === 'zh'
+                  ? '当前工作机会'
+                  : loc === 'en'
+                    ? 'Current job opportunities'
+                    : 'Cơ hội việc làm hiện tại'}
+              </h2>
             </div>
             <p>
-              {loc === 'vi'
-                ? `Đang có ${JOBS.length} vị trí tuyển dụng — gửi CV tới hr@longanhcorp.com với tiêu đề [Vị trí — Họ tên].`
-                : `${JOBS.length} open positions — send CV to hr@longanhcorp.com with subject [Position — Your name].`}
+              {loc === 'zh'
+                ? '所有职位向有能力和学习精神的候选人开放 — 矿产行业经验是加分项。'
+                : loc === 'en'
+                  ? 'All positions are open to motivated candidates — experience in the minerals industry is an advantage.'
+                  : 'Tất cả các vị trí đều mở cửa cho ứng viên có năng lực và tinh thần học hỏi — kinh nghiệm ngành khoáng sản là lợi thế.'}
             </p>
           </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {JOBS.map((j) => (
-              <Link
-                key={j.id}
-                href={`/${loc}/career/${j.id}`}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr auto',
-                  gap: 24,
-                  padding: '22px 24px',
-                  border: '1px solid var(--va-line)',
-                  borderRadius: 14,
-                  background: 'var(--va-card)',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  transition: '.3s',
-                }}
-                className="job-row"
-              >
+          <div className="cr-jobs-grid">
+            {jobs.map((j) => (
+              <Link key={j.id} href={`/${loc}/career/${j.id}`} className="cr-job-card">
                 <div>
-                  <div className="va-eyebrow" style={{ marginBottom: 6 }}>
-                    {j.dept[li]}
+                  <div className="cr-job-dept">{j.dept}</div>
+                  <div className="cr-job-title">{j.title}</div>
+                  <div className="cr-job-meta">
+                    <span className="cr-job-meta-item">
+                      <Icon name="pin" size={13} /> {j.loc}
+                    </span>
+                    <span className="cr-job-meta-item">
+                      <Icon name="check" size={13} /> {j.type}
+                    </span>
+                    <span className="cr-job-meta-item">
+                      <Icon name="spark" size={13} /> {j.exp}
+                    </span>
                   </div>
-                  <h3 style={{ fontSize: 18, margin: '4px 0 8px' }}>{j.title[li]}</h3>
-                  <div style={{ display: 'flex', gap: 18, fontSize: 12.5, opacity: 0.7, flexWrap: 'wrap' }}>
-                    <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
-                      <Icon name="pin" size={13} /> {j.location}
-                    </span>
-                    <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
-                      <Icon name="spark" size={13} /> {j.exp[li]}
-                    </span>
-                    <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
-                      <Icon name="check" size={13} /> {j.salary}
-                    </span>
+                  <div className="cr-job-tags">
+                    {j.tags.map((tag, i) => (
+                      <span key={i}>{tag}</span>
+                    ))}
                   </div>
                 </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    gap: 6,
-                  }}
-                >
-                  <span style={{ fontSize: 11, opacity: 0.55 }}>
-                    {loc === 'vi' ? 'Hạn:' : loc === 'en' ? 'Deadline:' : '截止日期:'} {j.deadline}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: 'var(--brand-accent,#F08023)',
-                      display: 'inline-flex',
-                      gap: 6,
-                      alignItems: 'center',
-                    }}
-                  >
-                    {loc === 'vi' ? 'Ứng tuyển' : loc === 'en' ? 'Apply' : '申请'}{' '}
-                    <Icon name="arrow" size={14} />
-                  </span>
+                <div className="cr-job-arrow">
+                  {loc === 'zh' ? '立即申请' : loc === 'en' ? 'Apply now' : 'Ứng tuyển ngay'}
+                  <Icon name="arrow" size={14} />
                 </div>
               </Link>
             ))}
           </div>
         </div>
       </section>
-    </>
+
+      {/* VALUES */}
+      <section className="cr-section tight" style={{ background: 'var(--va-bg-alt)' }}>
+        <div className="va-wrap">
+          <div className="cr-shead">
+            <div>
+              <div className="va-eyebrow">
+                {loc === 'zh' ? '企业文化' : loc === 'en' ? 'Company culture' : 'Văn hóa doanh nghiệp'}
+              </div>
+              <h2>
+                {loc === 'zh'
+                  ? '龙英的特色'
+                  : loc === 'en'
+                    ? 'What makes Long Anh'
+                    : 'Điều làm nên Long Anh'}
+              </h2>
+            </div>
+            <p>
+              {loc === 'zh'
+                ? '我们不仅生产矿产 — 我们打造具有持久价值的人才和组织。'
+                : loc === 'en'
+                  ? 'We do not just produce minerals — we build people and organizations with lasting value.'
+                  : 'Chúng tôi không chỉ sản xuất khoáng sản — chúng tôi xây dựng con người và tổ chức có giá trị lâu bền.'}
+            </p>
+          </div>
+          <div className="cr-values-grid">
+            {VALUES[loc].map(([icon, h, p], i) => (
+              <div key={i} className="cr-value-card">
+                <div className="cr-value-icon">
+                  <Icon name={icon} size={22} />
+                </div>
+                <h3>{h}</h3>
+                <p>{p}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* BENEFITS */}
+      <section className="cr-section">
+        <div className="va-wrap">
+          <div className="cr-shead">
+            <div>
+              <div className="va-eyebrow">
+                {loc === 'zh' ? '福利' : loc === 'en' ? 'Benefits' : 'Phúc lợi'}
+              </div>
+              <h2>
+                {loc === 'zh'
+                  ? '我们关心你'
+                  : loc === 'en'
+                    ? 'We take care of you'
+                    : 'Chúng tôi chăm lo cho bạn'}
+              </h2>
+            </div>
+            <p>
+              {loc === 'zh'
+                ? '除了有竞争力的薪酬,龙英还提供全面的福利,支持健康、发展和工作生活平衡。'
+                : loc === 'en'
+                  ? 'Alongside competitive salary, Long Anh provides comprehensive benefits supporting health, development and work-life balance.'
+                  : 'Bên cạnh mức lương cạnh tranh, Long Anh cung cấp chế độ đãi ngộ toàn diện hỗ trợ sức khoẻ, sự phát triển và cuộc sống cân bằng.'}
+            </p>
+          </div>
+          <div className="cr-benefits-grid">
+            {BENEFITS[loc].map(([h, p], i) => (
+              <div key={i} className="cr-benefit">
+                <div className="cr-benefit-num">0{i + 1}</div>
+                <h4>{h}</h4>
+                <p>{p}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PROCESS */}
+      <section className="cr-section tight" style={{ background: 'var(--va-bg-alt)' }}>
+        <div className="va-wrap">
+          <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto 56px' }}>
+            <div className="va-eyebrow">
+              {loc === 'zh' ? '招聘流程' : loc === 'en' ? 'Hiring process' : 'Quy trình tuyển dụng'}
+            </div>
+            <h2 style={{ fontSize: 'clamp(26px,3vw,38px)', marginTop: 12 }}>
+              {loc === 'zh'
+                ? '简单。透明。快速。'
+                : loc === 'en'
+                  ? 'Simple. Transparent. Fast.'
+                  : 'Đơn giản. Minh bạch. Nhanh chóng.'}
+            </h2>
+          </div>
+          <div className="cr-process-steps">
+            {PROCESS[loc].map(([h, p], i) => (
+              <div key={i} className="cr-process-step">
+                <div className="cr-step-num">0{i + 1}</div>
+                <h4>{h}</h4>
+                <p>{p}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="cr-section tight">
+        <div className="va-wrap">
+          <div className="cr-cta-banner">
+            <div>
+              <div className="va-eyebrow">
+                {loc === 'zh'
+                  ? '找不到合适的职位?'
+                  : loc === 'en'
+                    ? 'Cannot find a suitable position?'
+                    : 'Không tìm thấy vị trí phù hợp?'}
+              </div>
+              <h2>
+                {loc === 'zh'
+                  ? '提交自由申请'
+                  : loc === 'en'
+                    ? 'Submit an open application'
+                    : 'Gửi hồ sơ ứng tuyển tự do'}
+              </h2>
+              <p>
+                {loc === 'zh'
+                  ? '如果您相信自己能为龙英做出贡献,请给我们发送简历。无论目前是否招聘,我们始终在寻找优秀人才。'
+                  : loc === 'en'
+                    ? 'If you believe you can contribute to Long Anh, send us your CV. We are always looking for outstanding talent regardless of open positions.'
+                    : 'Nếu bạn tin rằng mình có thể đóng góp cho Long Anh, hãy gửi CV cho chúng tôi. Chúng tôi luôn tìm kiếm những tài năng xuất sắc bất kể vị trí đang tuyển.'}
+              </p>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'flex-start' }}>
+              <a className="va-btn va-btn-p" href="mailto:[email protected]">
+                {loc === 'zh'
+                  ? '通过邮件发送简历'
+                  : loc === 'en'
+                    ? 'Send CV by Email'
+                    : 'Gửi CV qua Email'}{' '}
+                <Icon name="arrow" size={15} />
+              </a>
+              <Link className="cr-btn-ghost" href={`/${loc}/contact`}>
+                {loc === 'zh'
+                  ? '联系人力资源部'
+                  : loc === 'en'
+                    ? 'Contact HR'
+                    : 'Liên hệ bộ phận HR'}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
