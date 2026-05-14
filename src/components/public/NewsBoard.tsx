@@ -30,6 +30,10 @@ const I18N: Record<
     emailPlaceholder: string;
     subscribe: string;
     hot: string[];
+    sectionByCat: string;
+    byCatTitle: string;
+    viewAll: string;
+    minRead: string;
   }
 > = {
   vi: {
@@ -57,6 +61,10 @@ const I18N: Record<
     emailPlaceholder: 'Email của bạn',
     subscribe: 'Đăng ký nhận tin',
     hot: ['Xuất khẩu', 'CaCO₃', 'ISO 9001', 'Báo giá tháng 5', 'Vietbuild 2026', 'Quỳ Hợp', '20 năm Long Anh'],
+    sectionByCat: 'Tin theo chủ đề',
+    byCatTitle: 'Khám phá tin tức theo chủ đề',
+    viewAll: 'Xem tất cả',
+    minRead: 'phút đọc',
   },
   en: {
     home: 'Home',
@@ -83,6 +91,10 @@ const I18N: Record<
     emailPlaceholder: 'Your email',
     subscribe: 'Subscribe',
     hot: ['Export', 'CaCO₃', 'ISO 9001', 'May Pricing', 'Vietbuild 2026', 'Quy Hop', '20 Years'],
+    sectionByCat: 'News by category',
+    byCatTitle: 'Explore news by category',
+    viewAll: 'View all',
+    minRead: 'min read',
   },
   zh: {
     home: '首页',
@@ -108,6 +120,10 @@ const I18N: Record<
     emailPlaceholder: '您的邮箱',
     subscribe: '订阅',
     hot: ['出口', '碳酸钙', 'ISO 9001', '5月报价', '河内建筑展', '归合', '20周年'],
+    sectionByCat: '按主题分类',
+    byCatTitle: '按主题探索新闻',
+    viewAll: '查看全部',
+    minRead: '分钟阅读',
   },
 };
 
@@ -136,6 +152,16 @@ export function NewsBoard({ locale, items }: Props) {
   const sortedByDate = [...items].sort((a, b) => b.date.localeCompare(a.date));
   const sortedByViews = [...items].sort((a, b) => b.views - a.views);
   const sidebarList = (tab === 'latest' ? sortedByDate : sortedByViews).slice(0, 6);
+
+  // Group by category for the "tin theo chủ đề" section
+  const byCat: Record<string, typeof items> = {};
+  items.forEach((n) => {
+    (byCat[n.cat] ??= []).push(n);
+  });
+  const catRows: [string, string][] = [
+    ['business', 'milestone'],
+    ['tech', 'product'],
+  ];
 
   return (
     <div className="nw">
@@ -337,6 +363,93 @@ export function NewsBoard({ locale, items }: Props) {
               </div>
             </aside>
           </div>
+        </div>
+      </section>
+
+      {/* TIN THEO CHỦ ĐỀ — categorized sections */}
+      <section className="nw-bycat" style={{ background: 'var(--va-bg-alt)' }}>
+        <div className="va-wrap">
+          <div style={{ marginBottom: 32 }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: '.18em',
+                textTransform: 'uppercase',
+                color: 'var(--brand-accent,#F08023)',
+                marginBottom: 8,
+              }}
+            >
+              {t.sectionByCat}
+            </div>
+            <h2 style={{ fontSize: 'clamp(22px,2.4vw,30px)' }}>{t.byCatTitle}</h2>
+          </div>
+
+          {catRows.map((pair, row) => (
+            <div key={row} className="nw-bycat-grid">
+              {pair.map((catKey) => {
+                const catItems = (byCat[catKey] ?? []).slice(0, 3);
+                if (catItems.length === 0) return null;
+                const feat = catItems[0];
+                const others = catItems.slice(1);
+                return (
+                  <div key={catKey}>
+                    <div className="nw-sec-head">
+                      <h3>{t.categories[catKey]}</h3>
+                      <a
+                        className="more"
+                        href={`#${catKey}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setActiveCat(catKey);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                      >
+                        {t.viewAll} →
+                      </a>
+                    </div>
+                    <Link className="nw-cat-feat" href={`/${locale}/news/${feat.id}`}>
+                      <div className="nw-img">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={feat.img} alt="" />
+                      </div>
+                      <h3>{feat.title[locale]}</h3>
+                      <p>{feat.excerpt[locale]}</p>
+                      <div className="nw-meta">
+                        {fmtDate(feat.date, locale)} · {feat.readMin} {t.minRead}
+                      </div>
+                    </Link>
+                    {others.length > 0 ? (
+                      <div className="nw-list" style={{ marginTop: 16 }}>
+                        {others.map((n) => (
+                          <Link
+                            key={n.id}
+                            className="nw-list-item"
+                            href={`/${locale}/news/${n.id}`}
+                          >
+                            <div className="nw-img">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={n.img} alt="" />
+                            </div>
+                            <div className="nw-body">
+                              <h4>{n.title[locale]}</h4>
+                              <div className="nw-list-meta">
+                                <span>{fmtDate(n.date, locale)}</span>
+                                <span>·</span>
+                                <span>
+                                  {n.views.toLocaleString()} {t.viewCount}
+                                </span>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
         </div>
       </section>
     </div>

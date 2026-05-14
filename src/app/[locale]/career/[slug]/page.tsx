@@ -1,8 +1,99 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
-import { COPY } from '@/data/copy';
+import { JOBS } from '@/data/jobs';
 import { Icon } from '@/components/ui/Icon';
+
+export function generateStaticParams() {
+  return Object.keys(JOBS).map((id) => ({ slug: id }));
+}
+
+const L = {
+  vi: {
+    home: 'Trang chủ',
+    career: 'Tuyển dụng',
+    salary: 'Mức lương',
+    department: 'Phòng ban',
+    location: 'Địa điểm',
+    type: 'Loại hình',
+    level: 'Cấp bậc',
+    experience: 'Kinh nghiệm',
+    headcount: 'Số lượng',
+    deadline: 'Hạn nộp',
+    jobOverview: 'Mô tả công việc',
+    responsibilities: 'Trách nhiệm chính',
+    requirements: 'Yêu cầu công việc',
+    benefits: 'Quyền lợi & phúc lợi',
+    howToApply: 'Hướng dẫn ứng tuyển',
+    applyNow: 'Ứng tuyển ngay',
+    applyText:
+      'Vui lòng gửi CV và thư giới thiệu (tiếng Việt hoặc tiếng Anh) đến email HR. Tiêu đề email: [Mã vị trí] - Họ tên - Vị trí ứng tuyển. Chúng tôi sẽ phản hồi trong vòng 3 ngày làm việc.',
+    sendCv: 'Gửi CV qua email',
+    contactHr: 'Liên hệ HR',
+    relatedJobs: 'Vị trí liên quan',
+    viewAll: 'Xem tất cả vị trí',
+  },
+  en: {
+    home: 'Home',
+    career: 'Career',
+    salary: 'Salary',
+    department: 'Department',
+    location: 'Location',
+    type: 'Type',
+    level: 'Level',
+    experience: 'Experience',
+    headcount: 'Headcount',
+    deadline: 'Deadline',
+    jobOverview: 'Job overview',
+    responsibilities: 'Key responsibilities',
+    requirements: 'Requirements',
+    benefits: 'Benefits & perks',
+    howToApply: 'How to apply',
+    applyNow: 'Apply now',
+    applyText:
+      'Please send your CV and cover letter (Vietnamese or English) to our HR email. Email subject: [Job code] - Full name - Position. We will respond within 3 business days.',
+    sendCv: 'Send CV via email',
+    contactHr: 'Contact HR',
+    relatedJobs: 'Related positions',
+    viewAll: 'View all positions',
+  },
+  zh: {
+    home: '首页',
+    career: '招聘',
+    salary: '薪资',
+    department: '部门',
+    location: '地点',
+    type: '类型',
+    level: '级别',
+    experience: '经验',
+    headcount: '招聘人数',
+    deadline: '截止日期',
+    jobOverview: '工作描述',
+    responsibilities: '主要职责',
+    requirements: '工作要求',
+    benefits: '福利待遇',
+    howToApply: '申请方式',
+    applyNow: '立即申请',
+    applyText:
+      '请将简历和求职信(越南语或英语)发送至HR邮箱。邮件主题:[职位代码] - 姓名 - 应聘职位。我们将在3个工作日内回复。',
+    sendCv: '通过邮件发送简历',
+    contactHr: '联系HR',
+    relatedJobs: '相关职位',
+    viewAll: '查看所有职位',
+  },
+} as const;
+
+function fmtDate(d: string, lang: Locale) {
+  if (!d) return '';
+  const [day, m, y] = d.split('/');
+  if (lang === 'en') {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${months[parseInt(m) - 1]} ${day}, ${y}`;
+  }
+  if (lang === 'zh') return `${y}年${parseInt(m)}月${parseInt(day)}日`;
+  return d;
+}
 
 export default function JobDetailPage({
   params,
@@ -11,153 +102,226 @@ export default function JobDetailPage({
 }) {
   setRequestLocale(params.locale);
   const loc = params.locale as Locale;
-  const C = COPY[loc];
+  const t = L[loc];
+
+  const job = JOBS[params.slug];
+  if (!job) notFound();
+
+  const title = job.title[loc] || job.title.vi;
+  const deptLabel = job.deptLabel[loc];
+  const mailto = `mailto:[email protected]?subject=${encodeURIComponent(`[${job.id}] ${title}`)}`;
+
+  const related = Object.values(JOBS)
+    .filter((j) => j.id !== job.id)
+    .sort((a, b) => (a.dept === job.dept ? -1 : 1) - (b.dept === job.dept ? -1 : 1))
+    .slice(0, 3);
 
   return (
-    <>
-      <section style={{ background: 'var(--va-bg-alt)', borderBottom: '1px solid var(--va-line)' }}>
-        <div className="va-wrap" style={{ padding: '14px 0' }}>
-          <nav style={{ fontSize: 12.5, opacity: 0.7, display: 'flex', gap: 6, alignItems: 'center' }}>
-            <Link href={`/${loc}`} style={{ color: 'inherit', textDecoration: 'none' }}>
-              {C.nav[0]}
-            </Link>
+    <div className="jd">
+      {/* HERO */}
+      <section className="jd-hero">
+        <div className="va-wrap">
+          <nav className="jd-bcrumb">
+            <Link href={`/${loc}`}>{t.home}</Link>
             <Icon name="chevron" size={12} />
-            <Link href={`/${loc}/career`} style={{ color: 'inherit', textDecoration: 'none' }}>
-              {C.nav[3]}
-            </Link>
+            <Link href={`/${loc}/career`}>{t.career}</Link>
+            <Icon name="chevron" size={12} />
+            <Link href={`/${loc}/career?dept=${job.dept}`}>{deptLabel}</Link>
+            <Icon name="chevron" size={12} />
+            <span className="now">{title}</span>
           </nav>
-        </div>
-      </section>
 
-      <section className="va-section">
-        <div className="va-wrap" style={{ maxWidth: 920, margin: '0 auto' }}>
-          <div className="va-eyebrow">{loc === 'vi' ? 'Sản xuất' : loc === 'en' ? 'Manufacturing' : '生产'}</div>
-          <h1 style={{ fontSize: 'clamp(28px,3.2vw,44px)', margin: '12px 0 24px' }}>
-            {params.slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
-          </h1>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: 12,
-              padding: '20px 24px',
-              border: '1px solid var(--va-line)',
-              borderRadius: 14,
-              background: 'var(--va-card)',
-              marginBottom: 36,
-            }}
-          >
-            <SpecItem label="Location" value="Quỳ Hợp, Nghệ An" />
-            <SpecItem label="Salary" value="18 – 30M" />
-            <SpecItem label="Experience" value="2–5 years" />
-            <SpecItem label="Deadline" value="30/06/2026" />
-          </div>
-
-          <Section title={loc === 'vi' ? 'Mô tả công việc' : 'Job description'}>
-            <p>
-              {loc === 'vi'
-                ? 'Vận hành và giám sát dây chuyền nghiền bột đá CaCO₃, đảm bảo chất lượng sản phẩm và an toàn lao động theo tiêu chuẩn ISO 9001.'
-                : 'Operate and supervise CaCO₃ grinding lines, ensuring product quality and workplace safety to ISO 9001 standards.'}
-            </p>
-          </Section>
-
-          <Section title={loc === 'vi' ? 'Trách nhiệm chính' : 'Key responsibilities'}>
-            <List
-              items={[
-                'Vận hành dây chuyền sản xuất 8 tiếng/ca theo SOP',
-                'Kiểm tra thông số kỹ thuật từng lô (cỡ hạt, độ trắng, độ ẩm)',
-                'Phối hợp với phòng QC khi có lô không đạt',
-                'Đào tạo công nhân mới về vận hành thiết bị',
-                'Bảo trì cấp 1 thiết bị, ghi nhận sự cố vào hệ thống',
-              ]}
-            />
-          </Section>
-
-          <Section title={loc === 'vi' ? 'Yêu cầu' : 'Requirements'}>
-            <List
-              items={[
-                'Tốt nghiệp Đại học chuyên ngành Cơ khí / Hóa / Công nghệ vật liệu',
-                '2–5 năm kinh nghiệm trong sản xuất công nghiệp',
-                'Thành thạo PLC, biến tần, hệ thống điều khiển dây chuyền',
-                'Tiếng Anh giao tiếp cơ bản (đọc tài liệu kỹ thuật)',
-                'Sẵn sàng đi công tác Quỳ Hợp khi cần',
-              ]}
-            />
-          </Section>
-
-          <Section title={loc === 'vi' ? 'Quyền lợi' : 'Benefits'}>
-            <List
-              items={[
-                'Lương cơ bản 18–30 triệu + phụ cấp ca + thưởng KPI',
-                'BHXH / BHYT / BHTN đóng đủ trên lương thực tế',
-                'Khám sức khỏe định kỳ + bảo hiểm tai nạn 24/7',
-                'Du lịch hằng năm, lương tháng 13',
-                'Đào tạo kỹ thuật trong & ngoài nước',
-              ]}
-            />
-          </Section>
-
-          <div className="va-cap" style={{ marginTop: 40 }}>
-            <div>
-              <div className="va-eyebrow">
-                {loc === 'vi' ? 'Ứng tuyển' : loc === 'en' ? 'Apply' : '申请'}
+          <div className="jd-hero-inner" style={{ marginTop: 24 }}>
+            <div className="jd-hero-l">
+              <div className="jd-dept-chip">
+                <Icon name="box" size={13} /> {deptLabel}
               </div>
-              <h2>
-                {loc === 'vi'
-                  ? 'Sẵn sàng gia nhập?'
-                  : loc === 'en'
-                    ? 'Ready to apply?'
-                    : '准备好申请了吗?'}
-              </h2>
-              <p>
-                {loc === 'vi'
-                  ? 'Gửi CV về hr@longanhcorp.com với tiêu đề [Vị trí - Họ tên]. Vòng phỏng vấn đầu trong 5 ngày làm việc.'
-                  : 'Send your CV to hr@longanhcorp.com with subject [Position - Your name]. First-round interview within 5 business days.'}
-              </p>
+              <h1>{title}</h1>
+              <div className="jd-hero-meta">
+                <div className="jd-hero-meta-item">
+                  <Icon name="pin" size={16} /> <b>{job.loc[loc]}</b>
+                </div>
+                <div className="jd-hero-meta-item">
+                  <Icon name="check" size={16} /> <b>{job.type[loc]}</b>
+                </div>
+                <div className="jd-hero-meta-item">
+                  <Icon name="globe" size={16} /> {job.exp[loc]}
+                </div>
+                <div className="jd-hero-meta-item">
+                  <Icon name="spark" size={16} /> {job.level[loc]}
+                </div>
+              </div>
+              <div className="jd-hero-tags">
+                {job.tags.map((tag, i) => (
+                  <span key={i}>{tag}</span>
+                ))}
+              </div>
+
+              {/* Content sections */}
+              <div style={{ marginTop: 48 }}>
+                <div className="jd-section">
+                  <div className="jd-section-head">
+                    <div className="ico">
+                      <Icon name="grid" size={18} />
+                    </div>
+                    <h2>{t.jobOverview}</h2>
+                  </div>
+                  <p>{job.overview[loc]}</p>
+                </div>
+
+                <div className="jd-section">
+                  <div className="jd-section-head">
+                    <div className="ico">
+                      <Icon name="check" size={18} />
+                    </div>
+                    <h2>{t.responsibilities}</h2>
+                  </div>
+                  <ul>
+                    {job.responsibilities[loc].map((r, i) => (
+                      <li key={i}>{r}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="jd-section">
+                  <div className="jd-section-head">
+                    <div className="ico">
+                      <Icon name="globe" size={18} />
+                    </div>
+                    <h2>{t.requirements}</h2>
+                  </div>
+                  <ul>
+                    {job.requirements[loc].map((r, i) => (
+                      <li key={i}>{r}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="jd-section benefits">
+                  <div className="jd-section-head">
+                    <div className="ico">
+                      <Icon name="spark" size={18} />
+                    </div>
+                    <h2>{t.benefits}</h2>
+                  </div>
+                  <ul>
+                    {job.benefits[loc].map((b, i) => (
+                      <li key={i}>{b}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="jd-section">
+                  <div className="jd-section-head">
+                    <div className="ico">
+                      <Icon name="mail" size={18} />
+                    </div>
+                    <h2>{t.howToApply}</h2>
+                  </div>
+                  <div className="jd-apply">
+                    <h3>{t.applyNow}</h3>
+                    <p>{t.applyText}</p>
+                    <div className="jd-apply-row">
+                      <a className="jd-btn jd-btn-p" href={mailto}>
+                        <Icon name="mail" size={16} /> {t.sendCv}
+                      </a>
+                      <a className="jd-btn jd-btn-g" href="mailto:[email protected]">
+                        hr@longanhcorp.com
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <a
-              href="mailto:[email protected]"
-              className="va-btn va-btn-p"
-              style={{ alignSelf: 'center', justifySelf: 'end' }}
-            >
-              <Icon name="mail" size={15} /> hr@longanhcorp.com
-            </a>
+
+            {/* Sticky info card */}
+            <div className="jd-aside">
+              <div className="jd-info-card">
+                <div className="jd-info-head">
+                  <div className="label">{t.salary}</div>
+                  <div className="salary">{job.salary[loc]}</div>
+                </div>
+                <div className="jd-info-rows">
+                  <InfoRow icon="box" label={t.department} value={deptLabel} />
+                  <InfoRow icon="pin" label={t.location} value={job.loc[loc]} />
+                  <InfoRow icon="check" label={t.type} value={job.type[loc]} />
+                  <InfoRow
+                    icon="spark"
+                    label={`${t.level} · ${t.experience}`}
+                    value={`${job.level[loc]} · ${job.exp[loc]}`}
+                  />
+                  <InfoRow icon="globe" label={t.headcount} value={job.headcount} />
+                  <InfoRow icon="mail" label={t.deadline} value={fmtDate(job.deadline, loc)} />
+                </div>
+                <div className="jd-info-cta">
+                  <a className="jd-btn jd-btn-p" href={mailto}>
+                    <Icon name="mail" size={16} /> {t.applyNow}
+                  </a>
+                  <a className="jd-btn jd-btn-g" href="tel:+84912779799">
+                    <Icon name="phone" size={16} /> {t.contactHr}
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
-    </>
-  );
-}
 
-function SpecItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <div style={{ fontSize: 10.5, opacity: 0.55, letterSpacing: '.08em', textTransform: 'uppercase' }}>
-        {label}
-      </div>
-      <div style={{ fontSize: 14, fontWeight: 600, marginTop: 4 }}>{value}</div>
+      {/* RELATED JOBS */}
+      <section className="jd-related">
+        <div className="va-wrap">
+          <div className="jd-related-head">
+            <div className="num">— {t.relatedJobs}</div>
+            <h2>{t.relatedJobs}</h2>
+          </div>
+          <div className="jd-related-grid">
+            {related.map((r) => (
+              <Link key={r.id} href={`/${loc}/career/${r.id}`} className="jd-related-card">
+                <div className="dept">{r.deptLabel[loc]}</div>
+                <h4>{r.title[loc]}</h4>
+                <div className="meta">
+                  <span>
+                    <Icon name="pin" size={11} /> {r.loc[loc]}
+                  </span>
+                  <span>
+                    <Icon name="check" size={11} /> {r.type[loc]}
+                  </span>
+                  <span>
+                    <Icon name="spark" size={11} /> {r.salary[loc]}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 32 }}>
+            <Link className="jd-btn jd-btn-g" href={`/${loc}/career`} style={{ display: 'inline-flex' }}>
+              <Icon name="arrow" size={16} /> {t.viewAll}
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function InfoRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: 'box' | 'pin' | 'check' | 'spark' | 'globe' | 'mail';
+  label: string;
+  value: string;
+}) {
   return (
-    <section style={{ marginBottom: 32 }}>
-      <h2 style={{ fontSize: 22, marginBottom: 12 }}>{title}</h2>
-      <div style={{ fontSize: 14.5, lineHeight: 1.7, opacity: 0.82 }}>{children}</div>
-    </section>
-  );
-}
-
-function List({ items }: { items: string[] }) {
-  return (
-    <ul style={{ paddingLeft: 22, margin: 0 }}>
-      {items.map((it, i) => (
-        <li key={i} style={{ marginBottom: 6 }}>
-          {it}
-        </li>
-      ))}
-    </ul>
+    <div className="jd-info-row">
+      <div className="ico">
+        <Icon name={icon} size={15} />
+      </div>
+      <div>
+        <div className="lbl">{label}</div>
+        <div className="val">{value}</div>
+      </div>
+    </div>
   );
 }
