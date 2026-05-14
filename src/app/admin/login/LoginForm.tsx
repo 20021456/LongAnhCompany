@@ -51,8 +51,8 @@ export function LoginForm() {
             nhanh, an toàn, có phân quyền.
           </h1>
           <p>
-            Cập nhật sản phẩm, tin tức, tuyển dụng và theo dõi liên hệ khách hàng — tất cả
-            trong một bảng điều khiển.
+            Cập nhật sản phẩm, tin tức, tuyển dụng và theo dõi liên hệ khách hàng — tất cả trong một
+            bảng điều khiển.
           </p>
           <div className="stats">
             <div className="stat">
@@ -90,7 +90,7 @@ export function LoginForm() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="[email protected]"
+                placeholder="admin@longanhcorp.com"
               />
             </div>
 
@@ -142,14 +142,14 @@ export function LoginForm() {
               <div>
                 <div className="demo-name">Long Anh Admin</div>
                 <div className="demo-role">
-                  <code>[email protected]</code> · <code>ChangeMe123!</code>
+                  <code>admin@longanhcorp.com</code> · <code>ChangeMe123!</code>
                 </div>
               </div>
               <button
                 type="button"
                 className="use"
                 onClick={() => {
-                  setEmail('[email protected]');
+                  setEmail('admin@longanhcorp.com');
                   setPassword('ChangeMe123!');
                 }}
               >

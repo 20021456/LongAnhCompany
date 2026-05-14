@@ -48,18 +48,18 @@ npm run dev
 
 ## 📜 Scripts thường dùng
 
-| Lệnh                       | Mô tả                                                     |
-| -------------------------- | --------------------------------------------------------- |
-| `npm run dev`              | Dev server với hot-reload (port 3000)                     |
-| `npm run build`            | Build production (Next.js standalone output)              |
-| `npm start`                | Chạy bản build production                                 |
-| `npm run lint`             | ESLint check                                              |
-| `npm run format`           | Prettier format toàn bộ                                   |
-| `npm run typecheck`        | Type-check không emit                                     |
-| `npm run prisma:migrate`   | Tạo + apply migration mới                                 |
-| `npm run prisma:studio`    | Mở Prisma Studio (GUI cho DB) ở port 5555                  |
-| `npm run prisma:seed`      | Seed dữ liệu mặc định                                     |
-| `npm run docker:dev`       | Alias cho `docker compose up`                             |
+| Lệnh                     | Mô tả                                        |
+| ------------------------ | -------------------------------------------- |
+| `npm run dev`            | Dev server với hot-reload (port 3000)        |
+| `npm run build`          | Build production (Next.js standalone output) |
+| `npm start`              | Chạy bản build production                    |
+| `npm run lint`           | ESLint check                                 |
+| `npm run format`         | Prettier format toàn bộ                      |
+| `npm run typecheck`      | Type-check không emit                        |
+| `npm run prisma:migrate` | Tạo + apply migration mới                    |
+| `npm run prisma:studio`  | Mở Prisma Studio (GUI cho DB) ở port 5555    |
+| `npm run prisma:seed`    | Seed dữ liệu mặc định                        |
+| `npm run docker:dev`     | Alias cho `docker compose up`                |
 
 ## 🗂️ Cấu trúc thư mục
 
@@ -103,7 +103,7 @@ LongAnhCompany/
 ## 🔐 Admin mặc định (sau khi seed)
 
 - URL: http://localhost:3000/admin/login
-- Email: `[email protected]`
+- Email: `admin@longanhcorp.com`
 - Password: `ChangeMe123!` — **đổi ngay sau lần đăng nhập đầu tiên**
 
 ## 📦 Repos liên quan

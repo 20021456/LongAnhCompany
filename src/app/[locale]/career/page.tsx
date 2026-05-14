@@ -7,20 +7,68 @@ import { getJobs } from '@/lib/queries';
 
 const VALUES: Record<Locale, [IconName, string, string][]> = {
   vi: [
-    ['drop', 'Chính trực & Minh bạch', 'Mọi quyết định đều dựa trên dữ liệu và sự thật. Chúng tôi đối thoại cởi mở và nhận trách nhiệm về kết quả.'],
-    ['globe', 'Tinh thần đồng đội', 'Thành công là kết quả của tập thể. Chúng tôi đặt lợi ích chung lên trên và hỗ trợ nhau phát triển mỗi ngày.'],
-    ['spark', 'Đổi mới liên tục', 'Chúng tôi liên tục cải tiến quy trình, nâng cấp công nghệ và tìm kiếm các giải pháp sáng tạo để dẫn đầu ngành.'],
-    ['check', 'Chất lượng là cốt lõi', 'Từ nguyên liệu đầu vào đến sản phẩm đầu ra, tiêu chuẩn ISO 9001 không phải là đích đến — mà là nền tảng tối thiểu.'],
-    ['leaf', 'Phát triển bền vững', 'Chúng tôi khai thác và sản xuất có trách nhiệm với môi trường và cộng đồng địa phương — vì một tương lai lâu dài.'],
-    ['box', 'Hướng ra thị trường quốc tế', 'Với 12 thị trường xuất khẩu, nhân viên Long Anh được tiếp xúc với tư duy và tiêu chuẩn toàn cầu ngay tại Nghệ An.'],
+    [
+      'drop',
+      'Chính trực & Minh bạch',
+      'Mọi quyết định đều dựa trên dữ liệu và sự thật. Chúng tôi đối thoại cởi mở và nhận trách nhiệm về kết quả.',
+    ],
+    [
+      'globe',
+      'Tinh thần đồng đội',
+      'Thành công là kết quả của tập thể. Chúng tôi đặt lợi ích chung lên trên và hỗ trợ nhau phát triển mỗi ngày.',
+    ],
+    [
+      'spark',
+      'Đổi mới liên tục',
+      'Chúng tôi liên tục cải tiến quy trình, nâng cấp công nghệ và tìm kiếm các giải pháp sáng tạo để dẫn đầu ngành.',
+    ],
+    [
+      'check',
+      'Chất lượng là cốt lõi',
+      'Từ nguyên liệu đầu vào đến sản phẩm đầu ra, tiêu chuẩn ISO 9001 không phải là đích đến — mà là nền tảng tối thiểu.',
+    ],
+    [
+      'leaf',
+      'Phát triển bền vững',
+      'Chúng tôi khai thác và sản xuất có trách nhiệm với môi trường và cộng đồng địa phương — vì một tương lai lâu dài.',
+    ],
+    [
+      'box',
+      'Hướng ra thị trường quốc tế',
+      'Với 12 thị trường xuất khẩu, nhân viên Long Anh được tiếp xúc với tư duy và tiêu chuẩn toàn cầu ngay tại Nghệ An.',
+    ],
   ],
   en: [
-    ['drop', 'Integrity & Transparency', 'Every decision is based on data and truth. We communicate openly and take responsibility for outcomes.'],
-    ['globe', 'Team spirit', "Success is a collective result. We put common interests first and support each other's growth every day."],
-    ['spark', 'Continuous innovation', 'We continuously improve processes, upgrade technology and seek creative solutions to stay ahead.'],
-    ['check', 'Quality at the core', 'From raw material to finished product, ISO 9001 is not the destination — it is the minimum baseline.'],
-    ['leaf', 'Sustainable development', 'We mine and produce responsibly toward the environment and local community — for the long term.'],
-    ['box', 'Global market orientation', 'With 12 export markets, Long Anh employees engage with global thinking and standards right in Nghe An.'],
+    [
+      'drop',
+      'Integrity & Transparency',
+      'Every decision is based on data and truth. We communicate openly and take responsibility for outcomes.',
+    ],
+    [
+      'globe',
+      'Team spirit',
+      "Success is a collective result. We put common interests first and support each other's growth every day.",
+    ],
+    [
+      'spark',
+      'Continuous innovation',
+      'We continuously improve processes, upgrade technology and seek creative solutions to stay ahead.',
+    ],
+    [
+      'check',
+      'Quality at the core',
+      'From raw material to finished product, ISO 9001 is not the destination — it is the minimum baseline.',
+    ],
+    [
+      'leaf',
+      'Sustainable development',
+      'We mine and produce responsibly toward the environment and local community — for the long term.',
+    ],
+    [
+      'box',
+      'Global market orientation',
+      'With 12 export markets, Long Anh employees engage with global thinking and standards right in Nghe An.',
+    ],
   ],
   zh: [
     ['drop', '正直与透明', '所有决策均基于数据和事实。我们开放沟通,对结果负责。'],
@@ -34,20 +82,56 @@ const VALUES: Record<Locale, [IconName, string, string][]> = {
 
 const BENEFITS: Record<Locale, [string, string][]> = {
   vi: [
-    ['Lương & Thưởng cạnh tranh', 'Mức lương theo năng lực, xét tăng lương 2 lần/năm. Thưởng hiệu suất hàng quý và thưởng cuối năm theo kết quả kinh doanh.'],
-    ['Bảo hiểm toàn diện', 'BHXH, BHYT, BHTN theo đúng quy định. Bảo hiểm sức khỏe bổ sung cho nhân viên và gia đình với hạn mức cao.'],
-    ['Đào tạo & Phát triển', 'Chương trình đào tạo nội bộ định kỳ, hỗ trợ học phí các khóa chuyên môn, cử nhân viên tiêu biểu tham gia hội thảo quốc tế.'],
-    ['Môi trường làm việc hiện đại', 'Văn phòng và nhà máy được trang bị đầy đủ thiết bị bảo hộ lao động tiêu chuẩn. Trang bị laptop và công cụ làm việc đầy đủ.'],
-    ['Nghỉ phép & Lễ tết', '12 ngày nghỉ phép có lương/năm. Nghỉ lễ theo quy định nhà nước cộng thêm các ngày nghỉ đặc biệt của công ty.'],
-    ['Hoạt động tập thể', 'Team building hàng năm, du lịch công ty, các giải thể thao nội bộ và sự kiện văn hóa gắn kết đội ngũ.'],
+    [
+      'Lương & Thưởng cạnh tranh',
+      'Mức lương theo năng lực, xét tăng lương 2 lần/năm. Thưởng hiệu suất hàng quý và thưởng cuối năm theo kết quả kinh doanh.',
+    ],
+    [
+      'Bảo hiểm toàn diện',
+      'BHXH, BHYT, BHTN theo đúng quy định. Bảo hiểm sức khỏe bổ sung cho nhân viên và gia đình với hạn mức cao.',
+    ],
+    [
+      'Đào tạo & Phát triển',
+      'Chương trình đào tạo nội bộ định kỳ, hỗ trợ học phí các khóa chuyên môn, cử nhân viên tiêu biểu tham gia hội thảo quốc tế.',
+    ],
+    [
+      'Môi trường làm việc hiện đại',
+      'Văn phòng và nhà máy được trang bị đầy đủ thiết bị bảo hộ lao động tiêu chuẩn. Trang bị laptop và công cụ làm việc đầy đủ.',
+    ],
+    [
+      'Nghỉ phép & Lễ tết',
+      '12 ngày nghỉ phép có lương/năm. Nghỉ lễ theo quy định nhà nước cộng thêm các ngày nghỉ đặc biệt của công ty.',
+    ],
+    [
+      'Hoạt động tập thể',
+      'Team building hàng năm, du lịch công ty, các giải thể thao nội bộ và sự kiện văn hóa gắn kết đội ngũ.',
+    ],
   ],
   en: [
-    ['Competitive salary & bonus', 'Performance-based pay, twice-yearly reviews. Quarterly performance bonus and year-end bonus tied to business results.'],
-    ['Comprehensive insurance', 'Full social, health and unemployment insurance. Supplementary health insurance for employees and family with high coverage.'],
-    ['Training & Development', 'Regular internal training programs, tuition support for professional courses, top employees sent to international conferences.'],
-    ['Modern working environment', 'Offices and plants fully equipped with standard PPE. Laptop and full working tools provided.'],
-    ['Leave & Holidays', '12 paid annual leave days. Public holidays per regulations plus additional company-specific days off.'],
-    ['Team activities', 'Annual team building, company trips, internal sports competitions and cultural events that build team bonds.'],
+    [
+      'Competitive salary & bonus',
+      'Performance-based pay, twice-yearly reviews. Quarterly performance bonus and year-end bonus tied to business results.',
+    ],
+    [
+      'Comprehensive insurance',
+      'Full social, health and unemployment insurance. Supplementary health insurance for employees and family with high coverage.',
+    ],
+    [
+      'Training & Development',
+      'Regular internal training programs, tuition support for professional courses, top employees sent to international conferences.',
+    ],
+    [
+      'Modern working environment',
+      'Offices and plants fully equipped with standard PPE. Laptop and full working tools provided.',
+    ],
+    [
+      'Leave & Holidays',
+      '12 paid annual leave days. Public holidays per regulations plus additional company-specific days off.',
+    ],
+    [
+      'Team activities',
+      'Annual team building, company trips, internal sports competitions and cultural events that build team bonds.',
+    ],
   ],
   zh: [
     ['有竞争力的薪酬与奖金', '按能力定薪,每年两次调薪。季度绩效奖金和与业绩挂钩的年终奖金。'],
@@ -61,16 +145,40 @@ const BENEFITS: Record<Locale, [string, string][]> = {
 
 const PROCESS: Record<Locale, [string, string][]> = {
   vi: [
-    ['Nộp hồ sơ', 'Gửi CV qua form online hoặc email hr@longanhcorp.com. Phản hồi trong vòng 3 ngày làm việc.'],
-    ['Phỏng vấn sơ bộ', 'Trao đổi qua điện thoại hoặc video call để hiểu về kinh nghiệm và mong muốn của ứng viên.'],
-    ['Phỏng vấn chuyên sâu', 'Gặp trực tiếp với quản lý bộ phận. Có thể bao gồm bài kiểm tra kỹ năng thực tế tùy vị trí.'],
-    ['Nhận offer & Onboarding', 'Thư đề nghị làm việc trong vòng 5 ngày sau phỏng vấn cuối. Chương trình hội nhập 30 ngày đầu tiên.'],
+    [
+      'Nộp hồ sơ',
+      'Gửi CV qua form online hoặc email hr@longanhcorp.com. Phản hồi trong vòng 3 ngày làm việc.',
+    ],
+    [
+      'Phỏng vấn sơ bộ',
+      'Trao đổi qua điện thoại hoặc video call để hiểu về kinh nghiệm và mong muốn của ứng viên.',
+    ],
+    [
+      'Phỏng vấn chuyên sâu',
+      'Gặp trực tiếp với quản lý bộ phận. Có thể bao gồm bài kiểm tra kỹ năng thực tế tùy vị trí.',
+    ],
+    [
+      'Nhận offer & Onboarding',
+      'Thư đề nghị làm việc trong vòng 5 ngày sau phỏng vấn cuối. Chương trình hội nhập 30 ngày đầu tiên.',
+    ],
   ],
   en: [
-    ['Submit application', 'Send CV via online form or email hr@longanhcorp.com. Response within 3 business days.'],
-    ['Initial interview', "Phone or video call to understand the candidate's experience and aspirations."],
-    ['In-depth interview', 'Meet in person with department manager. May include a practical skills test depending on the role.'],
-    ['Offer & Onboarding', 'Job offer letter within 5 days of final interview. 30-day onboarding program for new joiners.'],
+    [
+      'Submit application',
+      'Send CV via online form or email hr@longanhcorp.com. Response within 3 business days.',
+    ],
+    [
+      'Initial interview',
+      "Phone or video call to understand the candidate's experience and aspirations.",
+    ],
+    [
+      'In-depth interview',
+      'Meet in person with department manager. May include a practical skills test depending on the role.',
+    ],
+    [
+      'Offer & Onboarding',
+      'Job offer letter within 5 days of final interview. 30-day onboarding program for new joiners.',
+    ],
   ],
   zh: [
     ['提交申请', '通过在线表格或邮件 hr@longanhcorp.com 发送简历。3个工作日内回复。'],
@@ -80,11 +188,7 @@ const PROCESS: Record<Locale, [string, string][]> = {
   ],
 };
 
-export default async function CareerPage({
-  params: { locale },
-}: {
-  params: { locale: string };
-}) {
+export default async function CareerPage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
   const loc = locale as Locale;
   const C = COPY[loc];
@@ -107,7 +211,9 @@ export default async function CareerPage({
       <section className="cr-hero">
         <div className="va-wrap">
           <div className="cr-bcrumb">
-            <Link href={`/${loc}`}>{loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ'}</Link>
+            <Link href={`/${loc}`}>
+              {loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ'}
+            </Link>
             <Icon name="chevron" size={11} />
             <span>{C.nav[3]}</span>
           </div>
@@ -226,7 +332,11 @@ export default async function CareerPage({
           <div className="cr-shead">
             <div>
               <div className="va-eyebrow">
-                {loc === 'zh' ? '企业文化' : loc === 'en' ? 'Company culture' : 'Văn hóa doanh nghiệp'}
+                {loc === 'zh'
+                  ? '企业文化'
+                  : loc === 'en'
+                    ? 'Company culture'
+                    : 'Văn hóa doanh nghiệp'}
               </div>
               <h2>
                 {loc === 'zh'
@@ -348,8 +458,15 @@ export default async function CareerPage({
                     : 'Nếu bạn tin rằng mình có thể đóng góp cho Long Anh, hãy gửi CV cho chúng tôi. Chúng tôi luôn tìm kiếm những tài năng xuất sắc bất kể vị trí đang tuyển.'}
               </p>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'flex-start' }}>
-              <a className="va-btn va-btn-p" href="mailto:[email protected]">
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 14,
+                alignItems: 'flex-start',
+              }}
+            >
+              <a className="va-btn va-btn-p" href="mailto:hr@longanhcorp.com">
                 {loc === 'zh'
                   ? '通过邮件发送简历'
                   : loc === 'en'

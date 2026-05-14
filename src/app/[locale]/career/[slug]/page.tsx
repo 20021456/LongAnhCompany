@@ -84,7 +84,20 @@ function fmtDate(d: string, lang: Locale) {
   if (!d) return '';
   const [day, m, y] = d.split('/');
   if (lang === 'en') {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return `${months[parseInt(m) - 1]} ${day}, ${y}`;
   }
   if (lang === 'zh') return `${y}年${parseInt(m)}月${parseInt(day)}日`;
@@ -107,7 +120,7 @@ export default async function JobDetailPage({
 
   const title = job.title[loc] || job.title.vi;
   const deptLabel = job.deptLabel[loc];
-  const mailto = `mailto:[email protected]?subject=${encodeURIComponent(`[${job.id}] ${title}`)}`;
+  const mailto = `mailto:hr@longanhcorp.com?subject=${encodeURIComponent(`[${job.id}] ${title}`)}`;
 
   const related = Object.values(jobs)
     .filter((j) => j.id !== job.id)
@@ -223,7 +236,7 @@ export default async function JobDetailPage({
                       <a className="jd-btn jd-btn-p" href={mailto}>
                         <Icon name="mail" size={16} /> {t.sendCv}
                       </a>
-                      <a className="jd-btn jd-btn-g" href="mailto:[email protected]">
+                      <a className="jd-btn jd-btn-g" href="mailto:hr@longanhcorp.com">
                         hr@longanhcorp.com
                       </a>
                     </div>
@@ -292,7 +305,11 @@ export default async function JobDetailPage({
             ))}
           </div>
           <div style={{ textAlign: 'center', marginTop: 32 }}>
-            <Link className="jd-btn jd-btn-g" href={`/${loc}/career`} style={{ display: 'inline-flex' }}>
+            <Link
+              className="jd-btn jd-btn-g"
+              href={`/${loc}/career`}
+              style={{ display: 'inline-flex' }}
+            >
               <Icon name="arrow" size={16} /> {t.viewAll}
             </Link>
           </div>

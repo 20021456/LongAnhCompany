@@ -246,7 +246,11 @@ const CORE_VALUES: { scope: string; icon: string; title: L3; body: L3 }[] = [
   {
     scope: 'career',
     icon: 'box',
-    title: { vi: 'Hướng ra thị trường quốc tế', en: 'Global market orientation', zh: '面向国际市场' },
+    title: {
+      vi: 'Hướng ra thị trường quốc tế',
+      en: 'Global market orientation',
+      zh: '面向国际市场',
+    },
     body: {
       vi: 'Với 12 thị trường xuất khẩu, nhân viên Long Anh được tiếp xúc với tư duy và tiêu chuẩn toàn cầu ngay tại Nghệ An.',
       en: 'With 12 export markets, Long Anh employees engage with global thinking and standards right in Nghe An.',
@@ -278,7 +282,7 @@ async function main() {
     });
   }
   const superAdminRole = await db.role.findUniqueOrThrow({ where: { name: 'super_admin' } });
-  const adminEmail = process.env.SEED_ADMIN_EMAIL ?? '[email protected]';
+  const adminEmail = process.env.SEED_ADMIN_EMAIL ?? 'admin@longanhcorp.com';
   const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? 'ChangeMe123!';
   await db.user.upsert({
     where: { email: adminEmail },
@@ -303,18 +307,90 @@ async function main() {
     valueZh: string;
     group: string;
   }[] = [
-    { key: 'site.brand_short', valueVi: vi.short, valueEn: en.short, valueZh: zh.short, group: 'brand' },
-    { key: 'site.company_full', valueVi: vi.company, valueEn: en.company, valueZh: zh.company, group: 'brand' },
-    { key: 'site.tagline', valueVi: vi.tagline, valueEn: en.tagline, valueZh: zh.tagline, group: 'brand' },
-    { key: 'site.footnote', valueVi: vi.footnote, valueEn: en.footnote, valueZh: zh.footnote, group: 'brand' },
-    { key: 'contact.phone_main', valueVi: vi.phone[0], valueEn: en.phone[0], valueZh: zh.phone[0], group: 'contact' },
-    { key: 'contact.phone_secondary', valueVi: vi.phone[1], valueEn: en.phone[1], valueZh: zh.phone[1], group: 'contact' },
-    { key: 'contact.email_main', valueVi: vi.email, valueEn: en.email, valueZh: zh.email, group: 'contact' },
-    { key: 'contact.email_hr', valueVi: '[email protected]', valueEn: '[email protected]', valueZh: '[email protected]', group: 'contact' },
-    { key: 'contact.address', valueVi: vi.addr, valueEn: en.addr, valueZh: zh.addr, group: 'contact' },
-    { key: 'social.facebook', valueVi: 'https://www.facebook.com/longanhcorp', valueEn: 'https://www.facebook.com/longanhcorp', valueZh: 'https://www.facebook.com/longanhcorp', group: 'social' },
-    { key: 'social.linkedin', valueVi: 'https://www.linkedin.com/company/longanhcorp', valueEn: 'https://www.linkedin.com/company/longanhcorp', valueZh: 'https://www.linkedin.com/company/longanhcorp', group: 'social' },
-    { key: 'social.zalo', valueVi: 'https://zalo.me/longanhcorp', valueEn: 'https://zalo.me/longanhcorp', valueZh: 'https://zalo.me/longanhcorp', group: 'social' },
+    {
+      key: 'site.brand_short',
+      valueVi: vi.short,
+      valueEn: en.short,
+      valueZh: zh.short,
+      group: 'brand',
+    },
+    {
+      key: 'site.company_full',
+      valueVi: vi.company,
+      valueEn: en.company,
+      valueZh: zh.company,
+      group: 'brand',
+    },
+    {
+      key: 'site.tagline',
+      valueVi: vi.tagline,
+      valueEn: en.tagline,
+      valueZh: zh.tagline,
+      group: 'brand',
+    },
+    {
+      key: 'site.footnote',
+      valueVi: vi.footnote,
+      valueEn: en.footnote,
+      valueZh: zh.footnote,
+      group: 'brand',
+    },
+    {
+      key: 'contact.phone_main',
+      valueVi: vi.phone[0],
+      valueEn: en.phone[0],
+      valueZh: zh.phone[0],
+      group: 'contact',
+    },
+    {
+      key: 'contact.phone_secondary',
+      valueVi: vi.phone[1],
+      valueEn: en.phone[1],
+      valueZh: zh.phone[1],
+      group: 'contact',
+    },
+    {
+      key: 'contact.email_main',
+      valueVi: vi.email,
+      valueEn: en.email,
+      valueZh: zh.email,
+      group: 'contact',
+    },
+    {
+      key: 'contact.email_hr',
+      valueVi: 'hr@longanhcorp.com',
+      valueEn: 'hr@longanhcorp.com',
+      valueZh: 'hr@longanhcorp.com',
+      group: 'contact',
+    },
+    {
+      key: 'contact.address',
+      valueVi: vi.addr,
+      valueEn: en.addr,
+      valueZh: zh.addr,
+      group: 'contact',
+    },
+    {
+      key: 'social.facebook',
+      valueVi: 'https://www.facebook.com/longanhcorp',
+      valueEn: 'https://www.facebook.com/longanhcorp',
+      valueZh: 'https://www.facebook.com/longanhcorp',
+      group: 'social',
+    },
+    {
+      key: 'social.linkedin',
+      valueVi: 'https://www.linkedin.com/company/longanhcorp',
+      valueEn: 'https://www.linkedin.com/company/longanhcorp',
+      valueZh: 'https://www.linkedin.com/company/longanhcorp',
+      group: 'social',
+    },
+    {
+      key: 'social.zalo',
+      valueVi: 'https://zalo.me/longanhcorp',
+      valueEn: 'https://zalo.me/longanhcorp',
+      valueZh: 'https://zalo.me/longanhcorp',
+      group: 'social',
+    },
   ];
   for (const s of settings) {
     await db.setting.upsert({
@@ -332,8 +408,10 @@ async function main() {
       nameVi: 'Bột đá CaCO₃',
       nameEn: 'CaCO₃ powder',
       nameZh: '碳酸钙粉',
-      descriptionVi: 'Coated · Uncoated · 3–20 µm — phụ gia cho nhựa, sơn, giấy, thức ăn chăn nuôi.',
-      descriptionEn: 'Coated · Uncoated · 3–20 µm — additive for plastics, paint, paper, animal feed.',
+      descriptionVi:
+        'Coated · Uncoated · 3–20 µm — phụ gia cho nhựa, sơn, giấy, thức ăn chăn nuôi.',
+      descriptionEn:
+        'Coated · Uncoated · 3–20 µm — additive for plastics, paint, paper, animal feed.',
       descriptionZh: '涂层 · 未涂层 · 3–20 µm — 用于塑料、涂料、纸张、动物饲料的添加剂。',
       coverImageUrl: '/assets/bot-caco3-sieu-min.webp',
       sortOrder: 1,
