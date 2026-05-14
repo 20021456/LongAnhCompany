@@ -6,7 +6,7 @@ import { Icon } from '@/components/ui/Icon';
 import { ProductCarousel } from '@/components/public/ProductCarousel';
 import { ExportMap } from '@/components/public/ExportMap';
 import { ContactForm } from '@/components/public/ContactForm';
-import { getProducts, getStats } from '@/lib/queries';
+import { getProducts, getStats, getPageHero } from '@/lib/queries';
 
 const ABOUT_TILES = [
   {
@@ -15,7 +15,8 @@ const ABOUT_TILES = [
     titleVi: 'Năng lực sản xuất',
     titleEn: 'Production capacity',
     titleZh: '生产能力',
-    bodyVi: '05 nhà máy với tổng diện tích 12ha, dây chuyền hiện đại — công suất đạt trên 350,000 tấn/năm.',
+    bodyVi:
+      '05 nhà máy với tổng diện tích 12ha, dây chuyền hiện đại — công suất đạt trên 350,000 tấn/năm.',
     bodyEn: '5 plants over 12ha of modern lines — capacity exceeding 350,000 tons/year.',
     bodyZh: '5座工厂占地12公顷,配备现代化生产线 — 年产能超过35万吨。',
   },
@@ -25,8 +26,10 @@ const ABOUT_TILES = [
     titleVi: 'Nguồn nguyên liệu',
     titleEn: 'Raw material',
     titleZh: '原料来源',
-    bodyVi: 'Đá vôi trắng nguyên sinh từ Quỳ Hợp – Nghệ An, độ trắng > 98% và CaCO₃ > 98.5% — kiểm soát từ gốc.',
-    bodyEn: 'Pristine white limestone from Quy Hop · whiteness > 98%, CaCO₃ > 98.5% — controlled at the source.',
+    bodyVi:
+      'Đá vôi trắng nguyên sinh từ Quỳ Hợp – Nghệ An, độ trắng > 98% và CaCO₃ > 98.5% — kiểm soát từ gốc.',
+    bodyEn:
+      'Pristine white limestone from Quy Hop · whiteness > 98%, CaCO₃ > 98.5% — controlled at the source.',
     bodyZh: '源自归合-义安省的原始白石灰岩 · 白度>98%,碳酸钙>98.5% — 从源头控制。',
   },
   {
@@ -35,7 +38,8 @@ const ABOUT_TILES = [
     titleVi: 'Cơ sở hạ tầng',
     titleEn: 'Infrastructure',
     titleZh: '基础设施',
-    bodyVi: 'Hệ thống dây chuyền nghiền và phủ Stearic Acid theo công nghệ Châu Âu, vận hành đồng bộ và ổn định.',
+    bodyVi:
+      'Hệ thống dây chuyền nghiền và phủ Stearic Acid theo công nghệ Châu Âu, vận hành đồng bộ và ổn định.',
     bodyEn: 'EU-spec grinding and stearic-acid coating lines, running in stable synchronization.',
     bodyZh: '欧洲标准的研磨和硬脂酸涂层生产线,稳定同步运行。',
   },
@@ -45,8 +49,10 @@ const ABOUT_TILES = [
     titleVi: 'Kiểm định chất lượng',
     titleEn: 'Quality control',
     titleZh: '质量检验',
-    bodyVi: 'Phòng QC kiểm tra từng lô — độ trắng, CaCO₃, độ ẩm, cỡ hạt — kèm COA và MSDS theo tiêu chuẩn ISO 9001:2015.',
-    bodyEn: 'Per-batch QC — whiteness, CaCO₃, moisture, particle size — with COA and MSDS to ISO 9001:2015.',
+    bodyVi:
+      'Phòng QC kiểm tra từng lô — độ trắng, CaCO₃, độ ẩm, cỡ hạt — kèm COA và MSDS theo tiêu chuẩn ISO 9001:2015.',
+    bodyEn:
+      'Per-batch QC — whiteness, CaCO₃, moisture, particle size — with COA and MSDS to ISO 9001:2015.',
     bodyZh: '每批次QC检测 — 白度、碳酸钙、水分、粒径 — 提供符合ISO 9001:2015的COA和MSDS。',
   },
   {
@@ -55,8 +61,10 @@ const ABOUT_TILES = [
     titleVi: 'Đóng gói sản phẩm',
     titleEn: 'Packaging',
     titleZh: '产品包装',
-    bodyVi: 'Đáp ứng mọi quy cách: PP 25kg/50kg, jumbo 250kg/500kg/1000kg và bulk theo yêu cầu khách hàng.',
-    bodyEn: 'Every spec covered: PP 25/50kg, jumbo 250/500/1000kg, and bulk to customer requirements.',
+    bodyVi:
+      'Đáp ứng mọi quy cách: PP 25kg/50kg, jumbo 250kg/500kg/1000kg và bulk theo yêu cầu khách hàng.',
+    bodyEn:
+      'Every spec covered: PP 25/50kg, jumbo 250/500/1000kg, and bulk to customer requirements.',
     bodyZh: '满足各种规格:PP 25/50公斤、吨袋250/500/1000公斤,以及按客户需求散装。',
   },
 ];
@@ -108,11 +116,7 @@ const CERT_TILES = [
   },
 ];
 
-export default async function HomePage({
-  params: { locale },
-}: {
-  params: { locale: string };
-}) {
+export default async function HomePage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
   const loc = locale as Locale;
   const C = COPY[loc];
@@ -131,24 +135,35 @@ export default async function HomePage({
   const stats = await getStats('home');
   const lang = loc;
 
+  // Hero content is editable from /admin/pages/home; fall back to static COPY.
+  const heroDb = await getPageHero('home', loc);
+  const hero = {
+    eyebrow: heroDb?.eyebrow || C.heroEy,
+    titleLine1: heroDb?.titleLine1 || C.heroH[0],
+    titleLine2: heroDb?.titleLine2 || C.heroH[1],
+    sub: heroDb?.sub || C.heroSub,
+    ctaPrimary: heroDb?.ctaPrimary || C.ctaPrimary,
+    ctaSecondary: heroDb?.ctaSecondary || C.ctaGhost,
+  };
+
   return (
     <>
       {/* HERO */}
       <section id="home" className="va-hero split">
         <div className="va-wrap va-hero-l">
-          <div className="va-eyebrow va-hero-eb">{C.heroEy}</div>
+          <div className="va-eyebrow va-hero-eb">{hero.eyebrow}</div>
           <h1>
-            {C.heroH[0]}
+            {hero.titleLine1}
             <br />
-            <b style={{ color: 'var(--brand-accent, #F08023)' }}>{C.heroH[1]}</b>
+            <b style={{ color: 'var(--brand-accent, #F08023)' }}>{hero.titleLine2}</b>
           </h1>
-          <p className="va-hero-sub">{C.heroSub}</p>
+          <p className="va-hero-sub">{hero.sub}</p>
           <div className="va-hero-cta">
             <Link className="va-btn va-btn-p" href={`/${loc}/products`}>
-              {C.ctaPrimary} <Icon name="arrow" size={15} />
+              {hero.ctaPrimary} <Icon name="arrow" size={15} />
             </Link>
             <Link className="va-btn va-btn-g" href={`/${loc}/contact`}>
-              {C.ctaGhost}
+              {hero.ctaSecondary}
             </Link>
           </div>
         </div>
@@ -208,12 +223,8 @@ export default async function HomePage({
                 }}
               >
                 <div className="va-cap4-body">
-                  <h3>
-                    {lang === 'zh' ? it.titleZh : lang === 'en' ? it.titleEn : it.titleVi}
-                  </h3>
-                  <p>
-                    {lang === 'zh' ? it.bodyZh : lang === 'en' ? it.bodyEn : it.bodyVi}
-                  </p>
+                  <h3>{lang === 'zh' ? it.titleZh : lang === 'en' ? it.titleEn : it.titleVi}</h3>
+                  <p>{lang === 'zh' ? it.bodyZh : lang === 'en' ? it.bodyEn : it.bodyVi}</p>
                 </div>
               </div>
             ))}

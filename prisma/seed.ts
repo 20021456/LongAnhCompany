@@ -757,6 +757,41 @@ async function main() {
   }
   console.log('  ✓ menus (header + footer)');
 
+  // ─── 13. Pages + editable hero section ────────────────────────────────
+  const homePage = await db.page.upsert({
+    where: { key: 'home' },
+    update: {},
+    create: {
+      key: 'home',
+      slug: '/',
+      titleVi: 'Trang chủ',
+      titleEn: 'Home',
+      titleZh: '首页',
+      isPublished: true,
+    },
+  });
+  const heroLocale = (c: typeof vi) => ({
+    eyebrow: c.heroEy,
+    titleLine1: c.heroH[0],
+    titleLine2: c.heroH[1],
+    sub: c.heroSub,
+    ctaPrimary: c.ctaPrimary,
+    ctaSecondary: c.ctaGhost,
+  });
+  const heroContent = { vi: heroLocale(vi), en: heroLocale(en), zh: heroLocale(zh) };
+  await db.pageSection.upsert({
+    where: { pageId_sectionKey: { pageId: homePage.id, sectionKey: 'hero' } },
+    update: { content: heroContent },
+    create: {
+      pageId: homePage.id,
+      sectionKey: 'hero',
+      sectionType: 'hero',
+      content: heroContent,
+      sortOrder: 0,
+    },
+  });
+  console.log('  ✓ pages (home + hero section)');
+
   console.log('\n✅ Seed complete.');
 }
 

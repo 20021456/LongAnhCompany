@@ -7,6 +7,23 @@ import { requirePermission } from '@/lib/auth-helpers';
 import { recordAudit } from '@/lib/audit';
 import { KNOWN_PAGES } from './known';
 
+const heroLocaleSchema = z.object({
+  eyebrow: z.string().default(''),
+  titleLine1: z.string().default(''),
+  titleLine2: z.string().default(''),
+  sub: z.string().default(''),
+  ctaPrimary: z.string().default(''),
+  ctaSecondary: z.string().default(''),
+});
+
+const heroSchema = z.object({
+  vi: heroLocaleSchema,
+  en: heroLocaleSchema,
+  zh: heroLocaleSchema,
+});
+
+export type HeroInput = z.input<typeof heroSchema>;
+
 const schema = z.object({
   key: z.string().min(1),
   titleVi: z.string().min(1, 'Tiêu đề (VI) không được để trống'),
@@ -20,6 +37,7 @@ const schema = z.object({
   metaDescZh: z.string().optional(),
   ogImageUrl: z.string().optional(),
   isPublished: z.boolean().default(true),
+  hero: heroSchema.optional(),
 });
 
 export type PageInput = z.input<typeof schema>;
@@ -53,11 +71,25 @@ export async function savePage(raw: PageInput): Promise<ActionResult> {
       updatedById: user.id,
     };
 
-    await db.page.upsert({
+    const page = await db.page.upsert({
       where: { key: d.key },
       update: data,
       create: { key: d.key, ...data },
     });
+
+    if (d.hero) {
+      await db.pageSection.upsert({
+        where: { pageId_sectionKey: { pageId: page.id, sectionKey: 'hero' } },
+        update: { content: d.hero, sectionType: 'hero', isVisible: true },
+        create: {
+          pageId: page.id,
+          sectionKey: 'hero',
+          sectionType: 'hero',
+          content: d.hero,
+          sortOrder: 0,
+        },
+      });
+    }
 
     await recordAudit({
       userId: user.id,

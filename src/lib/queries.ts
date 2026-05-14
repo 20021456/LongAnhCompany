@@ -49,8 +49,7 @@ export async function getProducts(): Promise<Record<string, ProductDetail>> {
       desc: l3(p.shortDescVi, p.shortDescEn, p.shortDescZh),
       longDesc: l3(p.longDescVi, p.longDescEn, p.longDescZh),
       images:
-        (p.gallery as unknown as string[] | null) ??
-        (p.coverImageUrl ? [p.coverImageUrl] : []),
+        (p.gallery as unknown as string[] | null) ?? (p.coverImageUrl ? [p.coverImageUrl] : []),
       specs: p.specs.map((s) => ({
         key: s.specKey ?? '',
         val: s.valueVi,
@@ -67,8 +66,7 @@ export async function getProducts(): Promise<Record<string, ProductDetail>> {
         en: pk.nameEn ?? pk.nameVi,
         zh: pk.nameZh ?? pk.nameVi,
       })),
-      features:
-        (p.features as unknown as ProductDetail['features']) ?? { vi: [], en: [], zh: [] },
+      features: (p.features as unknown as ProductDetail['features']) ?? { vi: [], en: [], zh: [] },
       tags: (p.tags as unknown as ProductDetail['tags']) ?? { vi: [], en: [], zh: [] },
       moq: l3(p.moq, p.moqEn, p.moqZh),
       leadTime: l3(p.productionTime, p.productionTimeEn, p.productionTimeZh),
@@ -138,14 +136,16 @@ export async function getJobs(): Promise<Record<string, JobDetail>> {
       headcount: String(j.slots).padStart(2, '0'),
       tags: (j.tags as unknown as string[] | null) ?? [],
       overview: l3(j.descriptionVi, j.descriptionEn, j.descriptionZh),
-      responsibilities:
-        (j.responsibilities as unknown as JobDetail['responsibilities']) ?? {
-          vi: [],
-          en: [],
-          zh: [],
-        },
-      requirements:
-        (j.requirements as unknown as JobDetail['requirements']) ?? { vi: [], en: [], zh: [] },
+      responsibilities: (j.responsibilities as unknown as JobDetail['responsibilities']) ?? {
+        vi: [],
+        en: [],
+        zh: [],
+      },
+      requirements: (j.requirements as unknown as JobDetail['requirements']) ?? {
+        vi: [],
+        en: [],
+        zh: [],
+      },
       benefits: (j.benefits as unknown as JobDetail['benefits']) ?? { vi: [], en: [], zh: [] },
     };
   }
@@ -284,4 +284,40 @@ export async function getMenu(location: 'header' | 'footer'): Promise<MenuLink[]
     label: l3(i.labelVi, i.labelEn, i.labelZh),
     url: i.url,
   }));
+}
+
+// ─── Pages / sections ─────────────────────────────────────────────────────
+
+export interface HeroContent {
+  eyebrow: string;
+  titleLine1: string;
+  titleLine2: string;
+  sub: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+}
+
+/**
+ * Hero block of a page, read from the `page_sections` table. Returns null
+ * when the page or its hero section has not been customised in the admin
+ * yet — callers then fall back to the static COPY content.
+ */
+export async function getPageHero(pageKey: string, locale: string): Promise<HeroContent | null> {
+  const page = await db.page.findUnique({ where: { key: pageKey } });
+  if (!page) return null;
+  const section = await db.pageSection.findUnique({
+    where: { pageId_sectionKey: { pageId: page.id, sectionKey: 'hero' } },
+  });
+  if (!section || !section.isVisible) return null;
+  const byLocale = section.content as Record<string, Partial<HeroContent>> | null;
+  const c = byLocale?.[locale];
+  if (!c) return null;
+  return {
+    eyebrow: c.eyebrow ?? '',
+    titleLine1: c.titleLine1 ?? '',
+    titleLine2: c.titleLine2 ?? '',
+    sub: c.sub ?? '',
+    ctaPrimary: c.ctaPrimary ?? '',
+    ctaSecondary: c.ctaSecondary ?? '',
+  };
 }
