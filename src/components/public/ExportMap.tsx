@@ -1,10 +1,11 @@
 import type { Locale } from '@/lib/i18n/config';
-import { COPY } from '@/data/copy';
 import { Icon } from '@/components/ui/Icon';
 import { VA_MAP_BG, VA_MAP_PARTNERS, VA_MAP_ORIGIN } from '@/data/world-map';
+import type { ExportSection } from '@/lib/home-content';
 
 interface Props {
   locale: Locale;
+  content: ExportSection;
 }
 
 const dests = [
@@ -18,8 +19,9 @@ const dests = [
   { x: 597, y: 144, key: 7 }, // Türkiye
 ];
 
-export function ExportMap({ locale }: Props) {
-  const C = COPY[locale];
+const FEATURE_ICONS = ['spark', 'globe', 'ship', 'check'] as const;
+
+export function ExportMap({ locale, content }: Props) {
   const ox = 803;
   const oy = 213; // Vietnam centroid
 
@@ -125,7 +127,7 @@ export function ExportMap({ locale }: Props) {
                   fill="rgba(255,255,255,0.9)"
                   style={{ paintOrder: 'stroke', stroke: 'rgba(10,43,87,0.9)', strokeWidth: 3 }}
                 >
-                  {C.markets[d.key]}
+                  {content.markets[d.key] ?? ''}
                 </text>
               </g>
             );
@@ -181,101 +183,26 @@ export function ExportMap({ locale }: Props) {
       {/* Overlay glass card */}
       <div className="va-export-overlay">
         <div className="va-export-info">
-          <div className="va-eyebrow">{C.capEy}</div>
-          <h2>{C.capH}</h2>
-          <p>{C.capP}</p>
+          <div className="va-eyebrow">{content.eyebrow}</div>
+          <h2>{content.title}</h2>
+          <p>{content.sub}</p>
           <div className="va-export-features">
-            <div className="va-export-feature">
-              <div className="va-ef-i">
-                <Icon name="spark" size={16} />
+            {content.features.map((f, i) => (
+              <div key={i} className="va-export-feature">
+                <div className="va-ef-i">
+                  <Icon name={FEATURE_ICONS[i] ?? 'check'} size={16} />
+                </div>
+                <div>
+                  <b>{f.title}</b>
+                  <span>{f.body}</span>
+                </div>
               </div>
-              <div>
-                <b>
-                  {locale === 'zh'
-                    ? '优质碳酸钙'
-                    : locale === 'en'
-                      ? 'Premium Quality'
-                      : 'Chất lượng cao cấp'}
-                </b>
-                <span>
-                  {locale === 'zh'
-                    ? '白度 98%+,CaCO₃ 98.5%+'
-                    : locale === 'en'
-                      ? 'Whiteness 98%+, CaCO₃ 98.5%+'
-                      : 'Độ trắng 98%+, CaCO₃ 98.5%+'}
-                </span>
-              </div>
-            </div>
-            <div className="va-export-feature">
-              <div className="va-ef-i">
-                <Icon name="globe" size={16} />
-              </div>
-              <div>
-                <b>
-                  {locale === 'zh' ? '全球覆盖' : locale === 'en' ? 'Global Reach' : 'Tầm phủ toàn cầu'}
-                </b>
-                <span>
-                  {locale === 'zh'
-                    ? '12个国家 · 8+核心市场'
-                    : locale === 'en'
-                      ? '12 countries · 8+ key markets'
-                      : '12 quốc gia · 8+ thị trường'}
-                </span>
-              </div>
-            </div>
-            <div className="va-export-feature">
-              <div className="va-ef-i">
-                <Icon name="ship" size={16} />
-              </div>
-              <div>
-                <b>
-                  {locale === 'zh'
-                    ? '可靠物流'
-                    : locale === 'en'
-                      ? 'Reliable Logistics'
-                      : 'Logistics tin cậy'}
-                </b>
-                <span>
-                  {locale === 'zh'
-                    ? 'FOB窗碧港和海防港'
-                    : locale === 'en'
-                      ? 'FOB Cua Lo & Hai Phong ports'
-                      : 'FOB cảng Cửa Lò & Hải Phòng'}
-                </span>
-              </div>
-            </div>
-            <div className="va-export-feature">
-              <div className="va-ef-i">
-                <Icon name="check" size={16} />
-              </div>
-              <div>
-                <b>
-                  {locale === 'zh'
-                    ? '客户信任'
-                    : locale === 'en'
-                      ? 'Customer Trust'
-                      : 'Niềm tin khách hàng'}
-                </b>
-                <span>
-                  {locale === 'zh'
-                    ? '10年以上稳定合作'
-                    : locale === 'en'
-                      ? '10+ years long-term partners'
-                      : '10+ năm đối tác dài hạn'}
-                </span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className="va-map-caption">
-        {locale === 'zh'
-          ? '从我们的工厂到您的目的地 — 优质交付,信任建立。'
-          : locale === 'en'
-            ? 'From our factory to your destination — delivering quality, building trust.'
-            : 'Từ nhà máy của chúng tôi đến cảng của bạn — giao hàng chất lượng, xây dựng niềm tin.'}
-      </div>
+      <div className="va-map-caption">{content.mapCaption}</div>
     </div>
   );
 }

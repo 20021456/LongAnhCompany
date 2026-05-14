@@ -11,10 +11,11 @@
  * certifications, core values, stats, header/footer menus.
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { DEFAULT_ROLE_PERMISSIONS } from '../src/lib/permissions';
 import { COPY } from '../src/data/copy';
+import { homeDefaults, HOME_SECTION_KEYS } from '../src/lib/home-content';
 import { PRODUCTS } from '../src/data/products';
 import { JOBS } from '../src/data/jobs';
 import { NEWS } from '../src/data/news';
@@ -757,7 +758,7 @@ async function main() {
   }
   console.log('  ✓ menus (header + footer)');
 
-  // ─── 13. Pages + editable hero section ────────────────────────────────
+  // ─── 13. Pages + editable home sections ───────────────────────────────
   const homePage = await db.page.upsert({
     where: { key: 'home' },
     update: {},
@@ -770,27 +771,25 @@ async function main() {
       isPublished: true,
     },
   });
-  const heroLocale = (c: typeof vi) => ({
-    eyebrow: c.heroEy,
-    titleLine1: c.heroH[0],
-    titleLine2: c.heroH[1],
-    sub: c.heroSub,
-    ctaPrimary: c.ctaPrimary,
-    ctaSecondary: c.ctaGhost,
-  });
-  const heroContent = { vi: heroLocale(vi), en: heroLocale(en), zh: heroLocale(zh) };
-  await db.pageSection.upsert({
-    where: { pageId_sectionKey: { pageId: homePage.id, sectionKey: 'hero' } },
-    update: { content: heroContent },
-    create: {
-      pageId: homePage.id,
-      sectionKey: 'hero',
-      sectionType: 'hero',
-      content: heroContent,
-      sortOrder: 0,
-    },
-  });
-  console.log('  ✓ pages (home + hero section)');
+  for (const sectionKey of HOME_SECTION_KEYS) {
+    const content = {
+      vi: homeDefaults('vi')[sectionKey],
+      en: homeDefaults('en')[sectionKey],
+      zh: homeDefaults('zh')[sectionKey],
+    } as unknown as Prisma.InputJsonValue;
+    await db.pageSection.upsert({
+      where: { pageId_sectionKey: { pageId: homePage.id, sectionKey } },
+      update: { content },
+      create: {
+        pageId: homePage.id,
+        sectionKey,
+        sectionType: sectionKey,
+        content,
+        sortOrder: 0,
+      },
+    });
+  }
+  console.log(`  ✓ pages (home + ${HOME_SECTION_KEYS.length} sections)`);
 
   console.log('\n✅ Seed complete.');
 }

@@ -2,27 +2,25 @@
 
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
 import { requirePermission } from '@/lib/auth-helpers';
 import { recordAudit } from '@/lib/audit';
+import { HOME_SECTION_KEYS } from '@/lib/home-content';
 import { KNOWN_PAGES } from './known';
 
-const heroLocaleSchema = z.object({
-  eyebrow: z.string().default(''),
-  titleLine1: z.string().default(''),
-  titleLine2: z.string().default(''),
-  sub: z.string().default(''),
-  ctaPrimary: z.string().default(''),
-  ctaSecondary: z.string().default(''),
-});
+/**
+ * `sections` is a map of sectionKey → per-locale content JSON
+ * (`{ vi: {...}, en: {...}, zh: {...} }`). It is kept loosely typed here —
+ * the shape is owned by `@/lib/home-content` and the editor form.
+ */
+const localeContentSchema = z.record(z.string(), z.unknown());
+const sectionsSchema = z.record(
+  z.string(),
+  z.object({ vi: localeContentSchema, en: localeContentSchema, zh: localeContentSchema }),
+);
 
-const heroSchema = z.object({
-  vi: heroLocaleSchema,
-  en: heroLocaleSchema,
-  zh: heroLocaleSchema,
-});
-
-export type HeroInput = z.input<typeof heroSchema>;
+export type SectionsInput = z.input<typeof sectionsSchema>;
 
 const schema = z.object({
   key: z.string().min(1),
@@ -37,11 +35,13 @@ const schema = z.object({
   metaDescZh: z.string().optional(),
   ogImageUrl: z.string().optional(),
   isPublished: z.boolean().default(true),
-  hero: heroSchema.optional(),
+  sections: sectionsSchema.optional(),
 });
 
 export type PageInput = z.input<typeof schema>;
 export type ActionResult = { ok?: boolean; error?: string };
+
+const VALID_SECTION_KEYS = new Set<string>(HOME_SECTION_KEYS);
 
 export async function savePage(raw: PageInput): Promise<ActionResult> {
   const user = await requirePermission('pages.update');
@@ -77,18 +77,22 @@ export async function savePage(raw: PageInput): Promise<ActionResult> {
       create: { key: d.key, ...data },
     });
 
-    if (d.hero) {
-      await db.pageSection.upsert({
-        where: { pageId_sectionKey: { pageId: page.id, sectionKey: 'hero' } },
-        update: { content: d.hero, sectionType: 'hero', isVisible: true },
-        create: {
-          pageId: page.id,
-          sectionKey: 'hero',
-          sectionType: 'hero',
-          content: d.hero,
-          sortOrder: 0,
-        },
-      });
+    if (d.sections) {
+      for (const [sectionKey, raw] of Object.entries(d.sections)) {
+        if (!VALID_SECTION_KEYS.has(sectionKey)) continue;
+        const content = raw as unknown as Prisma.InputJsonValue;
+        await db.pageSection.upsert({
+          where: { pageId_sectionKey: { pageId: page.id, sectionKey } },
+          update: { content, isVisible: true },
+          create: {
+            pageId: page.id,
+            sectionKey,
+            sectionType: sectionKey,
+            content,
+            sortOrder: 0,
+          },
+        });
+      }
     }
 
     await recordAudit({

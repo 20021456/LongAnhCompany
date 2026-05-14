@@ -14,6 +14,8 @@ import { db } from '@/lib/db';
 import type { ProductDetail } from '@/data/products';
 import type { JobDetail } from '@/data/jobs';
 import type { NewsItem } from '@/data/news';
+import type { Locale } from '@/lib/i18n/config';
+import { homeDefaults, HOME_SECTION_KEYS, type HomeSectionsLocale } from '@/lib/home-content';
 
 type L3 = { vi: string; en: string; zh: string };
 
@@ -288,36 +290,28 @@ export async function getMenu(location: 'header' | 'footer'): Promise<MenuLink[]
 
 // ─── Pages / sections ─────────────────────────────────────────────────────
 
-export interface HeroContent {
-  eyebrow: string;
-  titleLine1: string;
-  titleLine2: string;
-  sub: string;
-  ctaPrimary: string;
-  ctaSecondary: string;
-}
-
 /**
- * Hero block of a page, read from the `page_sections` table. Returns null
- * when the page or its hero section has not been customised in the admin
- * yet — callers then fall back to the static COPY content.
+ * Editable content for every section of the home page. Each section is read
+ * from the `page_sections` table; sections that have not been customised in
+ * the admin fall back to the static COPY-derived defaults.
  */
-export async function getPageHero(pageKey: string, locale: string): Promise<HeroContent | null> {
-  const page = await db.page.findUnique({ where: { key: pageKey } });
-  if (!page) return null;
-  const section = await db.pageSection.findUnique({
-    where: { pageId_sectionKey: { pageId: page.id, sectionKey: 'hero' } },
+export async function getHomeSections(locale: Locale): Promise<HomeSectionsLocale> {
+  const out = homeDefaults(locale);
+  const page = await db.page.findUnique({
+    where: { key: 'home' },
+    include: { sections: true },
   });
-  if (!section || !section.isVisible) return null;
-  const byLocale = section.content as Record<string, Partial<HeroContent>> | null;
-  const c = byLocale?.[locale];
-  if (!c) return null;
-  return {
-    eyebrow: c.eyebrow ?? '',
-    titleLine1: c.titleLine1 ?? '',
-    titleLine2: c.titleLine2 ?? '',
-    sub: c.sub ?? '',
-    ctaPrimary: c.ctaPrimary ?? '',
-    ctaSecondary: c.ctaSecondary ?? '',
-  };
+  if (!page) return out;
+
+  const view = out as unknown as Record<string, Record<string, unknown>>;
+  for (const key of HOME_SECTION_KEYS) {
+    const section = page.sections.find((s) => s.sectionKey === key);
+    if (!section || !section.isVisible) continue;
+    const byLocale = section.content as Record<string, unknown> | null;
+    const c = byLocale?.[locale];
+    if (c && typeof c === 'object') {
+      view[key] = { ...view[key], ...(c as Record<string, unknown>) };
+    }
+  }
+  return out;
 }
