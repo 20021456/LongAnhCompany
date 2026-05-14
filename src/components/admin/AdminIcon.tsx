@@ -21,7 +21,22 @@ export type AdminIconName =
   | 'check'
   | 'logout'
   | 'box'
-  | 'activity';
+  | 'activity'
+  | 'grid'
+  | 'list'
+  | 'eye'
+  | 'edit'
+  | 'folder'
+  | 'upload'
+  | 'download'
+  | 'trash'
+  | 'x'
+  | 'refresh'
+  | 'more'
+  | 'copy'
+  | 'filter'
+  | 'star'
+  | 'layers';
 
 const ICONS: Record<AdminIconName, JSX.Element> = {
   home: <path d="M3 12l9-9 9 9M5 10v10h14V10" />,
@@ -53,7 +68,9 @@ const ICONS: Record<AdminIconName, JSX.Element> = {
       <path d="M22 19a5 5 0 0 0-5-5" />
     </>
   ),
-  chat: <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.6 9.6 0 0 1-3-.5L3 21l1.6-5A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z" />,
+  chat: (
+    <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.6 9.6 0 0 1-3-.5L3 21l1.6-5A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z" />
+  ),
   help: (
     <>
       <circle cx="12" cy="12" r="10" />
@@ -113,6 +130,69 @@ const ICONS: Record<AdminIconName, JSX.Element> = {
     </>
   ),
   activity: <path d="M22 12h-4l-3 9L9 3l-3 9H2" />,
+  grid: (
+    <>
+      <rect x="3" y="3" width="7" height="7" />
+      <rect x="14" y="3" width="7" height="7" />
+      <rect x="14" y="14" width="7" height="7" />
+      <rect x="3" y="14" width="7" height="7" />
+    </>
+  ),
+  list: <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />,
+  eye: (
+    <>
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <circle cx="12" cy="12" r="3" />
+    </>
+  ),
+  edit: (
+    <>
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z" />
+    </>
+  ),
+  folder: <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />,
+  upload: (
+    <>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+    </>
+  ),
+  download: (
+    <>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+    </>
+  ),
+  trash: (
+    <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+  ),
+  x: <path d="M18 6L6 18M6 6l12 12" />,
+  refresh: (
+    <>
+      <path d="M23 4v6h-6M1 20v-6h6" />
+      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+    </>
+  ),
+  more: (
+    <>
+      <circle cx="12" cy="12" r="1" />
+      <circle cx="12" cy="5" r="1" />
+      <circle cx="12" cy="19" r="1" />
+    </>
+  ),
+  copy: (
+    <>
+      <rect x="9" y="9" width="12" height="12" rx="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </>
+  ),
+  filter: <path d="M22 3H2l8 9.46V19l4 2v-8.54z" />,
+  star: <path d="M12 2l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" />,
+  layers: (
+    <>
+      <path d="M12 2l10 6-10 6L2 8z" />
+      <path d="M2 17l10 6 10-6M2 12l10 6 10-6" />
+    </>
+  ),
 };
 
 interface Props extends Omit<SVGProps<SVGSVGElement>, 'name'> {

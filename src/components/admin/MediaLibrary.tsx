@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AdminIcon } from './AdminIcon';
 import { Field, FieldRow } from './FormBits';
@@ -18,10 +18,29 @@ export interface MediaItem {
   altVi: string;
   altEn: string;
   altZh: string;
+  folderId: string | null;
+  folderName: string | null;
+  width: number | null;
+  height: number | null;
+  size: number | null;
+  mimeType: string | null;
+  uploadedByName: string | null;
   createdAt: string;
 }
 
-function AddForm({ onDone }: { onDone: () => void }) {
+export interface MediaFolderOption {
+  id: string;
+  name: string;
+}
+
+function fmtSize(bytes: number | null): string {
+  if (!bytes) return '—';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function AddPanel({ onDone }: { onDone: () => void }) {
   const [url, setUrl] = useState('');
   const [filename, setFilename] = useState('');
   const [altVi, setAltVi] = useState('');
@@ -91,7 +110,7 @@ function AddForm({ onDone }: { onDone: () => void }) {
   );
 }
 
-function MediaCard({ item }: { item: MediaItem }) {
+function DetailPanel({ item }: { item: MediaItem }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [filename, setFilename] = useState(item.filename);
@@ -100,6 +119,18 @@ function MediaCard({ item }: { item: MediaItem }) {
   const [altZh, setAltZh] = useState(item.altZh);
   const [busy, setBusy] = useState(false);
   const [confirming, setConfirming] = useState(false);
+
+  // Reset local edit state whenever a different image is selected.
+  const [trackedId, setTrackedId] = useState(item.id);
+  if (trackedId !== item.id) {
+    setTrackedId(item.id);
+    setEditing(false);
+    setConfirming(false);
+    setFilename(item.filename);
+    setAltVi(item.altVi);
+    setAltEn(item.altEn);
+    setAltZh(item.altZh);
+  }
 
   async function onSave() {
     setBusy(true);
@@ -126,143 +157,271 @@ function MediaCard({ item }: { item: MediaItem }) {
   }
 
   return (
-    <div
-      style={{
-        border: '1px solid var(--ad-line)',
-        borderRadius: 8,
-        overflow: 'hidden',
-        background: 'var(--ad-surface)',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <div style={{ aspectRatio: '4 / 3', background: 'var(--ad-line-soft)', overflow: 'hidden' }}>
+    <div className="mb-detail">
+      <div className="preview">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={item.url}
-          alt={item.altVi || item.filename}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        />
+        <img src={item.url} alt={item.altVi || item.filename} />
       </div>
-      <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
+      <div className="body">
+        <div>
+          <div style={{ fontWeight: 600, fontSize: 13.5, wordBreak: 'break-all' }}>
+            {item.filename}
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--ad-text-mute)', marginTop: 2 }}>
+            {item.width && item.height ? `${item.width}×${item.height} · ` : ''}
+            {fmtSize(item.size)}
+          </div>
+        </div>
+
+        <dl className="mb-info" style={{ margin: 0 }}>
+          <dt>Đường dẫn</dt>
+          <dd style={{ wordBreak: 'break-all' }}>
+            <span className="ad-code">{item.url}</span>
+          </dd>
+          <dt>Upload bởi</dt>
+          <dd>
+            {item.uploadedByName ?? '—'} · {new Date(item.createdAt).toLocaleDateString('vi-VN')}
+          </dd>
+          <dt>Folder</dt>
+          <dd>{item.folderName ?? 'Chưa phân loại'}</dd>
+        </dl>
+
         {editing ? (
           <>
-            <input
-              className="ad-input"
-              value={filename}
-              onChange={(e) => setFilename(e.target.value)}
-              placeholder="Tên hiển thị"
-            />
-            <input
-              className="ad-input"
-              value={altVi}
-              onChange={(e) => setAltVi(e.target.value)}
-              placeholder="Alt (VI)"
-            />
-            <input
-              className="ad-input"
-              value={altEn}
-              onChange={(e) => setAltEn(e.target.value)}
-              placeholder="Alt (EN)"
-            />
-            <input
-              className="ad-input"
-              value={altZh}
-              onChange={(e) => setAltZh(e.target.value)}
-              placeholder="Alt (ZH)"
-            />
-            <div style={{ display: 'flex', gap: 6 }}>
-              <button type="button" className="ad-btn sm primary" disabled={busy} onClick={onSave}>
-                {busy ? '…' : 'Lưu'}
-              </button>
-              <button
-                type="button"
-                className="ad-btn sm ghost"
-                disabled={busy}
-                onClick={() => setEditing(false)}
-              >
-                Huỷ
-              </button>
-            </div>
+            <Field label="Tên hiển thị" required>
+              <input
+                className="ad-input"
+                value={filename}
+                onChange={(e) => setFilename(e.target.value)}
+              />
+            </Field>
+            <Field label="Alt text (VI)" help="Mô tả ảnh cho SEO & screen readers.">
+              <input
+                className="ad-input"
+                value={altVi}
+                onChange={(e) => setAltVi(e.target.value)}
+              />
+            </Field>
+            <Field label="Alt text (EN)">
+              <input
+                className="ad-input"
+                value={altEn}
+                onChange={(e) => setAltEn(e.target.value)}
+              />
+            </Field>
+            <Field label="Alt text (ZH)">
+              <input
+                className="ad-input"
+                value={altZh}
+                onChange={(e) => setAltZh(e.target.value)}
+              />
+            </Field>
           </>
         ) : (
+          <dl className="mb-info" style={{ margin: 0 }}>
+            <dt>Alt text (VI)</dt>
+            <dd>{item.altVi || <span style={{ color: 'var(--ad-text-mute)' }}>chưa có</span>}</dd>
+            <dt>Alt text (EN)</dt>
+            <dd>{item.altEn || <span style={{ color: 'var(--ad-text-mute)' }}>chưa có</span>}</dd>
+            <dt>Alt text (ZH)</dt>
+            <dd>{item.altZh || <span style={{ color: 'var(--ad-text-mute)' }}>chưa có</span>}</dd>
+          </dl>
+        )}
+      </div>
+      <div className="actions">
+        {editing ? (
           <>
-            <div style={{ fontWeight: 600, fontSize: 13, wordBreak: 'break-word' }}>
-              {item.filename}
-            </div>
-            <div
-              style={{
-                fontSize: 11.5,
-                color: 'var(--ad-text-mute)',
-                wordBreak: 'break-all',
-              }}
+            <button type="button" className="ad-btn sm primary" disabled={busy} onClick={onSave}>
+              <AdminIcon name="check" size={12} /> {busy ? 'Đang lưu…' : 'Lưu'}
+            </button>
+            <button
+              type="button"
+              className="ad-btn sm ghost"
+              disabled={busy}
+              onClick={() => setEditing(false)}
             >
-              {item.url}
-            </div>
-            {item.altVi ? (
-              <div style={{ fontSize: 12, color: 'var(--ad-text-soft)' }}>{item.altVi}</div>
-            ) : null}
-            <div style={{ display: 'flex', gap: 6, marginTop: 'auto', paddingTop: 6 }}>
-              <button type="button" className="ad-btn sm" onClick={() => setEditing(true)}>
-                <AdminIcon name="file" size={13} /> Sửa
-              </button>
-              {confirming ? (
-                <>
-                  <button
-                    type="button"
-                    className="ad-btn sm danger"
-                    disabled={busy}
-                    onClick={onDelete}
-                  >
-                    {busy ? '…' : 'Xác nhận'}
-                  </button>
-                  <button
-                    type="button"
-                    className="ad-btn sm ghost"
-                    onClick={() => setConfirming(false)}
-                  >
-                    Huỷ
-                  </button>
-                </>
-              ) : (
-                <button
-                  type="button"
-                  className="ad-btn sm danger"
-                  onClick={() => setConfirming(true)}
-                >
-                  <AdminIcon name="logout" size={13} /> Xoá
-                </button>
-              )}
-            </div>
+              Huỷ
+            </button>
           </>
+        ) : (
+          <button type="button" className="ad-btn sm" onClick={() => setEditing(true)}>
+            <AdminIcon name="edit" size={12} /> Sửa thông tin
+          </button>
+        )}
+        <a className="ad-btn sm" href={item.url} target="_blank" rel="noreferrer" title="Mở ảnh">
+          <AdminIcon name="eye" size={12} />
+        </a>
+        <div style={{ flex: 1 }} />
+        {confirming ? (
+          <>
+            <button type="button" className="ad-btn sm danger" disabled={busy} onClick={onDelete}>
+              {busy ? '…' : 'Xác nhận xoá'}
+            </button>
+            <button type="button" className="ad-btn sm ghost" onClick={() => setConfirming(false)}>
+              Huỷ
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            className="ad-btn sm danger"
+            onClick={() => setConfirming(true)}
+            title="Xoá ảnh"
+          >
+            <AdminIcon name="trash" size={12} />
+          </button>
         )}
       </div>
     </div>
   );
 }
 
-export function MediaLibrary({ items, canUpload }: { items: MediaItem[]; canUpload: boolean }) {
+export function MediaLibrary({
+  items,
+  folders,
+  canUpload,
+}: {
+  items: MediaItem[];
+  folders: MediaFolderOption[];
+  canUpload: boolean;
+}) {
   const router = useRouter();
+  const [folder, setFolder] = useState<string>('all');
+  const [query, setQuery] = useState('');
+  const [selectedId, setSelectedId] = useState<string | null>(items[0]?.id ?? null);
+  const [showAdd, setShowAdd] = useState(false);
+
+  const counts = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const it of items) {
+      const key = it.folderId ?? 'none';
+      map[key] = (map[key] ?? 0) + 1;
+    }
+    return map;
+  }, [items]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return items.filter((it) => {
+      if (folder === 'none' && it.folderId !== null) return false;
+      if (folder !== 'all' && folder !== 'none' && it.folderId !== folder) return false;
+      if (q && !it.filename.toLowerCase().includes(q) && !it.altVi.toLowerCase().includes(q))
+        return false;
+      return true;
+    });
+  }, [items, folder, query]);
+
+  const selected = filtered.find((i) => i.id === selectedId) ?? filtered[0] ?? null;
 
   return (
     <>
-      {canUpload ? <AddForm onDone={() => router.refresh()} /> : null}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 14 }}>
+        {canUpload ? (
+          <button type="button" className="ad-btn primary" onClick={() => setShowAdd((v) => !v)}>
+            <AdminIcon name="upload" size={15} />
+            {showAdd ? 'Đóng' : 'Thêm ảnh'}
+          </button>
+        ) : null}
+      </div>
+
+      {canUpload && showAdd ? (
+        <AddPanel
+          onDone={() => {
+            setShowAdd(false);
+            router.refresh();
+          }}
+        />
+      ) : null}
 
       {items.length === 0 ? (
         <div className="ad-empty">
-          Thư viện trống. {canUpload ? 'Thêm ảnh đầu tiên ở khung phía trên.' : ''}
+          Thư viện trống. {canUpload ? 'Bấm “Thêm ảnh” ở trên để đăng ký ảnh đầu tiên.' : ''}
         </div>
       ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-            gap: 14,
-          }}
-        >
-          {items.map((it) => (
-            <MediaCard key={it.id} item={it} />
-          ))}
+        <div className="mb-layout">
+          <div className="mb-folders">
+            <h4>Folders</h4>
+            <button
+              type="button"
+              className={'mb-folder ' + (folder === 'all' ? 'on' : '')}
+              onClick={() => setFolder('all')}
+            >
+              <AdminIcon name="image" size={14} />
+              <span>Tất cả</span>
+              <span className="count">{items.length}</span>
+            </button>
+            {folders.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                className={'mb-folder ' + (folder === f.id ? 'on' : '')}
+                onClick={() => setFolder(f.id)}
+              >
+                <AdminIcon name="folder" size={14} />
+                <span>{f.name}</span>
+                <span className="count">{counts[f.id] ?? 0}</span>
+              </button>
+            ))}
+            {counts['none'] ? (
+              <button
+                type="button"
+                className={'mb-folder ' + (folder === 'none' ? 'on' : '')}
+                onClick={() => setFolder('none')}
+              >
+                <AdminIcon name="folder" size={14} />
+                <span>Chưa phân loại</span>
+                <span className="count">{counts['none']}</span>
+              </button>
+            ) : null}
+          </div>
+
+          <div className="mb-main">
+            <div className="ad-toolbar" style={{ background: '#fff' }}>
+              <div className="ad-search-box" style={{ width: 240 }}>
+                <AdminIcon name="search" size={14} />
+                <input
+                  className="ad-input"
+                  placeholder="Tìm theo tên, alt…"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+              </div>
+              <div className="grow" />
+              <span style={{ fontSize: 12, color: 'var(--ad-text-mute)' }}>
+                {filtered.length} ảnh
+              </span>
+            </div>
+            {filtered.length === 0 ? (
+              <div className="mb-empty">Không có ảnh nào khớp bộ lọc.</div>
+            ) : (
+              <div className="mb-grid">
+                {filtered.map((it) => (
+                  <button
+                    key={it.id}
+                    type="button"
+                    className={'mb-tile ' + (selected?.id === it.id ? 'sel' : '')}
+                    onClick={() => setSelectedId(it.id)}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={it.url} alt={it.altVi || it.filename} />
+                    {it.width && it.height ? (
+                      <div className="meta">
+                        {it.width}×{it.height}
+                      </div>
+                    ) : null}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {selected ? (
+            <DetailPanel item={selected} />
+          ) : (
+            <div className="mb-detail">
+              <div className="mb-empty">Chọn một ảnh để xem chi tiết.</div>
+            </div>
+          )}
         </div>
       )}
     </>
