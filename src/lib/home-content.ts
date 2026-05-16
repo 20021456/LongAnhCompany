@@ -334,7 +334,13 @@ const MAP_CAPTION: Record<Locale, string> = {
 
 /** Build the fallback section content for one locale from the static COPY. */
 export function homeDefaults(locale: Locale): HomeSectionsLocale {
-  const C = COPY[locale] as Record<string, unknown>;
+  // Defensive fallback — during hot-reload races or if `locale` is briefly
+  // undefined/unknown, fall back to the Vietnamese COPY rather than throwing
+  // "Cannot read properties of undefined". A throw in this Server Component
+  // would leave the SSR pipeline with no HTML and the browser would later
+  // hydrate a fresh RSC payload against the stale error fallback HTML — a
+  // classic "Hydration failed" symptom.
+  const C = (COPY[locale] ?? COPY.vi ?? {}) as Record<string, unknown>;
   const heroH = (C.heroH as string[] | undefined) ?? ['', ''];
   const statVals = (C.statVals as string[] | undefined) ?? [];
   const statLabels = (C.statLabels as string[] | undefined) ?? [];

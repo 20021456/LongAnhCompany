@@ -29,9 +29,10 @@ export const metadata: Metadata = {
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi" className={`${inter.variable} ${fraunces.variable}`}>
-      {/* suppressHydrationWarning: password managers / browser extensions
-          inject attributes into <body> and form inputs before hydration */}
+    // `suppressHydrationWarning` on <html> covers attributes injected by dark-
+    // mode / theme extensions (Dark Reader, color-scheme, etc.). The same on
+    // <body> covers password-manager / autofill probes on form inputs.
+    <html lang="vi" className={`${inter.variable} ${fraunces.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>{children}</body>
     </html>
   );
