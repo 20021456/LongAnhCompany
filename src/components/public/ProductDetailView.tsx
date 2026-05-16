@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { Locale } from '@/lib/i18n/config';
 import type { ProductDetail } from '@/data/products';
 import { Icon, type IconName } from '@/components/ui/Icon';
+import { fmtNumberVn } from '@/lib/format';
 
 interface Props {
   locale: Locale;
@@ -125,10 +126,22 @@ const SPEC_LABELS: Record<string, Record<Locale, string>> = {
   finish: { vi: 'Hoàn thiện', en: 'Finish', zh: '表面处理' },
 };
 
+function fmtPriceUsd(n: number) {
+  // Manual thousands grouping with comma, mirrors en-US numbers without
+  // depending on Intl (which differs between Node ICU and browser).
+  const s = String(Math.abs(Math.trunc(n)));
+  let out = '';
+  for (let i = 0; i < s.length; i++) {
+    if (i > 0 && (s.length - i) % 3 === 0) out += ',';
+    out += s[i];
+  }
+  return (n < 0 ? '-' : '') + out;
+}
+
 function fmtPrice(vnd: number, lang: Locale) {
-  if (lang === 'en') return '$' + Math.round(vnd / 25000).toLocaleString('en-US');
-  if (lang === 'zh') return '¥' + Math.round(vnd / 3500).toLocaleString('en-US');
-  return new Intl.NumberFormat('vi-VN').format(vnd) + ' ₫';
+  if (lang === 'en') return '$' + fmtPriceUsd(Math.round(vnd / 25000));
+  if (lang === 'zh') return '¥' + fmtPriceUsd(Math.round(vnd / 3500));
+  return fmtNumberVn(vnd) + ' ₫';
 }
 
 /** Variant labels may be a plain string ('3 µm') or an i18n object ({ vi, en, zh }). */
@@ -204,11 +217,11 @@ export function ProductDetailView({ locale, product, related }: Props) {
                 </span>
                 <span className="sep">|</span>
                 <span>
-                  <b>{(120 + parseInt(product.code.slice(2)) * 47).toLocaleString()}</b> {t.soldCount}
+                  <b>{fmtNumberVn(120 + parseInt(product.code.slice(2)) * 47)}</b> {t.soldCount}
                 </span>
                 <span className="sep">|</span>
                 <span>
-                  <b>{totalStock.toLocaleString()}</b> {product.unit[locale]} {t.stockUnit}
+                  <b>{fmtNumberVn(totalStock)}</b> {product.unit[locale]} {t.stockUnit}
                 </span>
               </div>
 
@@ -238,7 +251,7 @@ export function ProductDetailView({ locale, product, related }: Props) {
                     </span>
                   </div>
                   <div className={'pd-variants-stock' + (v.stock < 200 ? ' low' : '')}>
-                    {v.stock.toLocaleString()} {product.unit[locale]} {t.available}
+                    {fmtNumberVn(v.stock)} {product.unit[locale]} {t.available}
                   </div>
                 </div>
                 <div className="pd-variants-grid">
@@ -296,7 +309,7 @@ export function ProductDetailView({ locale, product, related }: Props) {
                   </button>
                 </div>
                 <div className="pd-qty-stock">
-                  <b>{v.stock.toLocaleString()}</b> {product.unit[locale]} {t.available}
+                  <b>{fmtNumberVn(v.stock)}</b> {product.unit[locale]} {t.available}
                 </div>
               </div>
 

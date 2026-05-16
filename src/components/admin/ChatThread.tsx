@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AdminIcon } from './AdminIcon';
+import { fmtDateTimeVn } from '@/lib/format';
 import {
   sendAgentMessage,
   setSessionStatus,
@@ -144,8 +145,7 @@ export function ChatThread({
                       textAlign: isAgent ? 'right' : 'left',
                     }}
                   >
-                    {SENDER_LABEL[m.senderType] ?? m.senderType} ·{' '}
-                    {new Date(m.createdAt).toLocaleString('vi-VN')}
+                    {SENDER_LABEL[m.senderType] ?? m.senderType} · {fmtDateTimeVn(m.createdAt)}
                   </div>
                   <div
                     style={{

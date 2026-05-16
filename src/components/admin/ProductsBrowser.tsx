@@ -1,9 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { AdminIcon } from './AdminIcon';
 import { DeleteButton } from './DeleteButton';
+import { fmtDateVn } from '@/lib/format';
 
 export interface ProductRow {
   id: string;
@@ -19,13 +20,28 @@ export interface ProductRow {
   updatedAt: string;
 }
 
-function timeAgo(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
-  const day = 86_400_000;
-  if (diff < day) return 'hôm nay';
-  if (diff < 2 * day) return 'hôm qua';
-  if (diff < 30 * day) return `${Math.floor(diff / day)} ngày trước`;
-  return new Date(iso).toLocaleDateString('vi-VN');
+/**
+ * Relative-time label. Renders the absolute date during SSR (deterministic),
+ * then upgrades to a "hôm nay / hôm qua / N ngày trước" label on the client
+ * after mount. Using `Date.now()` directly inside render would mismatch
+ * between the server's clock and the browser's clock and cause hydration
+ * errors.
+ */
+function useTimeAgo(iso: string): string {
+  const [label, setLabel] = useState(() => fmtDateVn(iso));
+  useEffect(() => {
+    const diff = Date.now() - new Date(iso).getTime();
+    const day = 86_400_000;
+    if (diff < day) setLabel('hôm nay');
+    else if (diff < 2 * day) setLabel('hôm qua');
+    else if (diff < 30 * day) setLabel(`${Math.floor(diff / day)} ngày trước`);
+    else setLabel(fmtDateVn(iso));
+  }, [iso]);
+  return label;
+}
+
+function TimeAgo({ iso }: { iso: string }) {
+  return <>{useTimeAgo(iso)}</>;
 }
 
 function StatusBadges({ active, featured }: { active: boolean; featured: boolean }) {
@@ -173,7 +189,7 @@ export function ProductsBrowser({
                 </div>
                 <div className="meta">
                   <span>{p.variantCount} quy cách</span>
-                  <span>{timeAgo(p.updatedAt)}</span>
+                  <span>{<TimeAgo iso={p.updatedAt} />}</span>
                 </div>
               </div>
             </Link>
@@ -215,7 +231,7 @@ export function ProductsBrowser({
                 <td>
                   <StatusBadges active={p.isActive} featured={p.isFeatured} />
                 </td>
-                <td style={{ color: 'var(--ad-text-soft)' }}>{timeAgo(p.updatedAt)}</td>
+                <td style={{ color: 'var(--ad-text-soft)' }}>{<TimeAgo iso={p.updatedAt} />}</td>
                 <td>
                   <div className="row-actions">
                     <Link href={`/admin/products/${p.code}`} className="ad-btn sm">

@@ -134,14 +134,14 @@ export function ExportMap({ locale, content }: Props) {
                     attributeName="r"
                     values="8;22;8"
                     dur="3.6s"
-                    begin={`${0.2 + i * 0.18}s`}
+                    begin={`${(0.2 + i * 0.18).toFixed(2)}s`}
                     repeatCount="indefinite"
                   />
                   <animate
                     attributeName="opacity"
                     values="0.55;0;0.55"
                     dur="3.6s"
-                    begin={`${0.2 + i * 0.18}s`}
+                    begin={`${(0.2 + i * 0.18).toFixed(2)}s`}
                     repeatCount="indefinite"
                   />
                 </circle>
@@ -151,14 +151,14 @@ export function ExportMap({ locale, content }: Props) {
                     attributeName="r"
                     values="5;12;5"
                     dur="2.2s"
-                    begin={`${0.3 + i * 0.2}s`}
+                    begin={`${(0.3 + i * 0.2).toFixed(2)}s`}
                     repeatCount="indefinite"
                   />
                   <animate
                     attributeName="opacity"
                     values="0.5;0;0.5"
                     dur="2.2s"
-                    begin={`${0.3 + i * 0.2}s`}
+                    begin={`${(0.3 + i * 0.2).toFixed(2)}s`}
                     repeatCount="indefinite"
                   />
                 </circle>

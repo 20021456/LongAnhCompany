@@ -3,14 +3,16 @@ import { requireAuth } from '@/lib/auth-helpers';
 import { db } from '@/lib/db';
 import { AdminIcon, type AdminIconName } from '@/components/admin/AdminIcon';
 import { ViewsChart } from '@/components/admin/ViewsChart';
+import { ClientNow } from '@/components/admin/ClientNow';
 
-const WEEKDAYS_VI = ['Chủ nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
-
-function formatDateVi(d = new Date()) {
-  const wd = WEEKDAYS_VI[d.getDay()];
-  const dd = String(d.getDate()).padStart(2, '0');
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  return `${wd}, ${dd}/${mm}/${d.getFullYear()}`;
+/**
+ * Manual HH:MM formatter — avoids Date#toLocaleTimeString whose output can
+ * differ subtly between Node's ICU and the browser's Intl implementation
+ * (e.g. "10:32" vs "10:32 SA"), a known source of hydration mismatches when
+ * the same Date is round-tripped through RSC.
+ */
+function fmtHM(d: Date): string {
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
 function initials(name: string | null | undefined, email: string) {
@@ -116,7 +118,7 @@ export default async function DashboardPage() {
   if (recentLeads[0]) {
     const t = recentLeads[0];
     acts.push({
-      time: t.createdAt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+      time: fmtHM(t.createdAt),
       av: '⚙',
       sys: true,
       who: 'Hệ thống',
@@ -131,10 +133,7 @@ export default async function DashboardPage() {
   if (recentArticles[0]) {
     const a = recentArticles[0];
     acts.push({
-      time: (a.publishedAt ?? a.createdAt).toLocaleTimeString('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
+      time: fmtHM(a.publishedAt ?? a.createdAt),
       av: initials(user.name, user.email),
       who: userName,
       body: (
@@ -191,7 +190,9 @@ export default async function DashboardPage() {
           <h1>
             Chào {userName} <span style={{ fontSize: 22 }}>👋</span>
           </h1>
-          <p>Hôm nay là {formatDateVi()} — đây là tổng quan tuần này.</p>
+          <p>
+            Hôm nay là <ClientNow fallback="…" /> — đây là tổng quan tuần này.
+          </p>
         </div>
       </div>
 
@@ -274,7 +275,12 @@ export default async function DashboardPage() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div className="title">{a.titleVi}</div>
                     <div className="meta">
-                      {(a.publishedAt ?? a.createdAt).toLocaleDateString('vi-VN')}
+                      {(() => {
+                        const d = a.publishedAt ?? a.createdAt;
+                        return `${String(d.getDate()).padStart(2, '0')}/${String(
+                          d.getMonth() + 1,
+                        ).padStart(2, '0')}/${d.getFullYear()}`;
+                      })()}
                     </div>
                   </div>
                 </Link>

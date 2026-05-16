@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AdminIcon } from './AdminIcon';
 import { Field, FieldRow } from './FormBits';
+import { fmtDateVn } from '@/lib/format';
 import {
   addMedia,
   updateMedia,
@@ -180,7 +181,7 @@ function DetailPanel({ item }: { item: MediaItem }) {
           </dd>
           <dt>Upload bởi</dt>
           <dd>
-            {item.uploadedByName ?? '—'} · {new Date(item.createdAt).toLocaleDateString('vi-VN')}
+            {item.uploadedByName ?? '—'} · {fmtDateVn(item.createdAt)}
           </dd>
           <dt>Folder</dt>
           <dd>{item.folderName ?? 'Chưa phân loại'}</dd>

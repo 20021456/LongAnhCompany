@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AdminIcon } from './AdminIcon';
 import { Field, FieldRow } from './FormBits';
 import { PERMISSIONS } from '@/lib/permissions';
+import { fmtDateVn } from '@/lib/format';
 import {
   createUser,
   updateUser,
@@ -286,9 +287,7 @@ function UserRowItem({
         </span>
       </td>
       <td style={{ fontSize: 12, color: 'var(--ad-text-mute)' }}>
-        {user.lastLoginAt
-          ? new Date(user.lastLoginAt).toLocaleDateString('vi-VN')
-          : 'chưa đăng nhập'}
+        {user.lastLoginAt ? fmtDateVn(user.lastLoginAt) : 'chưa đăng nhập'}
       </td>
       <td>
         <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import type { Locale } from '@/lib/i18n/config';
 import type { NewsItem } from '@/data/news';
 import { Icon } from '@/components/ui/Icon';
+import { fmtNumberVn } from '@/lib/format';
 
 interface Props {
   locale: Locale;
@@ -236,7 +237,7 @@ export function NewsBoard({ locale, items }: Props) {
                     <span>{fmtDate(featured.date, locale)}</span>
                     <span>·</span>
                     <span>
-                      {featured.views.toLocaleString()} {t.viewCount}
+                      {fmtNumberVn(featured.views)} {t.viewCount}
                     </span>
                     <span>·</span>
                     <span>
@@ -280,7 +281,7 @@ export function NewsBoard({ locale, items }: Props) {
                             <span>{fmtDate(n.date, locale)}</span>
                             <span>·</span>
                             <span>
-                              {n.views.toLocaleString()} {t.viewCount}
+                              {fmtNumberVn(n.views)} {t.viewCount}
                             </span>
                             <span>·</span>
                             <span>
@@ -437,7 +438,7 @@ export function NewsBoard({ locale, items }: Props) {
                                 <span>{fmtDate(n.date, locale)}</span>
                                 <span>·</span>
                                 <span>
-                                  {n.views.toLocaleString()} {t.viewCount}
+                                  {fmtNumberVn(n.views)} {t.viewCount}
                                 </span>
                               </div>
                             </div>
