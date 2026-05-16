@@ -56,10 +56,25 @@ export function ExportMap({ locale, content }: Props) {
             <stop offset="0%" stopColor="#F08023" stopOpacity="0.5" />
             <stop offset="100%" stopColor="#F08023" stopOpacity="0" />
           </radialGradient>
-          {/* Soft cyan glow used to light up every destination country */}
+          {/*
+           * Two-layer cyan glow used to light up every destination country.
+           *
+           * The static map already has a brighter "partner countries" path
+           * (VA_MAP_PARTNERS) that fills the original 5–8 markets in solid
+           * blue; dynamic pins can't paint country shapes (we have no per-
+           * country path data), so we stack a tight bright core on top of a
+           * large soft halo so every pin reads as "highlighted area" with
+           * roughly the same visual weight as the partner fill.
+           */}
           <radialGradient id="va-dest-glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#5B9BD5" stopOpacity="0.55" />
-            <stop offset="55%" stopColor="#5B9BD5" stopOpacity="0.18" />
+            <stop offset="0%" stopColor="#7BB3E6" stopOpacity="0.95" />
+            <stop offset="35%" stopColor="#5B9BD5" stopOpacity="0.55" />
+            <stop offset="70%" stopColor="#5B9BD5" stopOpacity="0.22" />
+            <stop offset="100%" stopColor="#5B9BD5" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="va-dest-core" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#AED4F2" stopOpacity="0.85" />
+            <stop offset="70%" stopColor="#5B9BD5" stopOpacity="0.35" />
             <stop offset="100%" stopColor="#5B9BD5" stopOpacity="0" />
           </radialGradient>
         </defs>
@@ -126,44 +141,46 @@ export function ExportMap({ locale, content }: Props) {
             const anchor = above ? 'middle' : pin.x > 750 ? 'start' : 'end';
             return (
               <g key={pin.slug} transform={`translate(${pin.x},${pin.y})`}>
-                {/* Static halo — lights up the destination country */}
-                <circle r="26" fill="url(#va-dest-glow)" />
+                {/* Big soft halo — paints the surrounding "country region" */}
+                <circle r="46" fill="url(#va-dest-glow)" />
+                {/* Tighter brighter core — mimics the partner-layer fill */}
+                <circle r="22" fill="url(#va-dest-core)" />
                 {/* Slow breathing outer ring */}
-                <circle r="6" fill="none" stroke="#5B9BD5" strokeWidth="1" opacity="0.55">
+                <circle r="6" fill="none" stroke="#7BB3E6" strokeWidth="1.2" opacity="0.7">
                   <animate
                     attributeName="r"
-                    values="8;22;8"
+                    values="10;28;10"
                     dur="3.6s"
                     begin={`${(0.2 + i * 0.18).toFixed(2)}s`}
                     repeatCount="indefinite"
                   />
                   <animate
                     attributeName="opacity"
-                    values="0.55;0;0.55"
+                    values="0.7;0;0.7"
                     dur="3.6s"
                     begin={`${(0.2 + i * 0.18).toFixed(2)}s`}
                     repeatCount="indefinite"
                   />
                 </circle>
                 {/* Faster small pulse closer to the dot */}
-                <circle r="6" fill="#5B9BD5" opacity="0.35">
+                <circle r="6" fill="#7BB3E6" opacity="0.45">
                   <animate
                     attributeName="r"
-                    values="5;12;5"
+                    values="6;14;6"
                     dur="2.2s"
                     begin={`${(0.3 + i * 0.2).toFixed(2)}s`}
                     repeatCount="indefinite"
                   />
                   <animate
                     attributeName="opacity"
-                    values="0.5;0;0.5"
+                    values="0.65;0;0.65"
                     dur="2.2s"
                     begin={`${(0.3 + i * 0.2).toFixed(2)}s`}
                     repeatCount="indefinite"
                   />
                 </circle>
                 {/* Center dot */}
-                <circle r="4" fill="#5B9BD5" stroke="#fff" strokeWidth="1.4" />
+                <circle r="4" fill="#fff" stroke="#5B9BD5" strokeWidth="2.2" />
                 <text
                   x={tx}
                   y={ty}
