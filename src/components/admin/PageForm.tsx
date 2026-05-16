@@ -7,6 +7,8 @@ import { AdminIcon } from './AdminIcon';
 import { AdminPageHead } from './AdminPageHead';
 import { Field } from './FormBits';
 import { LangTabs, EditorSection, StatusRadioGroup, type Lang } from './EditorChrome';
+import { PeImg } from './PeImg';
+import { PeTags } from './PeTags';
 import { savePage, type PageInput, type ActionResult } from '@/app/admin/(panel)/pages/actions';
 import { HOME_SECTION_KEYS, type HomeSections, type HomeSectionKey } from '@/lib/home-content';
 
@@ -225,38 +227,81 @@ export function PageForm({
                     />
                   </Field>
                 </div>
-                <div className="pe-row">
-                  <Field label="Ảnh hero (đường dẫn)">
-                    <input
-                      className="ad-input"
-                      value={C.hero.imageUrl}
-                      onChange={(e) => patch('hero', { imageUrl: e.target.value })}
-                      placeholder="/assets/hero-sw.png"
-                    />
-                  </Field>
-                  <Field
-                    label={`Mô tả ảnh — alt (${L})`}
-                    help="Quan trọng cho SEO & screen readers."
-                  >
-                    <input
-                      className="ad-input"
-                      value={C.hero.imageAlt}
-                      onChange={(e) => patch('hero', { imageAlt: e.target.value })}
-                    />
-                  </Field>
-                </div>
-                {C.hero.imageUrl ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src={C.hero.imageUrl}
-                    alt=""
+                <div
+                  style={{
+                    borderTop: '1px solid var(--ad-line-soft)',
+                    paddingTop: 16,
+                    marginTop: 4,
+                  }}
+                >
+                  <div
                     style={{
-                      width: 200,
-                      borderRadius: 6,
-                      border: '1px solid var(--ad-line)',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: 'var(--ad-text-mute)',
+                      letterSpacing: '0.05em',
+                      textTransform: 'uppercase',
+                      marginBottom: 10,
                     }}
-                  />
-                ) : null}
+                  >
+                    Ảnh hero
+                  </div>
+                  <div className="pe-imgrow">
+                    <PeImg
+                      src={C.hero.imageUrl}
+                      alt={C.hero.imageAlt}
+                      size={C.hero.imageUrl ? 'Ảnh hero' : undefined}
+                      onChange={(dataUrl) => patch('hero', { imageUrl: dataUrl })}
+                    />
+                    <div className="pe-stack">
+                      <Field
+                        label={`Mô tả ảnh — alt (${L})`}
+                        help="Quan trọng cho SEO & screen readers."
+                      >
+                        <input
+                          className="ad-input"
+                          value={C.hero.imageAlt}
+                          onChange={(e) => patch('hero', { imageAlt: e.target.value })}
+                        />
+                      </Field>
+                      <Field label="Đường dẫn / URL ảnh" help="Tự cập nhật khi bạn chọn file mới.">
+                        <input
+                          className="ad-input"
+                          value={C.hero.imageUrl}
+                          onChange={(e) => patch('hero', { imageUrl: e.target.value })}
+                          placeholder="/assets/hero-sw.png"
+                          spellCheck={false}
+                          style={{
+                            fontFamily: 'JetBrains Mono, ui-monospace, monospace',
+                            fontSize: 12,
+                          }}
+                        />
+                      </Field>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <button
+                          type="button"
+                          className="ad-btn sm"
+                          onClick={() => {
+                            // Trigger the same file picker the PeImg overlay uses
+                            (
+                              document.querySelector(
+                                '.imgwrap input[type="file"]',
+                              ) as HTMLInputElement | null
+                            )?.click();
+                          }}
+                        >
+                          <AdminIcon name="upload" size={13} /> Đổi ảnh
+                        </button>
+                        <button type="button" className="ad-btn sm" disabled>
+                          <AdminIcon name="image" size={13} /> Thư viện
+                        </button>
+                      </div>
+                      <div style={{ fontSize: 12, color: 'var(--ad-text-mute)' }}>
+                        Khuyến nghị: PNG nền trong suốt · tối thiểu 1200×900px · &lt; 500KB
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </EditorSection>
 
               {/* 02 — STATS */}
@@ -374,33 +419,78 @@ export function PageForm({
                     onChange={(e) => patch('about', { intro: e.target.value })}
                   />
                 </Field>
-                {C.about.cards.map((card, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      border: '1px solid var(--ad-line)',
-                      borderRadius: 8,
-                      padding: 12,
-                      background: '#fff',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 10,
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span className="ad-code">CARD {String(i + 1).padStart(2, '0')}</span>
-                      <div style={{ flex: 1 }} />
-                      <button
-                        type="button"
-                        className="ad-btn sm ghost danger"
-                        onClick={() =>
-                          patch('about', { cards: C.about.cards.filter((_, j) => j !== i) })
-                        }
-                      >
-                        <AdminIcon name="trash" size={13} />
-                      </button>
-                    </div>
-                    <div className="pe-row">
+                <div className="pe-card-grid">
+                  {C.about.cards.map((card, i) => (
+                    <div key={i} className="pe-card-edit">
+                      <div className="head">
+                        <span className="pill">CARD {String(i + 1).padStart(2, '0')}</span>
+                        <div className="name">{card.name || `Card ${i + 1}`}</div>
+                        <button type="button" title="Kéo" aria-label="Kéo để sắp xếp">
+                          <AdminIcon name="grid" size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          title="Xoá"
+                          aria-label="Xoá card"
+                          onClick={() =>
+                            patch('about', { cards: C.about.cards.filter((_, j) => j !== i) })
+                          }
+                        >
+                          <AdminIcon name="trash" size={13} />
+                        </button>
+                      </div>
+                      <div className="miniimg">
+                        {card.imageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={card.imageUrl} alt={card.name} />
+                        ) : (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              inset: 0,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'var(--ad-text-mute)',
+                              fontSize: 12,
+                            }}
+                          >
+                            (chưa có ảnh)
+                          </div>
+                        )}
+                        <input
+                          id={`about-card-file-${i}`}
+                          type="file"
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                              if (typeof reader.result === 'string') {
+                                const cards = [...C.about.cards];
+                                cards[i] = { ...cards[i], imageUrl: reader.result };
+                                patch('about', { cards });
+                              }
+                            };
+                            reader.readAsDataURL(file);
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => document.getElementById(`about-card-file-${i}`)?.click()}
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            background: 'transparent',
+                            border: 0,
+                            cursor: 'pointer',
+                          }}
+                          aria-label="Đổi ảnh card"
+                          title="Click để đổi ảnh"
+                        />
+                      </div>
                       <Field label={`Tên card (${L})`}>
                         <input
                           className="ad-input"
@@ -412,43 +502,33 @@ export function PageForm({
                           }}
                         />
                       </Field>
-                      <Field label="Ảnh nền (đường dẫn)">
-                        <input
-                          className="ad-input"
-                          value={card.imageUrl}
+                      <Field label={`Mô tả (${L})`}>
+                        <textarea
+                          className="ad-textarea"
+                          style={{ minHeight: 60 }}
+                          value={card.body}
                           onChange={(e) => {
                             const cards = [...C.about.cards];
-                            cards[i] = { ...cards[i], imageUrl: e.target.value };
+                            cards[i] = { ...cards[i], body: e.target.value };
                             patch('about', { cards });
                           }}
                         />
                       </Field>
                     </div>
-                    <Field label={`Mô tả (${L})`}>
-                      <textarea
-                        className="ad-textarea"
-                        value={card.body}
-                        onChange={(e) => {
-                          const cards = [...C.about.cards];
-                          cards[i] = { ...cards[i], body: e.target.value };
-                          patch('about', { cards });
-                        }}
-                      />
-                    </Field>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  className="ad-btn sm"
-                  style={{ width: 'fit-content' }}
-                  onClick={() =>
-                    patch('about', {
-                      cards: [...C.about.cards, { name: '', body: '', imageUrl: '' }],
-                    })
-                  }
-                >
-                  <AdminIcon name="plus" size={14} /> Thêm card
-                </button>
+                  ))}
+                  <button
+                    type="button"
+                    className="pe-add-card"
+                    onClick={() =>
+                      patch('about', {
+                        cards: [...C.about.cards, { name: '', body: '', imageUrl: '' }],
+                      })
+                    }
+                  >
+                    <AdminIcon name="plus" size={20} />
+                    Thêm card mới
+                  </button>
+                </div>
               </EditorSection>
 
               {/* 05 — CERTS */}
@@ -652,20 +732,12 @@ export function PageForm({
                   ))}
                 </div>
                 <Field
-                  label={`Danh sách thị trường — mỗi dòng một nước (${L})`}
-                  help="Hiển thị thành markers trên bản đồ."
+                  label={`Danh sách thị trường — markers trên map (${L})`}
+                  help="Nhập tên nước rồi Enter — hiện thành chip có thể xoá."
                 >
-                  <textarea
-                    className="ad-textarea"
-                    value={C.exportCap.markets.join('\n')}
-                    onChange={(e) =>
-                      patch('exportCap', {
-                        markets: e.target.value
-                          .split('\n')
-                          .map((s) => s.trim())
-                          .filter(Boolean),
-                      })
-                    }
+                  <PeTags
+                    tags={C.exportCap.markets}
+                    onChange={(markets) => patch('exportCap', { markets })}
                   />
                 </Field>
                 <Field label={`Caption dưới map (${L})`}>
@@ -798,26 +870,28 @@ export function PageForm({
               label="Ảnh chia sẻ (Open Graph)"
               help="Hiển thị khi share lên Facebook/Zalo · 1200×630px."
             >
-              <input
-                className="ad-input"
-                value={v.ogImageUrl}
-                onChange={(e) => set('ogImageUrl', e.target.value)}
-                placeholder="/assets/og-home.jpg"
-              />
+              <div className="pe-imgrow">
+                <PeImg
+                  src={v.ogImageUrl}
+                  alt="OG image"
+                  size={v.ogImageUrl ? '1200×630' : undefined}
+                  onChange={(dataUrl) => set('ogImageUrl', dataUrl)}
+                />
+                <div className="pe-stack">
+                  <input
+                    className="ad-input"
+                    value={v.ogImageUrl}
+                    onChange={(e) => set('ogImageUrl', e.target.value)}
+                    placeholder="/assets/og-home.jpg"
+                    spellCheck={false}
+                    style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
+                  />
+                  <div style={{ fontSize: 12, color: 'var(--ad-text-mute)' }}>
+                    Nếu để trống, hệ thống dùng ảnh hero của trang.
+                  </div>
+                </div>
+              </div>
             </Field>
-            {v.ogImageUrl ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
-                src={v.ogImageUrl}
-                alt=""
-                style={{
-                  width: '100%',
-                  maxWidth: 360,
-                  borderRadius: 6,
-                  border: '1px solid var(--ad-line)',
-                }}
-              />
-            ) : null}
             <div className="pe-google">
               <div className="lbl">Xem trước trên Google</div>
               <div className="url">
@@ -835,11 +909,17 @@ export function PageForm({
               <h3>Trạng thái</h3>
             </div>
             <div style={{ padding: 14 }}>
-              <StatusRadioGroup<'pub' | 'hide'>
+              <StatusRadioGroup<'draft' | 'pub' | 'sched' | 'hide'>
                 value={v.isPublished ? 'pub' : 'hide'}
-                onChange={(s) => set('isPublished', s === 'pub')}
+                onChange={(s) => set('isPublished', s === 'pub' || s === 'sched')}
                 options={[
+                  { value: 'draft', label: 'Nháp', hint: 'Chỉ admin thấy được' },
                   { value: 'pub', label: 'Đã xuất bản', hint: 'Hiển thị trên website' },
+                  {
+                    value: 'sched',
+                    label: 'Hẹn giờ',
+                    hint: 'Tự động xuất bản theo lịch (Phase 7)',
+                  },
                   { value: 'hide', label: 'Đã ẩn', hint: 'Không hiển thị, vẫn giữ dữ liệu' },
                 ]}
               />
