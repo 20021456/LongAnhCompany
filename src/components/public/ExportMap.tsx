@@ -56,6 +56,12 @@ export function ExportMap({ locale, content }: Props) {
             <stop offset="0%" stopColor="#F08023" stopOpacity="0.5" />
             <stop offset="100%" stopColor="#F08023" stopOpacity="0" />
           </radialGradient>
+          {/* Soft cyan glow used to light up every destination country */}
+          <radialGradient id="va-dest-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#5B9BD5" stopOpacity="0.55" />
+            <stop offset="55%" stopColor="#5B9BD5" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#5B9BD5" stopOpacity="0" />
+          </radialGradient>
         </defs>
 
         <rect width="1000" height="500" fill="url(#va-mapdots)" />
@@ -120,31 +126,52 @@ export function ExportMap({ locale, content }: Props) {
             const anchor = above ? 'middle' : pin.x > 750 ? 'start' : 'end';
             return (
               <g key={pin.slug} transform={`translate(${pin.x},${pin.y})`}>
-                <circle r="8" fill="#5B9BD5" opacity="0.18">
+                {/* Static halo — lights up the destination country */}
+                <circle r="26" fill="url(#va-dest-glow)" />
+                {/* Slow breathing outer ring */}
+                <circle r="6" fill="none" stroke="#5B9BD5" strokeWidth="1" opacity="0.55">
                   <animate
                     attributeName="r"
-                    values="6;14;6"
-                    dur="2.5s"
+                    values="8;22;8"
+                    dur="3.6s"
+                    begin={`${0.2 + i * 0.18}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values="0.55;0;0.55"
+                    dur="3.6s"
+                    begin={`${0.2 + i * 0.18}s`}
+                    repeatCount="indefinite"
+                  />
+                </circle>
+                {/* Faster small pulse closer to the dot */}
+                <circle r="6" fill="#5B9BD5" opacity="0.35">
+                  <animate
+                    attributeName="r"
+                    values="5;12;5"
+                    dur="2.2s"
                     begin={`${0.3 + i * 0.2}s`}
                     repeatCount="indefinite"
                   />
                   <animate
                     attributeName="opacity"
-                    values="0.4;0;0.4"
-                    dur="2.5s"
+                    values="0.5;0;0.5"
+                    dur="2.2s"
                     begin={`${0.3 + i * 0.2}s`}
                     repeatCount="indefinite"
                   />
                 </circle>
-                <circle r="3.5" fill="#5B9BD5" stroke="#fff" strokeWidth="1" />
+                {/* Center dot */}
+                <circle r="4" fill="#5B9BD5" stroke="#fff" strokeWidth="1.4" />
                 <text
                   x={tx}
                   y={ty}
                   textAnchor={anchor}
                   fontSize="11"
-                  fontWeight="500"
-                  fill="rgba(255,255,255,0.9)"
-                  style={{ paintOrder: 'stroke', stroke: 'rgba(10,43,87,0.9)', strokeWidth: 3 }}
+                  fontWeight="600"
+                  fill="rgba(255,255,255,0.95)"
+                  style={{ paintOrder: 'stroke', stroke: 'rgba(10,43,87,0.95)', strokeWidth: 3 }}
                 >
                   {pin.name[locale]}
                 </text>
