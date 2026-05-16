@@ -63,6 +63,21 @@ export const WORLD_PINS: WorldPin[] = [
   { slug: 'indonesia', x: 828, y: 273, name: { vi: 'Indonesia', en: 'Indonesia', zh: '印尼' } },
   { slug: 'australia', x: 905, y: 360, name: { vi: 'Úc', en: 'Australia', zh: '澳大利亚' } },
 
+  // ── Regions (continent-level markers — coarse centroids) ─────────────
+  {
+    slug: 'europe',
+    x: 495,
+    y: 125,
+    name: { vi: 'Châu Âu', en: 'Europe', zh: '欧洲' },
+    labelAbove: true,
+  },
+  {
+    slug: 'africa',
+    x: 545,
+    y: 290,
+    name: { vi: 'Châu Phi', en: 'Africa', zh: '非洲' },
+  },
+
   // ── Middle East ───────────────────────────────────────────────────────
   { slug: 'uae', x: 653, y: 183, name: { vi: 'UAE', en: 'UAE', zh: '阿联酋' } },
   {
