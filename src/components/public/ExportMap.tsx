@@ -77,6 +77,24 @@ export function ExportMap({ locale, content }: Props) {
             <stop offset="70%" stopColor="#5B9BD5" stopOpacity="0.35" />
             <stop offset="100%" stopColor="#5B9BD5" stopOpacity="0" />
           </radialGradient>
+          {/*
+           * Per-pin clip-path that lets us re-paint the world map's country
+           * shapes at a brighter fill — but only the parts inside a circle
+           * around each marker. Result: each pinned country lights up at
+           * its real outline, no per-country path data needed.
+           */}
+          <clipPath id="va-pin-region">
+            {pins.map((pin) => (
+              <circle key={pin.slug} cx={pin.x} cy={pin.y} r="34" />
+            ))}
+          </clipPath>
+          {/* Softer falloff mask — same circles but ~half the radius for the
+              inner saturated layer, so the highlight has a soft edge. */}
+          <clipPath id="va-pin-region-inner">
+            {pins.map((pin) => (
+              <circle key={pin.slug} cx={pin.x} cy={pin.y} r="18" />
+            ))}
+          </clipPath>
         </defs>
 
         <rect width="1000" height="500" fill="url(#va-mapdots)" />
@@ -99,6 +117,37 @@ export function ExportMap({ locale, content }: Props) {
           fillRule="evenodd"
           className="va-map-partners"
         />
+
+        {/*
+         * Dynamic partner highlight — re-render the world land path, but
+         * clip it to the union of small circles around each pin. The
+         * country outline is preserved (it's the same geometry as the
+         * dim background) but the fill+stroke are noticeably brighter, so
+         * every pinned country looks like it belongs to the partner layer.
+         */}
+        <g clipPath="url(#va-pin-region)">
+          <path
+            d={VA_MAP_BG}
+            fill="rgba(91,155,213,0.62)"
+            stroke="rgba(170,210,240,0.85)"
+            strokeWidth="0.8"
+            strokeLinejoin="round"
+            fillRule="evenodd"
+          />
+        </g>
+        {/* Saturated core within the same clip — adds the deeper blue
+            in the middle of each pinned country. */}
+        <g clipPath="url(#va-pin-region-inner)">
+          <path
+            d={VA_MAP_BG}
+            fill="rgba(123,179,230,0.78)"
+            stroke="rgba(200,225,245,0.95)"
+            strokeWidth="0.6"
+            strokeLinejoin="round"
+            fillRule="evenodd"
+          />
+        </g>
+
         <path
           d={VA_MAP_ORIGIN}
           fill="rgba(240,128,35,0.72)"
@@ -141,10 +190,10 @@ export function ExportMap({ locale, content }: Props) {
             const anchor = above ? 'middle' : pin.x > 750 ? 'start' : 'end';
             return (
               <g key={pin.slug} transform={`translate(${pin.x},${pin.y})`}>
-                {/* Big soft halo — paints the surrounding "country region" */}
-                <circle r="46" fill="url(#va-dest-glow)" />
-                {/* Tighter brighter core — mimics the partner-layer fill */}
-                <circle r="22" fill="url(#va-dest-core)" />
+                {/* Soft halo on top of the country-fill clip-mask */}
+                <circle r="28" fill="url(#va-dest-glow)" />
+                {/* Tighter brighter core anchored at the pin */}
+                <circle r="12" fill="url(#va-dest-core)" />
                 {/* Slow breathing outer ring */}
                 <circle r="6" fill="none" stroke="#7BB3E6" strokeWidth="1.2" opacity="0.7">
                   <animate
