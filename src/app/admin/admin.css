@@ -1670,3 +1670,509 @@
     position: static;
   }
 }
+/* ────────────────────────────────────────────────────────────────────────────
+ * Dashboard (/admin/dashboard)
+ * Ported from the LongAnhCorp prototype admin/index.html
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.dash-stat {
+  background: #fff;
+  border: 1px solid var(--ad-line);
+  border-radius: 10px;
+  padding: 18px 20px;
+  transition: 0.15s;
+}
+.dash-stat:hover {
+  border-color: var(--ad-primary);
+  background: #fbfbfc;
+}
+.dash-stat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ad-text-soft);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+.dash-stat-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.dash-stat-num {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--ad-text);
+}
+.dash-stat-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 8px;
+  padding: 2px 7px;
+  border-radius: 99px;
+}
+.dash-stat-delta.up {
+  background: var(--ad-success-soft);
+  color: #15803d;
+}
+.dash-stat-delta.flat {
+  background: var(--ad-line-soft);
+  color: var(--ad-text-soft);
+}
+
+.dash-2col {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.dash-chart {
+  height: 240px;
+  padding: 18px;
+}
+.dash-chart svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.dash-news-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--ad-line-soft);
+  font-size: 13px;
+  color: inherit;
+  text-decoration: none;
+}
+.dash-news-item:last-child {
+  border-bottom: 0;
+}
+.dash-news-item img {
+  width: 42px;
+  height: 32px;
+  border-radius: 5px;
+  object-fit: cover;
+  flex: none;
+  background: var(--ad-line-soft);
+}
+.dash-news-item .title {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dash-news-item .meta {
+  font-size: 11.5px;
+  color: var(--ad-text-mute);
+  margin-top: 2px;
+}
+.dash-news-item:hover {
+  background: #fbfbfc;
+}
+
+.dash-quick {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.dash-quick a {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid var(--ad-line);
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: inherit;
+  text-decoration: none;
+  transition: 0.15s;
+}
+.dash-quick a:hover {
+  border-color: var(--ad-primary);
+  background: var(--ad-primary-soft);
+  color: var(--ad-primary);
+}
+.dash-quick .ico {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.dash-act {
+  display: flex;
+  gap: 14px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--ad-line-soft);
+  align-items: flex-start;
+}
+.dash-act:last-child {
+  border-bottom: 0;
+}
+.dash-act-time {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11.5px;
+  color: var(--ad-text-mute);
+  flex: none;
+  min-width: 46px;
+  padding-top: 2px;
+}
+.dash-act-av {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--ad-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 10.5px;
+  flex: none;
+}
+.dash-act-av.sys {
+  background: var(--ad-line);
+  color: var(--ad-text-soft);
+}
+.dash-act-body {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ad-text);
+}
+.dash-act-body b {
+  font-weight: 600;
+}
+.dash-act-body a {
+  color: var(--ad-primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+.dash-act-body a:hover {
+  text-decoration: underline;
+}
+
+.dash-quick-heading {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ad-text-mute);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 4px 0 12px;
+}
+
+@media (max-width: 980px) {
+  .dash-stats,
+  .dash-quick {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .dash-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * Page Editor — sticky savebar, versions, autosave toast, helper classes
+ * Ported from page-edit-shell.jsx
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+.pe-savebar {
+  position: sticky;
+  top: 56px;
+  z-index: 10;
+  background: var(--ad-surface);
+  border: 1px solid var(--ad-line);
+  border-radius: var(--ad-radius);
+  margin-bottom: 18px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  box-shadow: var(--ad-shadow);
+}
+.pe-savebar .back {
+  color: var(--ad-text-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.pe-savebar .back:hover {
+  color: var(--ad-text);
+}
+.pe-savebar .title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 14.5px;
+  min-width: 0;
+}
+.pe-savebar .slug-chip {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--ad-text-soft);
+  background: var(--ad-line-soft);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+.pe-savebar .auto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ad-text-mute);
+  margin-left: auto;
+}
+.pe-savebar .auto::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ad-success);
+}
+
+.pe-versions .v {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ad-line-soft);
+  align-items: center;
+  font-size: 12.5px;
+}
+.pe-versions .v:last-child {
+  border-bottom: 0;
+}
+.pe-versions .v .when {
+  color: var(--ad-text-mute);
+  font-size: 11.5px;
+}
+.pe-versions .v .num {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 600;
+  color: var(--ad-primary);
+  flex: none;
+}
+.pe-versions .v button {
+  border: 0;
+  background: transparent;
+  color: var(--ad-text-mute);
+  cursor: pointer;
+  padding: 4px;
+}
+.pe-versions .v button:hover {
+  color: var(--ad-text);
+}
+
+.pe-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.pe-card-edit {
+  background: #fff;
+  border: 1px solid var(--ad-line);
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pe-card-edit .head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ad-line-soft);
+}
+.pe-card-edit .head .pill {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10.5px;
+  padding: 2px 7px;
+  background: var(--ad-primary-soft);
+  color: var(--ad-primary);
+  border-radius: 99px;
+  font-weight: 600;
+}
+.pe-card-edit .head .name {
+  font-weight: 600;
+  font-size: 13px;
+  flex: 1;
+}
+.pe-card-edit .head button {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ad-text-mute);
+  padding: 4px;
+}
+.pe-card-edit .head button:hover {
+  color: var(--ad-text);
+}
+.pe-card-edit .miniimg {
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--ad-line-soft);
+  cursor: pointer;
+  position: relative;
+}
+.pe-card-edit .miniimg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pe-add-card {
+  background: transparent;
+  border: 1.5px dashed var(--ad-line);
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--ad-text-mute);
+  font-size: 13px;
+  cursor: pointer;
+  min-height: 140px;
+}
+.pe-add-card:hover {
+  border-color: var(--ad-primary);
+  color: var(--ad-primary);
+  background: var(--ad-primary-soft);
+}
+
+.pe-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pe-list-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--ad-line);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.pe-list-item .num {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ad-text-soft);
+  background: var(--ad-line-soft);
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+.pe-list-item .actions {
+  display: flex;
+  gap: 4px;
+}
+.pe-list-item .actions button {
+  border: 0;
+  background: transparent;
+  color: var(--ad-text-mute);
+  cursor: pointer;
+  padding: 4px;
+}
+.pe-list-item .actions button:hover {
+  color: var(--ad-text);
+}
+
+.pe-imgrow {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.pe-imgrow .imgwrap {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--ad-line-soft);
+  border: 1.5px dashed var(--ad-line);
+}
+.pe-imgrow .imgwrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pe-imgrow .imgsize {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  right: 6px;
+  font-size: 10.5px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-align: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* Autosave toast (bottom right) */
+.pe-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ad-success);
+  color: #fff;
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--ad-shadow-md);
+  animation: pe-toast-in 0.25s ease-out;
+}
+@keyframes pe-toast-in {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.pe-toast.fading {
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+}

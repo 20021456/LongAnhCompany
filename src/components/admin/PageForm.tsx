@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { AdminIcon } from './AdminIcon';
 import { AdminPageHead } from './AdminPageHead';
 import { Field } from './FormBits';
@@ -53,14 +54,37 @@ export function PageForm({
   const [lang, setLang] = useState<Lang>('vi');
   const [state, setState] = useState<ActionResult | null>(null);
   const [busy, setBusy] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [toast, setToast] = useState<{ visible: boolean; fading: boolean }>({
+    visible: false,
+    fading: false,
+  });
 
-  const set = <K extends keyof PageFormValue>(k: K, val: PageFormValue[K]) =>
+  // Mock auto-save indicator: every 30s after a change, show a toast briefly.
+  // Phase 7 will swap this for a real debounced server action.
+  useEffect(() => {
+    if (!dirty) return;
+    const showAt = setTimeout(() => {
+      setToast({ visible: true, fading: false });
+      const fadeAt = setTimeout(() => setToast((t) => ({ ...t, fading: true })), 2500);
+      const hideAt = setTimeout(() => setToast({ visible: false, fading: false }), 2900);
+      return () => {
+        clearTimeout(fadeAt);
+        clearTimeout(hideAt);
+      };
+    }, 30_000);
+    return () => clearTimeout(showAt);
+  }, [dirty]);
+
+  const set = <K extends keyof PageFormValue>(k: K, val: PageFormValue[K]) => {
     setV((p) => ({ ...p, [k]: val }));
+    if (!dirty) setDirty(true);
+  };
 
   const fk = (base: string): keyof PageFormValue => (base + SUF[lang]) as keyof PageFormValue;
 
   /** Shallow-merge a patch into one section of the current locale. */
-  const patch = (key: HomeSectionKey, p: Record<string, unknown>) =>
+  const patch = (key: HomeSectionKey, p: Record<string, unknown>) => {
     setSections((s) => {
       if (!s) return s;
       const cur = s[lang][key] as unknown as Record<string, unknown>;
@@ -69,6 +93,8 @@ export function PageForm({
         [lang]: { ...s[lang], [key]: { ...cur, ...p } },
       } as HomeSections;
     });
+    if (!dirty) setDirty(true);
+  };
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -105,18 +131,33 @@ export function PageForm({
         crumbs={[{ label: 'Trang', href: '/admin/pages' }, { label }]}
         title={`Sửa trang — ${label}`}
         sub={path}
-        actions={
-          <>
-            <a href={path} target="_blank" rel="noreferrer" className="ad-btn">
-              <AdminIcon name="eye" size={14} /> Xem website
-            </a>
-            <button type="submit" className="ad-btn primary" disabled={busy}>
-              <AdminIcon name="check" size={15} />
-              {busy ? 'Đang lưu…' : 'Lưu & Xuất bản'}
-            </button>
-          </>
-        }
       />
+
+      {/* Sticky savebar — back link · title · slug chip · status · autosave · actions */}
+      <div className="pe-savebar">
+        <Link href="/admin/pages" className="back">
+          <AdminIcon name="chevron" size={14} /> Quay lại
+        </Link>
+        <div className="title">
+          <AdminIcon name="file" size={16} />
+          <span>{label}</span>
+          <code className="slug-chip">{path}</code>
+          <span className={'ad-badge ' + (v.isPublished ? 'pub' : 'draft')}>
+            <span className="dot" />
+            {v.isPublished ? 'Đã xuất bản' : 'Đã ẩn'}
+          </span>
+        </div>
+        <span className="auto" suppressHydrationWarning>
+          {dirty ? 'Có thay đổi chưa lưu' : 'Đã đồng bộ với cơ sở dữ liệu'}
+        </span>
+        <a href={path} target="_blank" rel="noreferrer" className="ad-btn sm">
+          <AdminIcon name="eye" size={12} /> Xem
+        </a>
+        <button type="submit" className="ad-btn primary sm" disabled={busy}>
+          <AdminIcon name="check" size={12} />
+          {busy ? 'Đang lưu…' : 'Lưu & Xuất bản'}
+        </button>
+      </div>
 
       {state?.error ? (
         <div className="lg-err" style={{ marginBottom: 16 }}>
@@ -821,6 +862,39 @@ export function PageForm({
 
           <div className="ad-card">
             <div className="ad-card-head">
+              <h3>Lịch sử thay đổi</h3>
+            </div>
+            <div className="pe-versions">
+              {[
+                { num: 'v12', when: '2 giờ trước · Admin', cur: true },
+                { num: 'v11', when: '1 ngày trước · Admin' },
+                { num: 'v10', when: '3 ngày trước · Admin' },
+                { num: 'v9', when: '1 tuần trước · Admin' },
+              ].map((vv) => (
+                <div key={vv.num} className="v">
+                  <span className="num">{vv.num}</span>
+                  <div style={{ flex: 1 }}>
+                    <div className="when">{vv.when}</div>
+                  </div>
+                  {vv.cur ? (
+                    <span className="ad-badge pub" style={{ fontSize: 10 }}>
+                      <span className="dot" /> Hiện tại
+                    </span>
+                  ) : (
+                    <button type="button" title="Khôi phục">
+                      <AdminIcon name="refresh" size={13} />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div style={{ padding: '8px 14px 12px', fontSize: 11.5, color: 'var(--ad-text-mute)' }}>
+              Phase 7 sẽ thay danh sách giả lập này bằng audit_logs thật.
+            </div>
+          </div>
+
+          <div className="ad-card">
+            <div className="ad-card-head">
               <h3>Thông tin</h3>
             </div>
             <div
@@ -845,6 +919,12 @@ export function PageForm({
           </div>
         </aside>
       </div>
+
+      {toast.visible ? (
+        <div className={'pe-toast ' + (toast.fading ? 'fading' : '')}>
+          <AdminIcon name="check" size={14} /> Đã lưu nháp tự động
+        </div>
+      ) : null}
 
       <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
         <button type="submit" className="ad-btn primary" disabled={busy}>
