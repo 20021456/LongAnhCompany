@@ -374,7 +374,20 @@ export function homeDefaults(locale: Locale): HomeSectionsLocale {
       title: (C.capH as string) ?? '',
       sub: (C.capP as string) ?? '',
       features: EXPORT_FEATURES[locale],
-      markets: ((C.markets as string[] | undefined) ?? []).slice(),
+      // Markets are stored as world-pin slugs (see src/lib/world-pins.ts) so
+      // the public ExportMap can render each pin at its real geographic
+      // coordinates regardless of the editing locale. Same set for all 3
+      // locales — the localised label comes from WORLD_PINS[slug].name[locale].
+      markets: [
+        'south-korea',
+        'japan',
+        'india',
+        'bangladesh',
+        'indonesia',
+        'uae',
+        'egypt',
+        'turkey',
+      ],
       mapCaption: MAP_CAPTION[locale],
     },
     contact: {

@@ -10,23 +10,7 @@ import { LangTabs, EditorSection, StatusRadioGroup, type Lang } from './EditorCh
 import { PeImg } from './PeImg';
 import { savePage, type PageInput, type ActionResult } from '@/app/admin/(panel)/pages/actions';
 import { HOME_SECTION_KEYS, type HomeSections, type HomeSectionKey } from '@/lib/home-content';
-
-/**
- * The export map in src/components/public/ExportMap.tsx has 8 fixed
- * destination pins (real geographic coordinates) keyed by index. Each
- * slot in `exportCap.markets[i]` is the label for pin `i` — clearing
- * a label hides that pin entirely on the public map.
- */
-const PIN_LOCATIONS: { region: string; defaultLabel: Record<Lang, string> }[] = [
-  { region: 'South Korea', defaultLabel: { vi: 'Hàn Quốc', en: 'South Korea', zh: '韩国' } },
-  { region: 'Japan', defaultLabel: { vi: 'Nhật Bản', en: 'Japan', zh: '日本' } },
-  { region: 'India', defaultLabel: { vi: 'Ấn Độ', en: 'India', zh: '印度' } },
-  { region: 'Bangladesh', defaultLabel: { vi: 'Bangladesh', en: 'Bangladesh', zh: '孟加拉' } },
-  { region: 'Indonesia', defaultLabel: { vi: 'Indonesia', en: 'Indonesia', zh: '印尼' } },
-  { region: 'UAE', defaultLabel: { vi: 'UAE', en: 'UAE', zh: '阿联酋' } },
-  { region: 'Egypt', defaultLabel: { vi: 'Ai Cập', en: 'Egypt', zh: '埃及' } },
-  { region: 'Türkiye', defaultLabel: { vi: 'Thổ Nhĩ Kỳ', en: 'Türkiye', zh: '土耳其' } },
-];
+import { WORLD_PINS, WORLD_PINS_BY_SLUG } from '@/lib/world-pins';
 
 export interface PageFormValue {
   key: string;
@@ -820,56 +804,103 @@ export function PageForm({
                       marginBottom: 10,
                     }}
                   >
-                    Markers trên map ({L})
+                    Quốc gia hiển thị trên map ({L})
                   </div>
-                  <div className="pe-list">
-                    {PIN_LOCATIONS.map((pin, i) => {
-                      const value = C.exportCap.markets[i] ?? '';
-                      return (
-                        <div key={i} className="pe-list-item">
-                          <span className="num">{String(i + 1).padStart(2, '0')}</span>
-                          <div
-                            style={{
-                              display: 'grid',
-                              gridTemplateColumns: '1fr 1fr',
-                              gap: 8,
-                              alignItems: 'center',
-                            }}
-                          >
-                            <div style={{ fontSize: 12.5, color: 'var(--ad-text-soft)' }}>
-                              <AdminIcon name="globe" size={11} /> Pin #{i + 1} —{' '}
-                              <span style={{ color: 'var(--ad-text-mute)' }}>{pin.region}</span>
-                            </div>
-                            <input
-                              className="ad-input"
-                              placeholder={`Tên hiển thị (vd: ${pin.defaultLabel[lang]})`}
-                              value={value}
-                              onChange={(e) => {
-                                const markets = [...C.exportCap.markets];
-                                while (markets.length <= i) markets.push('');
-                                markets[i] = e.target.value;
-                                patch('exportCap', { markets });
-                              }}
-                            />
-                          </div>
-                          <div className="actions">
-                            <button
-                              type="button"
-                              title="Xoá nhãn — pin sẽ ẩn khỏi map"
-                              aria-label={`Xoá pin ${i + 1}`}
-                              onClick={() => {
-                                const markets = [...C.exportCap.markets];
-                                markets[i] = '';
-                                patch('exportCap', { markets });
-                              }}
-                            >
-                              <AdminIcon name="x" size={13} />
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
+
+                  {/* Selected pins — drawn on the map in this order */}
+                  <div
+                    style={{
+                      background: '#fff',
+                      border: '1px solid var(--ad-line)',
+                      borderRadius: 8,
+                      padding: 12,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: 'var(--ad-text-mute)',
+                        marginBottom: 8,
+                        fontWeight: 500,
+                      }}
+                    >
+                      {C.exportCap.markets.length} quốc gia đang hiển thị · pin tự đặt đúng vị trí
+                      địa lý thật
+                    </div>
+                    {C.exportCap.markets.length === 0 ? (
+                      <div style={{ fontSize: 12.5, color: 'var(--ad-text-mute)', padding: 8 }}>
+                        Chưa có quốc gia nào — chọn từ danh sách bên dưới.
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {C.exportCap.markets.map((slug, i) => {
+                          const pin = WORLD_PINS_BY_SLUG[slug];
+                          const label = pin ? pin.name[lang] : slug;
+                          return (
+                            <span key={`${slug}-${i}`} className="ad-tag">
+                              {label}
+                              {pin ? (
+                                <span
+                                  style={{
+                                    marginLeft: 4,
+                                    fontSize: 10,
+                                    color: 'var(--ad-text-mute)',
+                                    fontFamily: 'JetBrains Mono, ui-monospace, monospace',
+                                  }}
+                                >
+                                  ({pin.x},{pin.y})
+                                </span>
+                              ) : (
+                                <span
+                                  style={{
+                                    marginLeft: 4,
+                                    fontSize: 10,
+                                    color: 'var(--ad-danger)',
+                                  }}
+                                >
+                                  (legacy — chọn lại)
+                                </span>
+                              )}
+                              <button
+                                type="button"
+                                aria-label={`Bỏ ${label}`}
+                                onClick={() => {
+                                  const markets = C.exportCap.markets.filter((_, j) => j !== i);
+                                  patch('exportCap', { markets });
+                                }}
+                              >
+                                <AdminIcon name="x" size={11} />
+                              </button>
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
+
+                  {/* Picker — add a country */}
+                  <div style={{ marginTop: 12 }}>
+                    <select
+                      className="ad-select"
+                      value=""
+                      onChange={(e) => {
+                        const slug = e.target.value;
+                        if (!slug) return;
+                        if (C.exportCap.markets.includes(slug)) return;
+                        patch('exportCap', {
+                          markets: [...C.exportCap.markets, slug],
+                        });
+                      }}
+                    >
+                      <option value="">+ Thêm quốc gia vào map…</option>
+                      {WORLD_PINS.filter((p) => !C.exportCap.markets.includes(p.slug)).map((p) => (
+                        <option key={p.slug} value={p.slug}>
+                          {p.name[lang]} ({p.name.en})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
                   <div
                     style={{
                       fontSize: 12,
@@ -877,8 +908,12 @@ export function PageForm({
                       marginTop: 8,
                     }}
                   >
-                    Bản đồ có 8 vị trí pin cố định (theo địa lý thật). Xoá nhãn sẽ ẩn pin đó — đổi
-                    nhãn sẽ đổi label hiển thị bên cạnh pin trên map.
+                    Mỗi quốc gia có toạ độ địa lý thật trong bảng <code>WORLD_PINS</code> — pin đặt
+                    đúng vị trí trên map. Cần quốc gia chưa có?{' '}
+                    <span style={{ color: 'var(--ad-text-soft)' }}>
+                      bổ sung vào <code>src/lib/world-pins.ts</code> (Phase 7 sẽ chuyển sang bảng
+                      DB).
+                    </span>
                   </div>
                 </div>
                 <Field label={`Caption dưới map (${L})`}>

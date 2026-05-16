@@ -2,28 +2,47 @@ import type { Locale } from '@/lib/i18n/config';
 import { Icon } from '@/components/ui/Icon';
 import { VA_MAP_BG, VA_MAP_PARTNERS, VA_MAP_ORIGIN } from '@/data/world-map';
 import type { ExportSection } from '@/lib/home-content';
+import { WORLD_PINS_BY_SLUG, type WorldPin } from '@/lib/world-pins';
 
 interface Props {
   locale: Locale;
   content: ExportSection;
 }
 
-const dests = [
-  { x: 855, y: 152, key: 0 }, // South Korea
-  { x: 883, y: 154, key: 1 }, // Japan
-  { x: 717, y: 197, key: 2 }, // India
-  { x: 750, y: 189, key: 3 }, // Bangladesh
-  { x: 828, y: 261, key: 4 }, // Indonesia
-  { x: 653, y: 183, key: 5 }, // UAE
-  { x: 580, y: 178, key: 6 }, // Egypt
-  { x: 597, y: 144, key: 7 }, // Türkiye
-];
-
 const FEATURE_ICONS = ['spark', 'globe', 'ship', 'check'] as const;
 
 export function ExportMap({ locale, content }: Props) {
   const ox = 803;
   const oy = 213; // Vietnam centroid
+
+  /**
+   * Resolve each market entry to a real geographic pin. Entries are stored as
+   * slugs (e.g. "south-korea", "germany") that look up into WORLD_PINS. We
+   * also accept legacy free-text values from older saves — those are matched
+   * case-insensitively against any pin's localised name so the public site
+   * keeps rendering until an admin migrates the JSON.
+   */
+  const pins: WorldPin[] = [];
+  const seen = new Set<string>();
+  for (const raw of content.markets ?? []) {
+    if (!raw) continue;
+    const trimmed = String(raw).trim();
+    if (!trimmed) continue;
+    let pin: WorldPin | undefined = WORLD_PINS_BY_SLUG[trimmed];
+    if (!pin) {
+      const needle = trimmed.toLowerCase();
+      pin = Object.values(WORLD_PINS_BY_SLUG).find(
+        (p) =>
+          p.name.vi.toLowerCase() === needle ||
+          p.name.en.toLowerCase() === needle ||
+          p.name.zh === trimmed,
+      );
+    }
+    if (pin && !seen.has(pin.slug)) {
+      pins.push(pin);
+      seen.add(pin.slug);
+    }
+  }
 
   return (
     <div className="va-export-map">
@@ -69,19 +88,17 @@ export function ExportMap({ locale, content }: Props) {
           className="va-map-origin"
         />
 
-        {/* Animated routes — only drawn for pins that have a label */}
+        {/* Animated routes — one per resolved pin, drawn from Vietnam */}
         <g className="va-routes">
-          {dests.map((d, i) => {
-            const label = content.markets[d.key];
-            if (!label) return null;
-            const dx = d.x - ox;
-            const mx = (ox + d.x) / 2;
+          {pins.map((pin, i) => {
+            const dx = pin.x - ox;
+            const mx = (ox + pin.x) / 2;
             const bend = Math.max(36, Math.abs(dx) * 0.3);
-            const my = Math.min(oy, d.y) - bend;
+            const my = Math.min(oy, pin.y) - bend;
             return (
               <path
-                key={i}
-                d={`M ${ox} ${oy} Q ${mx} ${my} ${d.x} ${d.y}`}
+                key={pin.slug}
+                d={`M ${ox} ${oy} Q ${mx} ${my} ${pin.x} ${pin.y}`}
                 fill="none"
                 stroke="#F08023"
                 strokeWidth="1.4"
@@ -94,17 +111,15 @@ export function ExportMap({ locale, content }: Props) {
           })}
         </g>
 
-        {/* Destination markers — skipped when the admin clears a slot */}
+        {/* Destination markers — positioned at each pin's real coordinates */}
         <g className="va-dests">
-          {dests.map((d, i) => {
-            const label = content.markets[d.key];
-            if (!label) return null;
-            const above = d.key === 0 || d.key === 3;
-            const tx = above ? 0 : d.x > 750 ? 10 : -10;
+          {pins.map((pin, i) => {
+            const above = pin.labelAbove === true;
+            const tx = above ? 0 : pin.x > 750 ? 10 : -10;
             const ty = above ? -10 : 3;
-            const anchor = above ? 'middle' : d.x > 750 ? 'start' : 'end';
+            const anchor = above ? 'middle' : pin.x > 750 ? 'start' : 'end';
             return (
-              <g key={i} transform={`translate(${d.x},${d.y})`}>
+              <g key={pin.slug} transform={`translate(${pin.x},${pin.y})`}>
                 <circle r="8" fill="#5B9BD5" opacity="0.18">
                   <animate
                     attributeName="r"
@@ -131,7 +146,7 @@ export function ExportMap({ locale, content }: Props) {
                   fill="rgba(255,255,255,0.9)"
                   style={{ paintOrder: 'stroke', stroke: 'rgba(10,43,87,0.9)', strokeWidth: 3 }}
                 >
-                  {label}
+                  {pin.name[locale]}
                 </text>
               </g>
             );
