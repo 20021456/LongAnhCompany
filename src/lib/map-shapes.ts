@@ -116,6 +116,7 @@ const ISLAND_RADIUS: Record<string, number> = {
   'south-korea': 20,
   india: 25,
   'south-africa': 70,
+  australia: 55, // Tasmania + outer islands
 };
 
 export interface PinShape {
