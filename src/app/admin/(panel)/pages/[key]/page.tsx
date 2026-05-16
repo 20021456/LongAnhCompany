@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
 import { requirePermission } from '@/lib/auth-helpers';
 import { db } from '@/lib/db';
-import { getHomeSections } from '@/lib/queries';
+import { getHomeSections, getProducts } from '@/lib/queries';
 import type { HomeSections } from '@/lib/home-content';
-import { PageForm, type PageFormValue } from '@/components/admin/PageForm';
+import { PageForm, type PageFormValue, type ProductChip } from '@/components/admin/PageForm';
 import { KNOWN_PAGES } from '../known';
 
 export default async function AdminPageEditPage({ params }: { params: { key: string } }) {
@@ -32,13 +32,21 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
   // The home page exposes a full section editor. Load every section's content
   // for all three locales — getHomeSections merges saved rows with defaults.
   let initialSections: HomeSections | undefined;
+  let currentProducts: ProductChip[] | undefined;
   if (known.key === 'home') {
-    const [vi, en, zh] = await Promise.all([
+    const [vi, en, zh, products] = await Promise.all([
       getHomeSections('vi'),
       getHomeSections('en'),
       getHomeSections('zh'),
+      getProducts(),
     ]);
     initialSections = { vi, en, zh };
+    currentProducts = Object.values(products).map((p) => ({
+      code: p.code,
+      nameVi: p.name.vi,
+      nameEn: p.name.en,
+      nameZh: p.name.zh,
+    }));
   }
 
   return (
@@ -47,6 +55,7 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
       label={known.label}
       path={known.path}
       initialSections={initialSections}
+      currentProducts={currentProducts}
     />
   );
 }

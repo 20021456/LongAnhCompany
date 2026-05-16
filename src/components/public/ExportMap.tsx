@@ -69,9 +69,11 @@ export function ExportMap({ locale, content }: Props) {
           className="va-map-origin"
         />
 
-        {/* Animated routes */}
+        {/* Animated routes — only drawn for pins that have a label */}
         <g className="va-routes">
           {dests.map((d, i) => {
+            const label = content.markets[d.key];
+            if (!label) return null;
             const dx = d.x - ox;
             const mx = (ox + d.x) / 2;
             const bend = Math.max(36, Math.abs(dx) * 0.3);
@@ -92,9 +94,11 @@ export function ExportMap({ locale, content }: Props) {
           })}
         </g>
 
-        {/* Destination markers */}
+        {/* Destination markers — skipped when the admin clears a slot */}
         <g className="va-dests">
           {dests.map((d, i) => {
+            const label = content.markets[d.key];
+            if (!label) return null;
             const above = d.key === 0 || d.key === 3;
             const tx = above ? 0 : d.x > 750 ? 10 : -10;
             const ty = above ? -10 : 3;
@@ -127,7 +131,7 @@ export function ExportMap({ locale, content }: Props) {
                   fill="rgba(255,255,255,0.9)"
                   style={{ paintOrder: 'stroke', stroke: 'rgba(10,43,87,0.9)', strokeWidth: 3 }}
                 >
-                  {content.markets[d.key] ?? ''}
+                  {label}
                 </text>
               </g>
             );

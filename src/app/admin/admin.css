@@ -1543,6 +1543,14 @@
 .pe-row.three {
   grid-template-columns: repeat(3, 1fr);
 }
+.pe-row.four {
+  grid-template-columns: repeat(4, 1fr);
+}
+.pe-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
 /* Status radio cards */
 .pe-status {

@@ -8,9 +8,25 @@ import { AdminPageHead } from './AdminPageHead';
 import { Field } from './FormBits';
 import { LangTabs, EditorSection, StatusRadioGroup, type Lang } from './EditorChrome';
 import { PeImg } from './PeImg';
-import { PeTags } from './PeTags';
 import { savePage, type PageInput, type ActionResult } from '@/app/admin/(panel)/pages/actions';
 import { HOME_SECTION_KEYS, type HomeSections, type HomeSectionKey } from '@/lib/home-content';
+
+/**
+ * The export map in src/components/public/ExportMap.tsx has 8 fixed
+ * destination pins (real geographic coordinates) keyed by index. Each
+ * slot in `exportCap.markets[i]` is the label for pin `i` — clearing
+ * a label hides that pin entirely on the public map.
+ */
+const PIN_LOCATIONS: { region: string; defaultLabel: Record<Lang, string> }[] = [
+  { region: 'South Korea', defaultLabel: { vi: 'Hàn Quốc', en: 'South Korea', zh: '韩国' } },
+  { region: 'Japan', defaultLabel: { vi: 'Nhật Bản', en: 'Japan', zh: '日本' } },
+  { region: 'India', defaultLabel: { vi: 'Ấn Độ', en: 'India', zh: '印度' } },
+  { region: 'Bangladesh', defaultLabel: { vi: 'Bangladesh', en: 'Bangladesh', zh: '孟加拉' } },
+  { region: 'Indonesia', defaultLabel: { vi: 'Indonesia', en: 'Indonesia', zh: '印尼' } },
+  { region: 'UAE', defaultLabel: { vi: 'UAE', en: 'UAE', zh: '阿联酋' } },
+  { region: 'Egypt', defaultLabel: { vi: 'Ai Cập', en: 'Egypt', zh: '埃及' } },
+  { region: 'Türkiye', defaultLabel: { vi: 'Thổ Nhĩ Kỳ', en: 'Türkiye', zh: '土耳其' } },
+];
 
 export interface PageFormValue {
   key: string;
@@ -25,6 +41,14 @@ export interface PageFormValue {
   metaDescZh: string;
   ogImageUrl: string;
   isPublished: boolean;
+}
+
+/** Minimal product info shown as chips in the home "Products" section. */
+export interface ProductChip {
+  code: string;
+  nameVi: string;
+  nameEn: string;
+  nameZh: string;
 }
 
 const SUF: Record<Lang, string> = { vi: 'Vi', en: 'En', zh: 'Zh' };
@@ -43,12 +67,15 @@ export function PageForm({
   label,
   path,
   initialSections,
+  currentProducts,
 }: {
   initial: PageFormValue;
   label: string;
   path: string;
   /** Present only for the home page — the full editable section content. */
   initialSections?: HomeSections;
+  /** Live product catalogue — shown as read-only chips in the carousel section. */
+  currentProducts?: ProductChip[];
 }) {
   const router = useRouter();
   const [v, setV] = useState<PageFormValue>(initial);
@@ -311,7 +338,7 @@ export function PageForm({
                 title="Stats — Dải 4 con số"
                 sub="Năm kinh nghiệm, công suất, quốc gia xuất khẩu, số mỏ"
               >
-                <div className="pe-row">
+                <div className="pe-row four">
                   {C.stats.items.map((s, i) => (
                     <div
                       key={i}
@@ -383,9 +410,74 @@ export function PageForm({
                     onChange={(e) => patch('products', { sub: e.target.value })}
                   />
                 </Field>
-                <div style={{ fontSize: 12.5, color: 'var(--ad-text-mute)' }}>
-                  Danh sách sản phẩm trong carousel lấy tự động từ catalogue — quản lý ở{' '}
-                  <strong>Sản phẩm</strong>.
+                <Field label="Cách hiển thị">
+                  <select className="ad-select" defaultValue="auto">
+                    <option value="auto">
+                      Tự động — {currentProducts?.length ?? 5} dòng sản phẩm chính
+                    </option>
+                    <option value="manual" disabled>
+                      Thủ công — chọn sản phẩm cụ thể (Phase 7)
+                    </option>
+                  </select>
+                </Field>
+                <div
+                  style={{
+                    background: '#fff',
+                    border: '1px solid var(--ad-line)',
+                    borderRadius: 8,
+                    padding: 12,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: 'var(--ad-text-mute)',
+                      marginBottom: 8,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {currentProducts?.length ?? 0} sản phẩm đang hiển thị
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {(currentProducts ?? []).map((p) => {
+                      const name = lang === 'en' ? p.nameEn : lang === 'zh' ? p.nameZh : p.nameVi;
+                      return (
+                        <span key={p.code} className="ad-tag">
+                          {p.code} · {name}
+                          <button
+                            type="button"
+                            title="Tự động lấy từ catalogue — quản lý ở trang Sản phẩm"
+                            disabled
+                          >
+                            <AdminIcon name="x" size={11} />
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
+                  {!currentProducts?.length ? (
+                    <div style={{ fontSize: 12, color: 'var(--ad-text-mute)' }}>
+                      Chưa có sản phẩm — thêm ở{' '}
+                      <Link
+                        href="/admin/products"
+                        style={{ color: 'var(--ad-primary)', fontWeight: 500 }}
+                      >
+                        /admin/products
+                      </Link>
+                      .
+                    </div>
+                  ) : null}
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--ad-text-mute)' }}>
+                  Danh sách trên lấy tự động từ catalogue ở chế độ <strong>Tự động</strong>. Để chọn
+                  thủ công, quản lý ở{' '}
+                  <Link
+                    href="/admin/products"
+                    style={{ color: 'var(--ad-primary)', fontWeight: 500 }}
+                  >
+                    Sản phẩm
+                  </Link>
+                  .
                 </div>
               </EditorSection>
 
@@ -561,36 +653,20 @@ export function PageForm({
                     onChange={(e) => patch('certs', { sub: e.target.value })}
                   />
                 </Field>
-                {C.certs.items.map((cert, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      border: '1px solid var(--ad-line)',
-                      borderRadius: 8,
-                      padding: 12,
-                      background: '#fff',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 10,
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span className="ad-code">CERT {String(i + 1).padStart(2, '0')}</span>
-                      <div style={{ flex: 1 }} />
-                      <button
-                        type="button"
-                        className="ad-btn sm ghost danger"
-                        onClick={() =>
-                          patch('certs', { items: C.certs.items.filter((_, j) => j !== i) })
-                        }
+                <div className="pe-list">
+                  {C.certs.items.map((cert, i) => (
+                    <div key={i} className="pe-list-item">
+                      <span className="num">{String(i + 1).padStart(2, '0')}</span>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '0.6fr 1.5fr 1fr',
+                          gap: 8,
+                        }}
                       >
-                        <AdminIcon name="trash" size={13} />
-                      </button>
-                    </div>
-                    <div className="pe-row">
-                      <Field label="Tên chứng nhận">
                         <input
                           className="ad-input"
+                          placeholder="Tên cert"
                           value={cert.name}
                           onChange={(e) => {
                             const items = [...C.certs.items];
@@ -598,23 +674,9 @@ export function PageForm({
                             patch('certs', { items });
                           }}
                         />
-                      </Field>
-                      <Field label={`Đơn vị / năm cấp (${L})`}>
                         <input
                           className="ad-input"
-                          value={cert.issuer}
-                          onChange={(e) => {
-                            const items = [...C.certs.items];
-                            items[i] = { ...items[i], issuer: e.target.value };
-                            patch('certs', { items });
-                          }}
-                        />
-                      </Field>
-                    </div>
-                    <div className="pe-row">
-                      <Field label={`Mô tả (${L})`}>
-                        <input
-                          className="ad-input"
+                          placeholder={`Mô tả (${L})`}
                           value={cert.desc}
                           onChange={(e) => {
                             const items = [...C.certs.items];
@@ -622,21 +684,37 @@ export function PageForm({
                             patch('certs', { items });
                           }}
                         />
-                      </Field>
-                      <Field label="Logo (đường dẫn)">
                         <input
                           className="ad-input"
+                          placeholder="Đường dẫn logo"
                           value={cert.logoUrl}
                           onChange={(e) => {
                             const items = [...C.certs.items];
                             items[i] = { ...items[i], logoUrl: e.target.value };
                             patch('certs', { items });
                           }}
+                          spellCheck={false}
+                          style={{
+                            fontFamily: 'JetBrains Mono, ui-monospace, monospace',
+                            fontSize: 12,
+                          }}
                         />
-                      </Field>
+                      </div>
+                      <div className="actions">
+                        <button
+                          type="button"
+                          title="Xoá"
+                          aria-label={`Xoá chứng nhận ${cert.name || i + 1}`}
+                          onClick={() =>
+                            patch('certs', { items: C.certs.items.filter((_, j) => j !== i) })
+                          }
+                        >
+                          <AdminIcon name="trash" size={13} />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
                 <button
                   type="button"
                   className="ad-btn sm"
@@ -731,15 +809,78 @@ export function PageForm({
                     </div>
                   ))}
                 </div>
-                <Field
-                  label={`Danh sách thị trường — markers trên map (${L})`}
-                  help="Nhập tên nước rồi Enter — hiện thành chip có thể xoá."
-                >
-                  <PeTags
-                    tags={C.exportCap.markets}
-                    onChange={(markets) => patch('exportCap', { markets })}
-                  />
-                </Field>
+                <div>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: 'var(--ad-text-mute)',
+                      letterSpacing: '0.05em',
+                      textTransform: 'uppercase',
+                      marginBottom: 10,
+                    }}
+                  >
+                    Markers trên map ({L})
+                  </div>
+                  <div className="pe-list">
+                    {PIN_LOCATIONS.map((pin, i) => {
+                      const value = C.exportCap.markets[i] ?? '';
+                      return (
+                        <div key={i} className="pe-list-item">
+                          <span className="num">{String(i + 1).padStart(2, '0')}</span>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: 8,
+                              alignItems: 'center',
+                            }}
+                          >
+                            <div style={{ fontSize: 12.5, color: 'var(--ad-text-soft)' }}>
+                              <AdminIcon name="globe" size={11} /> Pin #{i + 1} —{' '}
+                              <span style={{ color: 'var(--ad-text-mute)' }}>{pin.region}</span>
+                            </div>
+                            <input
+                              className="ad-input"
+                              placeholder={`Tên hiển thị (vd: ${pin.defaultLabel[lang]})`}
+                              value={value}
+                              onChange={(e) => {
+                                const markets = [...C.exportCap.markets];
+                                while (markets.length <= i) markets.push('');
+                                markets[i] = e.target.value;
+                                patch('exportCap', { markets });
+                              }}
+                            />
+                          </div>
+                          <div className="actions">
+                            <button
+                              type="button"
+                              title="Xoá nhãn — pin sẽ ẩn khỏi map"
+                              aria-label={`Xoá pin ${i + 1}`}
+                              onClick={() => {
+                                const markets = [...C.exportCap.markets];
+                                markets[i] = '';
+                                patch('exportCap', { markets });
+                              }}
+                            >
+                              <AdminIcon name="x" size={13} />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: 'var(--ad-text-mute)',
+                      marginTop: 8,
+                    }}
+                  >
+                    Bản đồ có 8 vị trí pin cố định (theo địa lý thật). Xoá nhãn sẽ ẩn pin đó — đổi
+                    nhãn sẽ đổi label hiển thị bên cạnh pin trên map.
+                  </div>
+                </div>
                 <Field label={`Caption dưới map (${L})`}>
                   <input
                     className="ad-input"
