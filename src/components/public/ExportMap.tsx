@@ -46,14 +46,86 @@ export function ExportMap({ locale, content }: Props) {
   }
 
   /**
-   * Per-pin country/region SVG paths, extracted on the fly from the world
-   * map background. Lets us paint each pinned country in the brighter
-   * "partner" blue without per-country GeoJSON.
+   * Per-pin country/region SVG paths + the centroid of the matched shape.
+   * The centroid (not the hand-picked seed coordinate) is where the dot,
+   * halo and label get drawn so they sit at the country's visual centre.
    */
-  const pinShapes: { slug: string; path: string }[] = [];
+  type Placed = {
+    pin: WorldPin;
+    path: string;
+    cx: number;
+    cy: number;
+    /** Label offset chosen by the collision resolver. */
+    tx: number;
+    ty: number;
+    anchor: 'start' | 'middle' | 'end';
+  };
+  const placed: Placed[] = [];
+  const labelBoxes: { x1: number; y1: number; x2: number; y2: number }[] = [];
+
+  /** Approx label dimensions in viewBox units (font-size 11 ≈ 6 wide / 13 tall). */
+  function labelSize(text: string) {
+    return { w: text.length * 6, h: 13 };
+  }
+
+  /** 8 candidate positions tried in order of preference. */
+  const CANDIDATES: { tx: number; ty: number; anchor: 'start' | 'middle' | 'end' }[] = [
+    { tx: 12, ty: 4, anchor: 'start' }, // right
+    { tx: -12, ty: 4, anchor: 'end' }, // left
+    { tx: 0, ty: -12, anchor: 'middle' }, // above
+    { tx: 0, ty: 18, anchor: 'middle' }, // below
+    { tx: 14, ty: -10, anchor: 'start' }, // top-right
+    { tx: -14, ty: -10, anchor: 'end' }, // top-left
+    { tx: 14, ty: 18, anchor: 'start' }, // bottom-right
+    { tx: -14, ty: 18, anchor: 'end' }, // bottom-left
+  ];
+
+  function rectsOverlap(
+    a: { x1: number; y1: number; x2: number; y2: number },
+    b: { x1: number; y1: number; x2: number; y2: number },
+  ) {
+    return !(a.x2 < b.x1 || b.x2 < a.x1 || a.y2 < b.y1 || b.y2 < a.y1);
+  }
+
   for (const pin of pins) {
-    const path = shapeForPin(pin);
-    if (path) pinShapes.push({ slug: pin.slug, path });
+    const shape = shapeForPin(pin);
+    if (!shape) continue;
+    const [cx, cy] = shape.centroid;
+    const label = pin.name[locale];
+    const { w, h } = labelSize(label);
+
+    let chosen = CANDIDATES[0];
+    let chosenBox = null as null | { x1: number; y1: number; x2: number; y2: number };
+    for (const c of CANDIDATES) {
+      const lx = cx + c.tx;
+      const ly = cy + c.ty;
+      // Anchor adjusts the box's left/right.
+      const x1 = c.anchor === 'start' ? lx : c.anchor === 'end' ? lx - w : lx - w / 2;
+      const box = { x1, y1: ly - h, x2: x1 + w, y2: ly + 2 };
+      const collides = labelBoxes.some((b) => rectsOverlap(b, box));
+      if (!collides) {
+        chosen = c;
+        chosenBox = box;
+        break;
+      }
+    }
+    if (!chosenBox) {
+      // All candidates collide — fall back to the first and accept overlap.
+      const lx = cx + chosen.tx;
+      const ly = cy + chosen.ty;
+      const x1 = chosen.anchor === 'start' ? lx : chosen.anchor === 'end' ? lx - w : lx - w / 2;
+      chosenBox = { x1, y1: ly - h, x2: x1 + w, y2: ly + 2 };
+    }
+    labelBoxes.push(chosenBox);
+    placed.push({
+      pin,
+      path: shape.path,
+      cx,
+      cy,
+      tx: chosen.tx,
+      ty: chosen.ty,
+      anchor: chosen.anchor,
+    });
   }
 
   return (
@@ -114,14 +186,12 @@ export function ExportMap({ locale, content }: Props) {
 
         {/*
          * Dynamic partner highlight — every pinned country/region painted
-         * at its real outline. `shapeForPin()` plucks the matching
-         * sub-paths out of VA_MAP_BG (the same path data used for the dim
-         * background), so the country boundaries are pixel-identical to
-         * the static partner layer.
+         * at its real outline. Paths come from shapeForPin() which plucks
+         * matching sub-paths out of VA_MAP_BG + VA_MAP_PARTNERS.
          */}
-        {pinShapes.map((s) => (
+        {placed.map((s) => (
           <path
-            key={s.slug}
+            key={s.pin.slug}
             d={s.path}
             fill="rgba(91,155,213,0.62)"
             stroke="rgba(170,210,240,0.85)"
@@ -142,39 +212,35 @@ export function ExportMap({ locale, content }: Props) {
           className="va-map-origin"
         />
 
-        {/* Animated routes — one per resolved pin, drawn from Vietnam */}
+        {/* Animated routes — one per pin, drawn from Vietnam to the centroid */}
         <g className="va-routes">
-          {pins.map((pin, i) => {
-            const dx = pin.x - ox;
-            const mx = (ox + pin.x) / 2;
+          {placed.map((s, i) => {
+            const dx = s.cx - ox;
+            const mx = (ox + s.cx) / 2;
             const bend = Math.max(36, Math.abs(dx) * 0.3);
-            const my = Math.min(oy, pin.y) - bend;
+            const my = Math.min(oy, s.cy) - bend;
             return (
               <path
-                key={pin.slug}
-                d={`M ${ox} ${oy} Q ${mx} ${my} ${pin.x} ${pin.y}`}
+                key={s.pin.slug}
+                d={`M ${ox} ${oy} Q ${mx} ${my} ${s.cx} ${s.cy}`}
                 fill="none"
                 stroke="#F08023"
                 strokeWidth="1.4"
                 strokeDasharray="2 6"
                 strokeLinecap="round"
                 className="va-route"
-                style={{ animationDelay: `${i * 0.25}s` }}
+                style={{ animationDelay: `${(i * 0.25).toFixed(2)}s` }}
               />
             );
           })}
         </g>
 
-        {/* Destination markers — positioned at each pin's real coordinates */}
+        {/* Destination markers — dot + label at the country's centroid */}
         <g className="va-dests">
-          {pins.map((pin, i) => {
-            const above = pin.labelAbove === true;
-            const tx = above ? 0 : pin.x > 750 ? 10 : -10;
-            const ty = above ? -10 : 3;
-            const anchor = above ? 'middle' : pin.x > 750 ? 'start' : 'end';
+          {placed.map((s, i) => {
             return (
-              <g key={pin.slug} transform={`translate(${pin.x},${pin.y})`}>
-                {/* Soft halo on top of the country-fill clip-mask */}
+              <g key={s.pin.slug} transform={`translate(${s.cx.toFixed(1)},${s.cy.toFixed(1)})`}>
+                {/* Soft halo on top of the country-fill */}
                 <circle r="28" fill="url(#va-dest-glow)" />
                 {/* Tighter brighter core anchored at the pin */}
                 <circle r="12" fill="url(#va-dest-core)" />
@@ -215,15 +281,15 @@ export function ExportMap({ locale, content }: Props) {
                 {/* Center dot */}
                 <circle r="4" fill="#fff" stroke="#5B9BD5" strokeWidth="2.2" />
                 <text
-                  x={tx}
-                  y={ty}
-                  textAnchor={anchor}
+                  x={s.tx}
+                  y={s.ty}
+                  textAnchor={s.anchor}
                   fontSize="11"
                   fontWeight="600"
                   fill="rgba(255,255,255,0.95)"
                   style={{ paintOrder: 'stroke', stroke: 'rgba(10,43,87,0.95)', strokeWidth: 3 }}
                 >
-                  {pin.name[locale]}
+                  {s.pin.name[locale]}
                 </text>
               </g>
             );

@@ -38,7 +38,7 @@ export const WORLD_PINS: WorldPin[] = [
     name: { vi: 'Hàn Quốc', en: 'South Korea', zh: '韩国' },
     labelAbove: true,
   },
-  { slug: 'japan', x: 883, y: 154, name: { vi: 'Nhật Bản', en: 'Japan', zh: '日本' } },
+  { slug: 'japan', x: 880, y: 162, name: { vi: 'Nhật Bản', en: 'Japan', zh: '日本' } },
   { slug: 'china', x: 815, y: 132, name: { vi: 'Trung Quốc', en: 'China', zh: '中国' } },
   { slug: 'taiwan', x: 848, y: 188, name: { vi: 'Đài Loan', en: 'Taiwan', zh: '台湾' } },
   { slug: 'india', x: 717, y: 197, name: { vi: 'Ấn Độ', en: 'India', zh: '印度' } },
@@ -79,7 +79,7 @@ export const WORLD_PINS: WorldPin[] = [
   },
 
   // ── Middle East ───────────────────────────────────────────────────────
-  { slug: 'uae', x: 653, y: 183, name: { vi: 'UAE', en: 'UAE', zh: '阿联酋' } },
+  { slug: 'uae', x: 660, y: 192, name: { vi: 'UAE', en: 'UAE', zh: '阿联酋' } },
   {
     slug: 'saudi-arabia',
     x: 632,

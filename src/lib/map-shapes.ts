@@ -14,7 +14,7 @@
  * for `europe`/`africa`, small for individual countries).
  */
 
-import { VA_MAP_BG } from '@/data/world-map';
+import { VA_MAP_BG, VA_MAP_PARTNERS } from '@/data/world-map';
 import type { WorldPin } from './world-pins';
 
 interface Polygon {
@@ -85,8 +85,13 @@ function pointInPolygon(x: number, y: number, verts: [number, number][]): boolea
   return inside;
 }
 
-/** Module-level cache — VA_MAP_BG never changes at runtime. */
-const POLYGONS: Polygon[] = parsePolygons(VA_MAP_BG);
+/**
+ * Module-level cache — VA_MAP_BG holds the dim "rest of the world" path,
+ * while VA_MAP_PARTNERS holds the 5 hand-picked partner countries (Korea,
+ * Japan, India, Bangladesh, Indonesia). We parse BOTH so pins for any of
+ * those 5 still match a real polygon — they wouldn't be in VA_MAP_BG.
+ */
+const POLYGONS: Polygon[] = [...parsePolygons(VA_MAP_BG), ...parsePolygons(VA_MAP_PARTNERS)];
 
 /**
  * Continent-level pins don't sit inside any one polygon, so for them we
@@ -113,69 +118,99 @@ const ISLAND_RADIUS: Record<string, number> = {
   'south-africa': 70,
 };
 
+export interface PinShape {
+  /** Concatenated SVG path of every polygon that belongs to the pin. */
+  path: string;
+  /** Weighted centroid of the matched polygons — where the dot + label
+   *  should be drawn so they sit at the country's visual centre rather
+   *  than at the hand-picked seed coordinate. */
+  centroid: [number, number];
+}
+
 /**
- * Concatenated SVG path containing every polygon that belongs to the
- * given pin. Returns null when nothing matched (e.g. an ocean pin).
+ * Returns the SVG path + visual centroid for the given pin, or null if
+ * nothing in the world map matches.
  *
  * Strategy:
  *  1. Continent slugs (europe, africa) — use centroid-radius matching:
  *     every polygon whose centroid is within R of the pin is included.
- *  2. Everything else — point-in-polygon test: include the polygon the
- *     pin actually sits inside (correctly distinguishes Korea from the
- *     enclosing China bbox, etc.). Then optionally pull in nearby small
- *     islands within ISLAND_RADIUS for archipelagos.
- *  3. If nothing matches, fall back to the closest polygon by centroid
- *     distance so a slightly-off pin still highlights something.
+ *  2. Everything else — point-in-polygon test against every polygon.
+ *  3. Archipelagic countries — optional ISLAND_RADIUS pulls in islands
+ *     close to the seed.
+ *  4. Last-chance fallback: closest polygon by centroid distance — but
+ *     only if the distance is small (≤ 30 viewBox units, tightened from
+ *     45 to stop a slightly-off pin grabbing a neighbouring country).
  */
-export function shapeForPin(pin: WorldPin): string | null {
-  // ── 1. Continent fallback ──────────────────────────────────────────
+export function shapeForPin(pin: WorldPin): PinShape | null {
+  const matched: Polygon[] = [];
+
   const continentR = CONTINENT_RADIUS[pin.slug];
   if (continentR !== undefined) {
+    // ── Continent: centroid-radius matching ──
     const r2 = continentR * continentR;
-    const parts: string[] = [];
     for (const p of POLYGONS) {
       const dx = p.centroid[0] - pin.x;
       const dy = p.centroid[1] - pin.y;
-      if (dx * dx + dy * dy <= r2) parts.push(p.path);
+      if (dx * dx + dy * dy <= r2) matched.push(p);
     }
-    return parts.length ? parts.join(' ') : null;
-  }
-
-  // ── 2. Country: only the polygon(s) that geometrically contain the pin ──
-  const parts: string[] = [];
-  for (const p of POLYGONS) {
-    // Fast bbox reject before the more expensive ray-cast.
-    if (pin.x < p.bbox[0] || pin.x > p.bbox[2] || pin.y < p.bbox[1] || pin.y > p.bbox[3]) continue;
-    if (pointInPolygon(pin.x, pin.y, p.vertices)) parts.push(p.path);
-  }
-
-  // ── 3. Optional: pull in nearby islands for archipelagic countries ──
-  const islandR = ISLAND_RADIUS[pin.slug];
-  if (islandR !== undefined) {
-    const r2 = islandR * islandR;
+  } else {
+    // ── Country: point-in-polygon ──
     for (const p of POLYGONS) {
-      if (parts.includes(p.path)) continue;
-      const dx = p.centroid[0] - pin.x;
-      const dy = p.centroid[1] - pin.y;
-      if (dx * dx + dy * dy <= r2) parts.push(p.path);
+      if (pin.x < p.bbox[0] || pin.x > p.bbox[2] || pin.y < p.bbox[1] || pin.y > p.bbox[3])
+        continue;
+      if (pointInPolygon(pin.x, pin.y, p.vertices)) matched.push(p);
     }
-  }
 
-  // ── 4. Last-chance fallback: nearest polygon centroid ──
-  if (parts.length === 0) {
-    let best: Polygon | null = null;
-    let bestD = Infinity;
-    for (const p of POLYGONS) {
-      const dx = p.centroid[0] - pin.x;
-      const dy = p.centroid[1] - pin.y;
-      const d = dx * dx + dy * dy;
-      if (d < bestD) {
-        bestD = d;
-        best = p;
+    // ── Archipelago islands ──
+    const islandR = ISLAND_RADIUS[pin.slug];
+    if (islandR !== undefined) {
+      const r2 = islandR * islandR;
+      for (const p of POLYGONS) {
+        if (matched.includes(p)) continue;
+        const dx = p.centroid[0] - pin.x;
+        const dy = p.centroid[1] - pin.y;
+        if (dx * dx + dy * dy <= r2) matched.push(p);
       }
     }
-    if (best && bestD <= 45 * 45) parts.push(best.path);
+
+    // ── Last-chance fallback: nearest polygon centroid ──
+    if (matched.length === 0) {
+      let best: Polygon | null = null;
+      let bestD = Infinity;
+      for (const p of POLYGONS) {
+        const dx = p.centroid[0] - pin.x;
+        const dy = p.centroid[1] - pin.y;
+        const d = dx * dx + dy * dy;
+        if (d < bestD) {
+          bestD = d;
+          best = p;
+        }
+      }
+      // Tighter than before (30 not 45) — a far-away polygon usually means
+      // the wrong country (e.g. Japan pin falling to Korea).
+      if (best && bestD <= 30 * 30) matched.push(best);
+    }
   }
 
-  return parts.length === 0 ? null : parts.join(' ');
+  if (matched.length === 0) return null;
+
+  // Vertex-weighted centroid — larger polygons (the mainland) dominate
+  // over tiny outlier islands.
+  let sumX = 0;
+  let sumY = 0;
+  let count = 0;
+  for (const p of matched) {
+    for (const [vx, vy] of p.vertices) {
+      sumX += vx;
+      sumY += vy;
+      count++;
+    }
+  }
+  const cx = count ? sumX / count : pin.x;
+  const cy = count ? sumY / count : pin.y;
+
+  return {
+    path: matched.map((m) => m.path).join(' '),
+    centroid: [cx, cy],
+  };
 }
