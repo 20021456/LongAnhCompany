@@ -2124,6 +2124,56 @@
   gap: 16px;
   align-items: start;
 }
+
+/*
+ * Warehouse / image strip — used in the About editor (Dải ảnh kho bãi)
+ * and any other "row of square thumbnails" pattern. 4 columns by default,
+ * collapses gracefully on narrower viewports.
+ */
+.pe-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.pe-strip-item {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--ad-line-soft);
+  cursor: pointer;
+  position: relative;
+  border: 1px solid var(--ad-line);
+  transition: border-color 0.15s;
+}
+.pe-strip-item:hover {
+  border-color: var(--ad-primary);
+}
+.pe-strip-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pe-strip-item .drag {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  border-radius: 4px;
+  padding: 2px;
+  opacity: 0;
+  transition: 0.15s;
+}
+.pe-strip-item:hover .drag {
+  opacity: 1;
+}
+@media (max-width: 900px) {
+  .pe-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 .imgwrap {
   position: relative;
   border-radius: 8px;
