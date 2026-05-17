@@ -16,6 +16,7 @@ import type { JobDetail } from '@/data/jobs';
 import type { NewsItem } from '@/data/news';
 import type { Locale } from '@/lib/i18n/config';
 import { homeDefaults, HOME_SECTION_KEYS, type HomeSectionsLocale } from '@/lib/home-content';
+import { aboutDefaults, ABOUT_SECTION_KEYS, type AboutSectionsLocale } from '@/lib/about-content';
 
 type L3 = { vi: string; en: string; zh: string };
 
@@ -305,6 +306,32 @@ export async function getHomeSections(locale: Locale): Promise<HomeSectionsLocal
 
   const view = out as unknown as Record<string, Record<string, unknown>>;
   for (const key of HOME_SECTION_KEYS) {
+    const section = page.sections.find((s) => s.sectionKey === key);
+    if (!section || !section.isVisible) continue;
+    const byLocale = section.content as Record<string, unknown> | null;
+    const c = byLocale?.[locale];
+    if (c && typeof c === 'object') {
+      view[key] = { ...view[key], ...(c as Record<string, unknown>) };
+    }
+  }
+  return out;
+}
+
+/**
+ * Same shape as getHomeSections but for /about. Returns the merged
+ * `aboutDefaults(locale)` overlaid with any rows persisted in
+ * `page_sections` for the "about" page.
+ */
+export async function getAboutSections(locale: Locale): Promise<AboutSectionsLocale> {
+  const out = aboutDefaults(locale);
+  const page = await db.page.findUnique({
+    where: { key: 'about' },
+    include: { sections: true },
+  });
+  if (!page) return out;
+
+  const view = out as unknown as Record<string, Record<string, unknown>>;
+  for (const key of ABOUT_SECTION_KEYS) {
     const section = page.sections.find((s) => s.sectionKey === key);
     if (!section || !section.isVisible) continue;
     const byLocale = section.content as Record<string, unknown> | null;

@@ -7,6 +7,7 @@ import { db } from '@/lib/db';
 import { requirePermission } from '@/lib/auth-helpers';
 import { recordAudit } from '@/lib/audit';
 import { HOME_SECTION_KEYS } from '@/lib/home-content';
+import { ABOUT_SECTION_KEYS } from '@/lib/about-content';
 import { KNOWN_PAGES } from './known';
 
 /**
@@ -41,7 +42,7 @@ const schema = z.object({
 export type PageInput = z.input<typeof schema>;
 export type ActionResult = { ok?: boolean; error?: string };
 
-const VALID_SECTION_KEYS = new Set<string>(HOME_SECTION_KEYS);
+const VALID_SECTION_KEYS = new Set<string>([...HOME_SECTION_KEYS, ...ABOUT_SECTION_KEYS]);
 
 export async function savePage(raw: PageInput): Promise<ActionResult> {
   const user = await requirePermission('pages.update');

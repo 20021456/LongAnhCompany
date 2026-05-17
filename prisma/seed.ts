@@ -16,6 +16,7 @@ import bcrypt from 'bcryptjs';
 import { DEFAULT_ROLE_PERMISSIONS } from '../src/lib/permissions';
 import { COPY } from '../src/data/copy';
 import { homeDefaults, HOME_SECTION_KEYS } from '../src/lib/home-content';
+import { aboutDefaults, ABOUT_SECTION_KEYS } from '../src/lib/about-content';
 import { PRODUCTS } from '../src/data/products';
 import { JOBS } from '../src/data/jobs';
 import { NEWS } from '../src/data/news';
@@ -789,7 +790,41 @@ async function main() {
       },
     });
   }
-  console.log(`  ✓ pages (home + ${HOME_SECTION_KEYS.length} sections)`);
+
+  // About page + 8 editable sections (mirrors the home setup above).
+  const aboutPage = await db.page.upsert({
+    where: { key: 'about' },
+    update: {},
+    create: {
+      key: 'about',
+      slug: '/about',
+      titleVi: 'Giới thiệu',
+      titleEn: 'About',
+      titleZh: '关于我们',
+      isPublished: true,
+    },
+  });
+  for (const sectionKey of ABOUT_SECTION_KEYS) {
+    const content = {
+      vi: aboutDefaults('vi')[sectionKey],
+      en: aboutDefaults('en')[sectionKey],
+      zh: aboutDefaults('zh')[sectionKey],
+    } as unknown as Prisma.InputJsonValue;
+    await db.pageSection.upsert({
+      where: { pageId_sectionKey: { pageId: aboutPage.id, sectionKey } },
+      update: { content },
+      create: {
+        pageId: aboutPage.id,
+        sectionKey,
+        sectionType: sectionKey,
+        content,
+        sortOrder: 0,
+      },
+    });
+  }
+  console.log(
+    `  ✓ pages (home + ${HOME_SECTION_KEYS.length} sections, about + ${ABOUT_SECTION_KEYS.length} sections)`,
+  );
 
   console.log('\n✅ Seed complete.');
 }

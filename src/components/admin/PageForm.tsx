@@ -10,7 +10,9 @@ import { LangTabs, EditorSection, StatusRadioGroup, type Lang } from './EditorCh
 import { PeImg } from './PeImg';
 import { savePage, type PageInput, type ActionResult } from '@/app/admin/(panel)/pages/actions';
 import { HOME_SECTION_KEYS, type HomeSections, type HomeSectionKey } from '@/lib/home-content';
+import type { AboutSections, AboutSectionKey } from '@/lib/about-content';
 import { WORLD_PINS, WORLD_PINS_BY_SLUG } from '@/lib/world-pins';
+import { AboutSectionsEditor, aboutSectionsToPayload } from './AboutSectionsEditor';
 
 export interface PageFormValue {
   key: string;
@@ -51,6 +53,7 @@ export function PageForm({
   label,
   path,
   initialSections,
+  initialAboutSections,
   currentProducts,
 }: {
   initial: PageFormValue;
@@ -58,12 +61,17 @@ export function PageForm({
   path: string;
   /** Present only for the home page — the full editable section content. */
   initialSections?: HomeSections;
+  /** Present only for the about page — its 8 editable sections. */
+  initialAboutSections?: AboutSections;
   /** Live product catalogue — shown as read-only chips in the carousel section. */
   currentProducts?: ProductChip[];
 }) {
   const router = useRouter();
   const [v, setV] = useState<PageFormValue>(initial);
   const [sections, setSections] = useState<HomeSections | null>(initialSections ?? null);
+  const [aboutSections, setAboutSections] = useState<AboutSections | null>(
+    initialAboutSections ?? null,
+  );
   const [lang, setLang] = useState<Lang>('vi');
   const [state, setState] = useState<ActionResult | null>(null);
   const [busy, setBusy] = useState(false);
@@ -109,13 +117,33 @@ export function PageForm({
     if (!dirty) setDirty(true);
   };
 
+  /** Same shape, but for the about page's per-section editor. */
+  const aboutPatch = (key: AboutSectionKey, p: Record<string, unknown>) => {
+    setAboutSections((s) => {
+      if (!s) return s;
+      const cur = s[lang][key] as unknown as Record<string, unknown>;
+      return {
+        ...s,
+        [lang]: { ...s[lang], [key]: { ...cur, ...p } },
+      } as AboutSections;
+    });
+    if (!dirty) setDirty(true);
+  };
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setState(null);
+    // Both home and about persist into the same `sections` payload — the
+    // server validates each key against HOME_SECTION_KEYS ∪ ABOUT_SECTION_KEYS.
+    const payload = sections
+      ? toSectionsPayload(sections)
+      : aboutSections
+        ? aboutSectionsToPayload(aboutSections)
+        : undefined;
     const res = await savePage({
       ...v,
-      sections: sections ? toSectionsPayload(sections) : undefined,
+      sections: payload,
     } as unknown as PageInput);
     setBusy(false);
     setState(res);
@@ -183,7 +211,9 @@ export function PageForm({
 
       <div className="pe-grid">
         <div className="pe-main">
-          {C ? (
+          {aboutSections ? (
+            <AboutSectionsEditor sections={aboutSections} lang={lang} onPatch={aboutPatch} />
+          ) : C ? (
             <>
               {/* 01 — HERO */}
               <EditorSection

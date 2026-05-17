@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 import { requirePermission } from '@/lib/auth-helpers';
 import { db } from '@/lib/db';
-import { getHomeSections, getProducts } from '@/lib/queries';
+import { getHomeSections, getAboutSections, getProducts } from '@/lib/queries';
 import type { HomeSections } from '@/lib/home-content';
+import type { AboutSections } from '@/lib/about-content';
 import { PageForm, type PageFormValue, type ProductChip } from '@/components/admin/PageForm';
 import { KNOWN_PAGES } from '../known';
 
@@ -29,10 +30,13 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
     isPublished: row?.isPublished ?? true,
   };
 
-  // The home page exposes a full section editor. Load every section's content
-  // for all three locales — getHomeSections merges saved rows with defaults.
+  // The home and about pages expose full section editors. Load every
+  // section's content for all three locales — get*Sections merges saved
+  // rows with defaults so the editor always has something to render.
   let initialSections: HomeSections | undefined;
+  let initialAboutSections: AboutSections | undefined;
   let currentProducts: ProductChip[] | undefined;
+
   if (known.key === 'home') {
     const [vi, en, zh, products] = await Promise.all([
       getHomeSections('vi'),
@@ -47,6 +51,13 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
       nameEn: p.name.en,
       nameZh: p.name.zh,
     }));
+  } else if (known.key === 'about') {
+    const [vi, en, zh] = await Promise.all([
+      getAboutSections('vi'),
+      getAboutSections('en'),
+      getAboutSections('zh'),
+    ]);
+    initialAboutSections = { vi, en, zh };
   }
 
   return (
@@ -55,6 +66,7 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
       label={known.label}
       path={known.path}
       initialSections={initialSections}
+      initialAboutSections={initialAboutSections}
       currentProducts={currentProducts}
     />
   );
