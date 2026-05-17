@@ -18,6 +18,7 @@ import { COPY } from '../src/data/copy';
 import { homeDefaults, HOME_SECTION_KEYS } from '../src/lib/home-content';
 import { aboutDefaults, ABOUT_SECTION_KEYS } from '../src/lib/about-content';
 import { productsPageDefaults, PRODUCTS_PAGE_SECTION_KEYS } from '../src/lib/products-page-content';
+import { careersPageDefaults, CAREERS_PAGE_SECTION_KEYS } from '../src/lib/careers-page-content';
 import { PRODUCTS } from '../src/data/products';
 import { JOBS } from '../src/data/jobs';
 import { NEWS } from '../src/data/news';
@@ -855,8 +856,40 @@ async function main() {
       },
     });
   }
+
+  // Careers listing page + 6 editable sections.
+  const careersPage = await db.page.upsert({
+    where: { key: 'career' },
+    update: {},
+    create: {
+      key: 'career',
+      slug: '/career',
+      titleVi: 'Tuyển dụng',
+      titleEn: 'Careers',
+      titleZh: '招聘',
+      isPublished: true,
+    },
+  });
+  for (const sectionKey of CAREERS_PAGE_SECTION_KEYS) {
+    const content = {
+      vi: careersPageDefaults('vi')[sectionKey],
+      en: careersPageDefaults('en')[sectionKey],
+      zh: careersPageDefaults('zh')[sectionKey],
+    } as unknown as Prisma.InputJsonValue;
+    await db.pageSection.upsert({
+      where: { pageId_sectionKey: { pageId: careersPage.id, sectionKey } },
+      update: { content },
+      create: {
+        pageId: careersPage.id,
+        sectionKey,
+        sectionType: sectionKey,
+        content,
+        sortOrder: 0,
+      },
+    });
+  }
   console.log(
-    `  ✓ pages (home + ${HOME_SECTION_KEYS.length} sections, about + ${ABOUT_SECTION_KEYS.length} sections, products + ${PRODUCTS_PAGE_SECTION_KEYS.length} sections)`,
+    `  ✓ pages (home + ${HOME_SECTION_KEYS.length}, about + ${ABOUT_SECTION_KEYS.length}, products + ${PRODUCTS_PAGE_SECTION_KEYS.length}, career + ${CAREERS_PAGE_SECTION_KEYS.length} sections)`,
   );
 
   console.log('\n✅ Seed complete.');

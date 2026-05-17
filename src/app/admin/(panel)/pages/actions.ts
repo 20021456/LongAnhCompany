@@ -9,6 +9,7 @@ import { recordAudit } from '@/lib/audit';
 import { HOME_SECTION_KEYS } from '@/lib/home-content';
 import { ABOUT_SECTION_KEYS } from '@/lib/about-content';
 import { PRODUCTS_PAGE_SECTION_KEYS } from '@/lib/products-page-content';
+import { CAREERS_PAGE_SECTION_KEYS } from '@/lib/careers-page-content';
 import { KNOWN_PAGES } from './known';
 
 /**
@@ -47,6 +48,7 @@ const VALID_SECTION_KEYS = new Set<string>([
   ...HOME_SECTION_KEYS,
   ...ABOUT_SECTION_KEYS,
   ...PRODUCTS_PAGE_SECTION_KEYS,
+  ...CAREERS_PAGE_SECTION_KEYS,
 ]);
 
 export async function savePage(raw: PageInput): Promise<ActionResult> {
