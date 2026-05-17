@@ -19,6 +19,7 @@ import { homeDefaults, HOME_SECTION_KEYS } from '../src/lib/home-content';
 import { aboutDefaults, ABOUT_SECTION_KEYS } from '../src/lib/about-content';
 import { productsPageDefaults, PRODUCTS_PAGE_SECTION_KEYS } from '../src/lib/products-page-content';
 import { careersPageDefaults, CAREERS_PAGE_SECTION_KEYS } from '../src/lib/careers-page-content';
+import { newsPageDefaults, NEWS_PAGE_SECTION_KEYS } from '../src/lib/news-page-content';
 import { PRODUCTS } from '../src/data/products';
 import { JOBS } from '../src/data/jobs';
 import { NEWS } from '../src/data/news';
@@ -888,8 +889,40 @@ async function main() {
       },
     });
   }
+
+  // News listing page + 6 editable sections.
+  const newsPage = await db.page.upsert({
+    where: { key: 'news' },
+    update: {},
+    create: {
+      key: 'news',
+      slug: '/news',
+      titleVi: 'Tin tức',
+      titleEn: 'News',
+      titleZh: '新闻',
+      isPublished: true,
+    },
+  });
+  for (const sectionKey of NEWS_PAGE_SECTION_KEYS) {
+    const content = {
+      vi: newsPageDefaults('vi')[sectionKey],
+      en: newsPageDefaults('en')[sectionKey],
+      zh: newsPageDefaults('zh')[sectionKey],
+    } as unknown as Prisma.InputJsonValue;
+    await db.pageSection.upsert({
+      where: { pageId_sectionKey: { pageId: newsPage.id, sectionKey } },
+      update: { content },
+      create: {
+        pageId: newsPage.id,
+        sectionKey,
+        sectionType: sectionKey,
+        content,
+        sortOrder: 0,
+      },
+    });
+  }
   console.log(
-    `  ✓ pages (home + ${HOME_SECTION_KEYS.length}, about + ${ABOUT_SECTION_KEYS.length}, products + ${PRODUCTS_PAGE_SECTION_KEYS.length}, career + ${CAREERS_PAGE_SECTION_KEYS.length} sections)`,
+    `  ✓ pages (home + ${HOME_SECTION_KEYS.length}, about + ${ABOUT_SECTION_KEYS.length}, products + ${PRODUCTS_PAGE_SECTION_KEYS.length}, career + ${CAREERS_PAGE_SECTION_KEYS.length}, news + ${NEWS_PAGE_SECTION_KEYS.length} sections)`,
   );
 
   console.log('\n✅ Seed complete.');

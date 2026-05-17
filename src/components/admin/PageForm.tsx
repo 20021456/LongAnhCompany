@@ -13,6 +13,7 @@ import { HOME_SECTION_KEYS, type HomeSections, type HomeSectionKey } from '@/lib
 import type { AboutSections, AboutSectionKey } from '@/lib/about-content';
 import type { ProductsPageSections, ProductsPageSectionKey } from '@/lib/products-page-content';
 import type { CareersPageSections, CareersPageSectionKey } from '@/lib/careers-page-content';
+import type { NewsPageSections, NewsPageSectionKey } from '@/lib/news-page-content';
 import { WORLD_PINS, WORLD_PINS_BY_SLUG } from '@/lib/world-pins';
 import { AboutSectionsEditor, aboutSectionsToPayload } from './AboutSectionsEditor';
 import {
@@ -24,8 +25,14 @@ import {
   careersPageSectionsToPayload,
   type JobChip as _JobChip,
 } from './CareersPageSectionsEditor';
+import {
+  NewsPageSectionsEditor,
+  newsPageSectionsToPayload,
+  type ArticleChip as _ArticleChip,
+} from './NewsPageSectionsEditor';
 
 export type JobChip = _JobChip;
+export type ArticleChip = _ArticleChip;
 
 export interface PageFormValue {
   key: string;
@@ -69,8 +76,10 @@ export function PageForm({
   initialAboutSections,
   initialProductsPageSections,
   initialCareersPageSections,
+  initialNewsPageSections,
   currentProducts,
   currentJobs,
+  currentArticles,
 }: {
   initial: PageFormValue;
   label: string;
@@ -83,10 +92,14 @@ export function PageForm({
   initialProductsPageSections?: ProductsPageSections;
   /** Present only for the /career listing page — its 6 sections. */
   initialCareersPageSections?: CareersPageSections;
+  /** Present only for the /news listing page — its 6 sections. */
+  initialNewsPageSections?: NewsPageSections;
   /** Live product catalogue — shown as read-only chips in the carousel section. */
   currentProducts?: ProductChip[];
   /** Live job catalogue — shown as read-only chips in the careers Jobs section. */
   currentJobs?: JobChip[];
+  /** Live article catalogue — shown as read-only chips in the news Featured section. */
+  currentArticles?: ArticleChip[];
 }) {
   const router = useRouter();
   const [v, setV] = useState<PageFormValue>(initial);
@@ -99,6 +112,9 @@ export function PageForm({
   );
   const [careersPageSections, setCareersPageSections] = useState<CareersPageSections | null>(
     initialCareersPageSections ?? null,
+  );
+  const [newsPageSections, setNewsPageSections] = useState<NewsPageSections | null>(
+    initialNewsPageSections ?? null,
   );
   const [lang, setLang] = useState<Lang>('vi');
   const [state, setState] = useState<ActionResult | null>(null);
@@ -184,6 +200,19 @@ export function PageForm({
     if (!dirty) setDirty(true);
   };
 
+  /** Same shape, but for the news listing page editor. */
+  const newsPagePatch = (key: NewsPageSectionKey, p: Record<string, unknown>) => {
+    setNewsPageSections((s) => {
+      if (!s) return s;
+      const cur = s[lang][key] as unknown as Record<string, unknown>;
+      return {
+        ...s,
+        [lang]: { ...s[lang], [key]: { ...cur, ...p } },
+      } as NewsPageSections;
+    });
+    if (!dirty) setDirty(true);
+  };
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -198,7 +227,9 @@ export function PageForm({
           ? productsPageSectionsToPayload(productsPageSections)
           : careersPageSections
             ? careersPageSectionsToPayload(careersPageSections)
-            : undefined;
+            : newsPageSections
+              ? newsPageSectionsToPayload(newsPageSections)
+              : undefined;
     const res = await savePage({
       ...v,
       sections: payload,
@@ -284,6 +315,13 @@ export function PageForm({
               lang={lang}
               onPatch={careersPagePatch}
               currentJobs={currentJobs}
+            />
+          ) : newsPageSections ? (
+            <NewsPageSectionsEditor
+              sections={newsPageSections}
+              lang={lang}
+              onPatch={newsPagePatch}
+              currentArticles={currentArticles}
             />
           ) : C ? (
             <>

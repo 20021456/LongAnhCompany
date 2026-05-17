@@ -6,18 +6,22 @@ import {
   getAboutSections,
   getProductsPageSections,
   getCareersPageSections,
+  getNewsPageSections,
   getProducts,
   getJobs,
+  getArticles,
 } from '@/lib/queries';
 import type { HomeSections } from '@/lib/home-content';
 import type { AboutSections } from '@/lib/about-content';
 import type { ProductsPageSections } from '@/lib/products-page-content';
 import type { CareersPageSections } from '@/lib/careers-page-content';
+import type { NewsPageSections } from '@/lib/news-page-content';
 import {
   PageForm,
   type PageFormValue,
   type ProductChip,
   type JobChip,
+  type ArticleChip,
 } from '@/components/admin/PageForm';
 import { KNOWN_PAGES } from '../known';
 
@@ -44,13 +48,15 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
     isPublished: row?.isPublished ?? true,
   };
 
-  // home / about / products / career each expose a full section editor.
+  // home / about / products / career / news each expose a full section editor.
   let initialSections: HomeSections | undefined;
   let initialAboutSections: AboutSections | undefined;
   let initialProductsPageSections: ProductsPageSections | undefined;
   let initialCareersPageSections: CareersPageSections | undefined;
+  let initialNewsPageSections: NewsPageSections | undefined;
   let currentProducts: ProductChip[] | undefined;
   let currentJobs: JobChip[] | undefined;
+  let currentArticles: ArticleChip[] | undefined;
 
   if (known.key === 'home') {
     const [vi, en, zh, products] = await Promise.all([
@@ -107,6 +113,23 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
       deptZh: j.deptLabel.zh,
       locationVi: j.loc.vi,
     }));
+  } else if (known.key === 'news') {
+    const [vi, en, zh, articles] = await Promise.all([
+      getNewsPageSections('vi'),
+      getNewsPageSections('en'),
+      getNewsPageSections('zh'),
+      getArticles(),
+    ]);
+    initialNewsPageSections = { vi, en, zh };
+    currentArticles = articles.map((a) => ({
+      id: String(a.id),
+      titleVi: a.title.vi,
+      titleEn: a.title.en,
+      titleZh: a.title.zh,
+      views: a.views,
+      cat: a.cat,
+      date: a.date,
+    }));
   }
 
   return (
@@ -118,8 +141,10 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
       initialAboutSections={initialAboutSections}
       initialProductsPageSections={initialProductsPageSections}
       initialCareersPageSections={initialCareersPageSections}
+      initialNewsPageSections={initialNewsPageSections}
       currentProducts={currentProducts}
       currentJobs={currentJobs}
+      currentArticles={currentArticles}
     />
   );
 }

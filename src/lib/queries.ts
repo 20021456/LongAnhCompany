@@ -27,6 +27,11 @@ import {
   CAREERS_PAGE_SECTION_KEYS,
   type CareersPageSectionsLocale,
 } from '@/lib/careers-page-content';
+import {
+  newsPageDefaults,
+  NEWS_PAGE_SECTION_KEYS,
+  type NewsPageSectionsLocale,
+} from '@/lib/news-page-content';
 
 type L3 = { vi: string; en: string; zh: string };
 
@@ -390,6 +395,28 @@ export async function getCareersPageSections(locale: Locale): Promise<CareersPag
 
   const view = out as unknown as Record<string, Record<string, unknown>>;
   for (const key of CAREERS_PAGE_SECTION_KEYS) {
+    const section = page.sections.find((s) => s.sectionKey === key);
+    if (!section || !section.isVisible) continue;
+    const byLocale = section.content as Record<string, unknown> | null;
+    const c = byLocale?.[locale];
+    if (c && typeof c === 'object') {
+      view[key] = { ...view[key], ...(c as Record<string, unknown>) };
+    }
+  }
+  return out;
+}
+
+/** Same shape, for the /news listing page. */
+export async function getNewsPageSections(locale: Locale): Promise<NewsPageSectionsLocale> {
+  const out = newsPageDefaults(locale);
+  const page = await db.page.findUnique({
+    where: { key: 'news' },
+    include: { sections: true },
+  });
+  if (!page) return out;
+
+  const view = out as unknown as Record<string, Record<string, unknown>>;
+  for (const key of NEWS_PAGE_SECTION_KEYS) {
     const section = page.sections.find((s) => s.sectionKey === key);
     if (!section || !section.isVisible) continue;
     const byLocale = section.content as Record<string, unknown> | null;
