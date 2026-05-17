@@ -11,8 +11,13 @@ import { PeImg } from './PeImg';
 import { savePage, type PageInput, type ActionResult } from '@/app/admin/(panel)/pages/actions';
 import { HOME_SECTION_KEYS, type HomeSections, type HomeSectionKey } from '@/lib/home-content';
 import type { AboutSections, AboutSectionKey } from '@/lib/about-content';
+import type { ProductsPageSections, ProductsPageSectionKey } from '@/lib/products-page-content';
 import { WORLD_PINS, WORLD_PINS_BY_SLUG } from '@/lib/world-pins';
 import { AboutSectionsEditor, aboutSectionsToPayload } from './AboutSectionsEditor';
+import {
+  ProductsPageSectionsEditor,
+  productsPageSectionsToPayload,
+} from './ProductsPageSectionsEditor';
 
 export interface PageFormValue {
   key: string;
@@ -54,6 +59,7 @@ export function PageForm({
   path,
   initialSections,
   initialAboutSections,
+  initialProductsPageSections,
   currentProducts,
 }: {
   initial: PageFormValue;
@@ -63,6 +69,8 @@ export function PageForm({
   initialSections?: HomeSections;
   /** Present only for the about page — its 8 editable sections. */
   initialAboutSections?: AboutSections;
+  /** Present only for the /products listing page — its 7 sections. */
+  initialProductsPageSections?: ProductsPageSections;
   /** Live product catalogue — shown as read-only chips in the carousel section. */
   currentProducts?: ProductChip[];
 }) {
@@ -71,6 +79,9 @@ export function PageForm({
   const [sections, setSections] = useState<HomeSections | null>(initialSections ?? null);
   const [aboutSections, setAboutSections] = useState<AboutSections | null>(
     initialAboutSections ?? null,
+  );
+  const [productsPageSections, setProductsPageSections] = useState<ProductsPageSections | null>(
+    initialProductsPageSections ?? null,
   );
   const [lang, setLang] = useState<Lang>('vi');
   const [state, setState] = useState<ActionResult | null>(null);
@@ -130,17 +141,32 @@ export function PageForm({
     if (!dirty) setDirty(true);
   };
 
+  /** Same shape, but for the products listing page editor. */
+  const productsPagePatch = (key: ProductsPageSectionKey, p: Record<string, unknown>) => {
+    setProductsPageSections((s) => {
+      if (!s) return s;
+      const cur = s[lang][key] as unknown as Record<string, unknown>;
+      return {
+        ...s,
+        [lang]: { ...s[lang], [key]: { ...cur, ...p } },
+      } as ProductsPageSections;
+    });
+    if (!dirty) setDirty(true);
+  };
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setState(null);
-    // Both home and about persist into the same `sections` payload — the
-    // server validates each key against HOME_SECTION_KEYS ∪ ABOUT_SECTION_KEYS.
+    // Home / about / products each persist into the same `sections` payload;
+    // the server validates each key against the union of all known sets.
     const payload = sections
       ? toSectionsPayload(sections)
       : aboutSections
         ? aboutSectionsToPayload(aboutSections)
-        : undefined;
+        : productsPageSections
+          ? productsPageSectionsToPayload(productsPageSections)
+          : undefined;
     const res = await savePage({
       ...v,
       sections: payload,
@@ -213,6 +239,13 @@ export function PageForm({
         <div className="pe-main">
           {aboutSections ? (
             <AboutSectionsEditor sections={aboutSections} lang={lang} onPatch={aboutPatch} />
+          ) : productsPageSections ? (
+            <ProductsPageSectionsEditor
+              sections={productsPageSections}
+              lang={lang}
+              onPatch={productsPagePatch}
+              currentProducts={currentProducts}
+            />
           ) : C ? (
             <>
               {/* 01 — HERO */}

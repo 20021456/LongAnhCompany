@@ -1,9 +1,15 @@
 import { notFound } from 'next/navigation';
 import { requirePermission } from '@/lib/auth-helpers';
 import { db } from '@/lib/db';
-import { getHomeSections, getAboutSections, getProducts } from '@/lib/queries';
+import {
+  getHomeSections,
+  getAboutSections,
+  getProductsPageSections,
+  getProducts,
+} from '@/lib/queries';
 import type { HomeSections } from '@/lib/home-content';
 import type { AboutSections } from '@/lib/about-content';
+import type { ProductsPageSections } from '@/lib/products-page-content';
 import { PageForm, type PageFormValue, type ProductChip } from '@/components/admin/PageForm';
 import { KNOWN_PAGES } from '../known';
 
@@ -30,11 +36,10 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
     isPublished: row?.isPublished ?? true,
   };
 
-  // The home and about pages expose full section editors. Load every
-  // section's content for all three locales — get*Sections merges saved
-  // rows with defaults so the editor always has something to render.
+  // home / about / products each expose a full section editor.
   let initialSections: HomeSections | undefined;
   let initialAboutSections: AboutSections | undefined;
+  let initialProductsPageSections: ProductsPageSections | undefined;
   let currentProducts: ProductChip[] | undefined;
 
   if (known.key === 'home') {
@@ -58,6 +63,22 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
       getAboutSections('zh'),
     ]);
     initialAboutSections = { vi, en, zh };
+  } else if (known.key === 'products') {
+    const [vi, en, zh, products] = await Promise.all([
+      getProductsPageSections('vi'),
+      getProductsPageSections('en'),
+      getProductsPageSections('zh'),
+      getProducts(),
+    ]);
+    initialProductsPageSections = { vi, en, zh };
+    // Reuse the same ProductChip prop so the SKU-list section can display
+    // each catalog entry's localized name/MOQ next to the code.
+    currentProducts = Object.values(products).map((p) => ({
+      code: p.code,
+      nameVi: p.name.vi,
+      nameEn: p.name.en,
+      nameZh: p.name.zh,
+    }));
   }
 
   return (
@@ -67,6 +88,7 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
       path={known.path}
       initialSections={initialSections}
       initialAboutSections={initialAboutSections}
+      initialProductsPageSections={initialProductsPageSections}
       currentProducts={currentProducts}
     />
   );

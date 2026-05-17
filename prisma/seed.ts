@@ -17,6 +17,7 @@ import { DEFAULT_ROLE_PERMISSIONS } from '../src/lib/permissions';
 import { COPY } from '../src/data/copy';
 import { homeDefaults, HOME_SECTION_KEYS } from '../src/lib/home-content';
 import { aboutDefaults, ABOUT_SECTION_KEYS } from '../src/lib/about-content';
+import { productsPageDefaults, PRODUCTS_PAGE_SECTION_KEYS } from '../src/lib/products-page-content';
 import { PRODUCTS } from '../src/data/products';
 import { JOBS } from '../src/data/jobs';
 import { NEWS } from '../src/data/news';
@@ -822,8 +823,40 @@ async function main() {
       },
     });
   }
+
+  // Products listing page + 7 editable sections.
+  const productsPage = await db.page.upsert({
+    where: { key: 'products' },
+    update: {},
+    create: {
+      key: 'products',
+      slug: '/products',
+      titleVi: 'Sản phẩm',
+      titleEn: 'Products',
+      titleZh: '产品',
+      isPublished: true,
+    },
+  });
+  for (const sectionKey of PRODUCTS_PAGE_SECTION_KEYS) {
+    const content = {
+      vi: productsPageDefaults('vi')[sectionKey],
+      en: productsPageDefaults('en')[sectionKey],
+      zh: productsPageDefaults('zh')[sectionKey],
+    } as unknown as Prisma.InputJsonValue;
+    await db.pageSection.upsert({
+      where: { pageId_sectionKey: { pageId: productsPage.id, sectionKey } },
+      update: { content },
+      create: {
+        pageId: productsPage.id,
+        sectionKey,
+        sectionType: sectionKey,
+        content,
+        sortOrder: 0,
+      },
+    });
+  }
   console.log(
-    `  ✓ pages (home + ${HOME_SECTION_KEYS.length} sections, about + ${ABOUT_SECTION_KEYS.length} sections)`,
+    `  ✓ pages (home + ${HOME_SECTION_KEYS.length} sections, about + ${ABOUT_SECTION_KEYS.length} sections, products + ${PRODUCTS_PAGE_SECTION_KEYS.length} sections)`,
   );
 
   console.log('\n✅ Seed complete.');
