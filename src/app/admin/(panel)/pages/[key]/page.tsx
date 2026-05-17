@@ -7,6 +7,7 @@ import {
   getProductsPageSections,
   getCareersPageSections,
   getNewsPageSections,
+  getContactPageSections,
   getProducts,
   getJobs,
   getArticles,
@@ -16,6 +17,7 @@ import type { AboutSections } from '@/lib/about-content';
 import type { ProductsPageSections } from '@/lib/products-page-content';
 import type { CareersPageSections } from '@/lib/careers-page-content';
 import type { NewsPageSections } from '@/lib/news-page-content';
+import type { ContactPageSections } from '@/lib/contact-page-content';
 import {
   PageForm,
   type PageFormValue,
@@ -54,6 +56,7 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
   let initialProductsPageSections: ProductsPageSections | undefined;
   let initialCareersPageSections: CareersPageSections | undefined;
   let initialNewsPageSections: NewsPageSections | undefined;
+  let initialContactPageSections: ContactPageSections | undefined;
   let currentProducts: ProductChip[] | undefined;
   let currentJobs: JobChip[] | undefined;
   let currentArticles: ArticleChip[] | undefined;
@@ -130,6 +133,13 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
       cat: a.cat,
       date: a.date,
     }));
+  } else if (known.key === 'contact') {
+    const [vi, en, zh] = await Promise.all([
+      getContactPageSections('vi'),
+      getContactPageSections('en'),
+      getContactPageSections('zh'),
+    ]);
+    initialContactPageSections = { vi, en, zh };
   }
 
   return (
@@ -142,6 +152,7 @@ export default async function AdminPageEditPage({ params }: { params: { key: str
       initialProductsPageSections={initialProductsPageSections}
       initialCareersPageSections={initialCareersPageSections}
       initialNewsPageSections={initialNewsPageSections}
+      initialContactPageSections={initialContactPageSections}
       currentProducts={currentProducts}
       currentJobs={currentJobs}
       currentArticles={currentArticles}

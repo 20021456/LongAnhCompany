@@ -14,6 +14,7 @@ import type { AboutSections, AboutSectionKey } from '@/lib/about-content';
 import type { ProductsPageSections, ProductsPageSectionKey } from '@/lib/products-page-content';
 import type { CareersPageSections, CareersPageSectionKey } from '@/lib/careers-page-content';
 import type { NewsPageSections, NewsPageSectionKey } from '@/lib/news-page-content';
+import type { ContactPageSections, ContactPageSectionKey } from '@/lib/contact-page-content';
 import { WORLD_PINS, WORLD_PINS_BY_SLUG } from '@/lib/world-pins';
 import { AboutSectionsEditor, aboutSectionsToPayload } from './AboutSectionsEditor';
 import {
@@ -30,6 +31,10 @@ import {
   newsPageSectionsToPayload,
   type ArticleChip as _ArticleChip,
 } from './NewsPageSectionsEditor';
+import {
+  ContactPageSectionsEditor,
+  contactPageSectionsToPayload,
+} from './ContactPageSectionsEditor';
 
 export type JobChip = _JobChip;
 export type ArticleChip = _ArticleChip;
@@ -77,6 +82,7 @@ export function PageForm({
   initialProductsPageSections,
   initialCareersPageSections,
   initialNewsPageSections,
+  initialContactPageSections,
   currentProducts,
   currentJobs,
   currentArticles,
@@ -94,6 +100,8 @@ export function PageForm({
   initialCareersPageSections?: CareersPageSections;
   /** Present only for the /news listing page — its 6 sections. */
   initialNewsPageSections?: NewsPageSections;
+  /** Present only for the /contact page — its 5 sections. */
+  initialContactPageSections?: ContactPageSections;
   /** Live product catalogue — shown as read-only chips in the carousel section. */
   currentProducts?: ProductChip[];
   /** Live job catalogue — shown as read-only chips in the careers Jobs section. */
@@ -115,6 +123,9 @@ export function PageForm({
   );
   const [newsPageSections, setNewsPageSections] = useState<NewsPageSections | null>(
     initialNewsPageSections ?? null,
+  );
+  const [contactPageSections, setContactPageSections] = useState<ContactPageSections | null>(
+    initialContactPageSections ?? null,
   );
   const [lang, setLang] = useState<Lang>('vi');
   const [state, setState] = useState<ActionResult | null>(null);
@@ -213,6 +224,19 @@ export function PageForm({
     if (!dirty) setDirty(true);
   };
 
+  /** Same shape, but for the contact page editor. */
+  const contactPagePatch = (key: ContactPageSectionKey, p: Record<string, unknown>) => {
+    setContactPageSections((s) => {
+      if (!s) return s;
+      const cur = s[lang][key] as unknown as Record<string, unknown>;
+      return {
+        ...s,
+        [lang]: { ...s[lang], [key]: { ...cur, ...p } },
+      } as ContactPageSections;
+    });
+    if (!dirty) setDirty(true);
+  };
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -229,7 +253,9 @@ export function PageForm({
             ? careersPageSectionsToPayload(careersPageSections)
             : newsPageSections
               ? newsPageSectionsToPayload(newsPageSections)
-              : undefined;
+              : contactPageSections
+                ? contactPageSectionsToPayload(contactPageSections)
+                : undefined;
     const res = await savePage({
       ...v,
       sections: payload,
@@ -322,6 +348,12 @@ export function PageForm({
               lang={lang}
               onPatch={newsPagePatch}
               currentArticles={currentArticles}
+            />
+          ) : contactPageSections ? (
+            <ContactPageSectionsEditor
+              sections={contactPageSections}
+              lang={lang}
+              onPatch={contactPagePatch}
             />
           ) : C ? (
             <>

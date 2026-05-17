@@ -20,6 +20,7 @@ import { aboutDefaults, ABOUT_SECTION_KEYS } from '../src/lib/about-content';
 import { productsPageDefaults, PRODUCTS_PAGE_SECTION_KEYS } from '../src/lib/products-page-content';
 import { careersPageDefaults, CAREERS_PAGE_SECTION_KEYS } from '../src/lib/careers-page-content';
 import { newsPageDefaults, NEWS_PAGE_SECTION_KEYS } from '../src/lib/news-page-content';
+import { contactPageDefaults, CONTACT_PAGE_SECTION_KEYS } from '../src/lib/contact-page-content';
 import { PRODUCTS } from '../src/data/products';
 import { JOBS } from '../src/data/jobs';
 import { NEWS } from '../src/data/news';
@@ -921,8 +922,40 @@ async function main() {
       },
     });
   }
+
+  // Contact page + 5 editable sections.
+  const contactPage = await db.page.upsert({
+    where: { key: 'contact' },
+    update: {},
+    create: {
+      key: 'contact',
+      slug: '/contact',
+      titleVi: 'Liên hệ',
+      titleEn: 'Contact',
+      titleZh: '联系',
+      isPublished: true,
+    },
+  });
+  for (const sectionKey of CONTACT_PAGE_SECTION_KEYS) {
+    const content = {
+      vi: contactPageDefaults('vi')[sectionKey],
+      en: contactPageDefaults('en')[sectionKey],
+      zh: contactPageDefaults('zh')[sectionKey],
+    } as unknown as Prisma.InputJsonValue;
+    await db.pageSection.upsert({
+      where: { pageId_sectionKey: { pageId: contactPage.id, sectionKey } },
+      update: { content },
+      create: {
+        pageId: contactPage.id,
+        sectionKey,
+        sectionType: sectionKey,
+        content,
+        sortOrder: 0,
+      },
+    });
+  }
   console.log(
-    `  ✓ pages (home + ${HOME_SECTION_KEYS.length}, about + ${ABOUT_SECTION_KEYS.length}, products + ${PRODUCTS_PAGE_SECTION_KEYS.length}, career + ${CAREERS_PAGE_SECTION_KEYS.length}, news + ${NEWS_PAGE_SECTION_KEYS.length} sections)`,
+    `  ✓ pages (home + ${HOME_SECTION_KEYS.length}, about + ${ABOUT_SECTION_KEYS.length}, products + ${PRODUCTS_PAGE_SECTION_KEYS.length}, career + ${CAREERS_PAGE_SECTION_KEYS.length}, news + ${NEWS_PAGE_SECTION_KEYS.length}, contact + ${CONTACT_PAGE_SECTION_KEYS.length} sections)`,
   );
 
   console.log('\n✅ Seed complete.');

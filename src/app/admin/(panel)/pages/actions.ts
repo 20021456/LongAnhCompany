@@ -11,6 +11,7 @@ import { ABOUT_SECTION_KEYS } from '@/lib/about-content';
 import { PRODUCTS_PAGE_SECTION_KEYS } from '@/lib/products-page-content';
 import { CAREERS_PAGE_SECTION_KEYS } from '@/lib/careers-page-content';
 import { NEWS_PAGE_SECTION_KEYS } from '@/lib/news-page-content';
+import { CONTACT_PAGE_SECTION_KEYS } from '@/lib/contact-page-content';
 import { KNOWN_PAGES } from './known';
 
 /**
@@ -51,6 +52,7 @@ const VALID_SECTION_KEYS = new Set<string>([
   ...PRODUCTS_PAGE_SECTION_KEYS,
   ...CAREERS_PAGE_SECTION_KEYS,
   ...NEWS_PAGE_SECTION_KEYS,
+  ...CONTACT_PAGE_SECTION_KEYS,
 ]);
 
 export async function savePage(raw: PageInput): Promise<ActionResult> {
