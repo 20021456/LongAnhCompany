@@ -1,6 +1,5 @@
 import { requirePermission, can } from '@/lib/auth-helpers';
 import { db } from '@/lib/db';
-import { AdminPageHead } from '@/components/admin/AdminPageHead';
 import {
   MediaLibrary,
   type MediaItem,
@@ -44,16 +43,13 @@ export default async function AdminMediaPage() {
   }));
 
   const totalSize = media.reduce((sum, m) => sum + (m.size ?? 0), 0);
-  const sizeLabel = totalSize > 0 ? ` · ${(totalSize / 1024 / 1024).toFixed(1)} MB` : '';
 
   return (
-    <>
-      <AdminPageHead
-        crumbs={[{ label: 'Thư viện ảnh' }]}
-        title="Thư viện ảnh"
-        sub={`${items.length} ảnh${sizeLabel}`}
-      />
-      <MediaLibrary items={items} folders={folderOptions} canUpload={can(user, 'media.upload')} />
-    </>
+    <MediaLibrary
+      items={items}
+      folders={folderOptions}
+      canUpload={can(user, 'media.upload')}
+      totalSizeBytes={totalSize}
+    />
   );
 }

@@ -11,6 +11,7 @@ export type ActionResult = { ok?: boolean; error?: string };
 const addSchema = z.object({
   url: z.string().min(1, 'Đường dẫn ảnh không được để trống'),
   filename: z.string().optional(),
+  folderId: z.string().optional(),
   altVi: z.string().optional(),
   altEn: z.string().optional(),
   altZh: z.string().optional(),
@@ -32,6 +33,7 @@ export async function addMedia(raw: z.input<typeof addSchema>): Promise<ActionRe
         url: d.url.trim(),
         filename,
         originalName: filename,
+        folderId: d.folderId || null,
         altVi: d.altVi || null,
         altEn: d.altEn || null,
         altZh: d.altZh || null,

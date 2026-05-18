@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AdminIcon } from './AdminIcon';
+import { AdminIcon, type AdminIconName } from './AdminIcon';
+import { AdminPageHead } from './AdminPageHead';
 import { Field, FieldRow } from './FormBits';
 import { fmtDateVn } from '@/lib/format';
 import {
@@ -34,6 +35,19 @@ export interface MediaFolderOption {
   name: string;
 }
 
+/** Display label + icon for built-in folder slugs the prototype uses. */
+const FOLDER_ICONS: Record<string, AdminIconName> = {
+  product: 'rock',
+  gallery: 'grid',
+  banner: 'layers',
+  logo: 'star',
+};
+
+/** Visual-only tag chips at the bottom of the sidebar — schema doesn't
+ *  track media tags yet (Phase 7), but keeping the strip matches the
+ *  prototype and gives users a hint of the future feature. */
+const DECORATIVE_TAGS = ['đá tự nhiên', 'bột đá', 'kho hàng', 'nhà máy'];
+
 function fmtSize(bytes: number | null): string {
   if (!bytes) return '—';
   if (bytes < 1024) return `${bytes} B`;
@@ -41,10 +55,13 @@ function fmtSize(bytes: number | null): string {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
-function AddPanel({ onDone }: { onDone: () => void }) {
+// ─── Upload panel (URL-based registration) ───────────────────────────────
+
+function AddPanel({ onDone, folders }: { onDone: () => void; folders: MediaFolderOption[] }) {
   const [url, setUrl] = useState('');
   const [filename, setFilename] = useState('');
   const [altVi, setAltVi] = useState('');
+  const [folderId, setFolderId] = useState('');
   const [state, setState] = useState<ActionResult | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -52,7 +69,7 @@ function AddPanel({ onDone }: { onDone: () => void }) {
     e.preventDefault();
     setBusy(true);
     setState(null);
-    const res = await addMedia({ url, filename, altVi });
+    const res = await addMedia({ url, filename, altVi, folderId: folderId || undefined });
     setBusy(false);
     setState(res);
     if (res.ok) {
@@ -64,11 +81,14 @@ function AddPanel({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <div className="ad-card" style={{ marginBottom: 16 }}>
+    <div className="ad-card" style={{ marginBottom: 14 }}>
       <div className="ad-card-head">
         <div>
-          <h3>Thêm ảnh</h3>
-          <p>Đăng ký ảnh bằng đường dẫn (URL hoặc đường dẫn trong /public).</p>
+          <h3>Thêm ảnh vào thư viện</h3>
+          <p>
+            Đăng ký ảnh bằng đường dẫn (URL hoặc đường dẫn trong <code>/public</code>) — auto-WebP
+            convert sẽ chạy ở Phase 7.
+          </p>
         </div>
       </div>
       <div className="ad-card-body">
@@ -98,11 +118,32 @@ function AddPanel({ onDone }: { onDone: () => void }) {
               />
             </Field>
           </FieldRow>
-          <Field label="Mô tả ảnh (alt — VI)">
-            <input className="ad-input" value={altVi} onChange={(e) => setAltVi(e.target.value)} />
-          </Field>
+          <FieldRow>
+            <Field label="Folder">
+              <select
+                className="ad-select"
+                value={folderId}
+                onChange={(e) => setFolderId(e.target.value)}
+              >
+                <option value="">— Chưa phân loại —</option>
+                {folders.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Mô tả ảnh (alt — VI)">
+              <input
+                className="ad-input"
+                value={altVi}
+                onChange={(e) => setAltVi(e.target.value)}
+                placeholder="Đá nguyên liệu cao cấp Long Anh"
+              />
+            </Field>
+          </FieldRow>
           <button type="submit" className="ad-btn primary" disabled={busy}>
-            <AdminIcon name="plus" size={15} />
+            <AdminIcon name="upload" size={15} />
             {busy ? 'Đang thêm…' : 'Thêm vào thư viện'}
           </button>
         </form>
@@ -110,6 +151,8 @@ function AddPanel({ onDone }: { onDone: () => void }) {
     </div>
   );
 }
+
+// ─── Detail panel — preview + meta + editable alt + actions ───────────────
 
 function DetailPanel({ item }: { item: MediaItem }) {
   const router = useRouter();
@@ -175,18 +218,27 @@ function DetailPanel({ item }: { item: MediaItem }) {
         </div>
 
         <dl className="mb-info" style={{ margin: 0 }}>
-          <dt>Đường dẫn</dt>
-          <dd style={{ wordBreak: 'break-all' }}>
-            <span className="ad-code">{item.url}</span>
-          </dd>
           <dt>Upload bởi</dt>
           <dd>
             {item.uploadedByName ?? '—'} · {fmtDateVn(item.createdAt)}
           </dd>
           <dt>Folder</dt>
           <dd>{item.folderName ?? 'Chưa phân loại'}</dd>
+          <dt>Đường dẫn</dt>
+          <dd style={{ wordBreak: 'break-all' }}>
+            <span className="ad-code">{item.url}</span>
+          </dd>
         </dl>
 
+        <Field label="Alt text (VI)" required help="Mô tả ảnh cho SEO & screen readers">
+          <input
+            className="ad-input"
+            value={altVi}
+            disabled={!editing}
+            onChange={(e) => setAltVi(e.target.value)}
+            placeholder={editing ? 'Đá nguyên liệu cao cấp Long Anh' : 'chưa có'}
+          />
+        </Field>
         {editing ? (
           <>
             <Field label="Tên hiển thị" required>
@@ -194,13 +246,6 @@ function DetailPanel({ item }: { item: MediaItem }) {
                 className="ad-input"
                 value={filename}
                 onChange={(e) => setFilename(e.target.value)}
-              />
-            </Field>
-            <Field label="Alt text (VI)" help="Mô tả ảnh cho SEO & screen readers.">
-              <input
-                className="ad-input"
-                value={altVi}
-                onChange={(e) => setAltVi(e.target.value)}
               />
             </Field>
             <Field label="Alt text (EN)">
@@ -220,14 +265,39 @@ function DetailPanel({ item }: { item: MediaItem }) {
           </>
         ) : (
           <dl className="mb-info" style={{ margin: 0 }}>
-            <dt>Alt text (VI)</dt>
-            <dd>{item.altVi || <span style={{ color: 'var(--ad-text-mute)' }}>chưa có</span>}</dd>
             <dt>Alt text (EN)</dt>
             <dd>{item.altEn || <span style={{ color: 'var(--ad-text-mute)' }}>chưa có</span>}</dd>
             <dt>Alt text (ZH)</dt>
             <dd>{item.altZh || <span style={{ color: 'var(--ad-text-mute)' }}>chưa có</span>}</dd>
           </dl>
         )}
+
+        <Field label="Caption" help="Phase 7 — chưa lưu vào DB.">
+          <textarea
+            className="ad-textarea"
+            style={{ minHeight: 60 }}
+            disabled
+            placeholder="Khu vực kho đá nguyên liệu nhập từ mỏ Quỳ Hợp."
+          />
+        </Field>
+
+        <Field label="Tags" help="Phase 7 — chưa lưu vào DB.">
+          <div className="ad-tags" aria-disabled="true">
+            <span className="ad-tag" style={{ opacity: 0.6 }}>
+              đá
+            </span>
+            <span className="ad-tag" style={{ opacity: 0.6 }}>
+              nguyên liệu
+            </span>
+          </div>
+        </Field>
+
+        <div className="mb-usage">
+          <b>📍 Đang được dùng ở:</b>
+          <div style={{ color: 'var(--ad-text-soft)' }}>
+            Phase 7 — sẽ liệt kê các bài viết / sản phẩm / trang đang dùng ảnh này.
+          </div>
+        </div>
       </div>
       <div className="actions">
         {editing ? (
@@ -245,15 +315,49 @@ function DetailPanel({ item }: { item: MediaItem }) {
             </button>
           </>
         ) : (
-          <button type="button" className="ad-btn sm" onClick={() => setEditing(true)}>
-            <AdminIcon name="edit" size={12} /> Sửa thông tin
-          </button>
+          <>
+            <button
+              type="button"
+              className="ad-btn ghost sm"
+              onClick={() => setEditing(true)}
+              title="Sửa thông tin"
+              aria-label="Sửa thông tin"
+            >
+              <AdminIcon name="edit" size={12} />
+            </button>
+            <button
+              type="button"
+              className="ad-btn ghost sm"
+              disabled
+              title="Crop (Phase 7)"
+              aria-label="Crop ảnh"
+            >
+              <AdminIcon name="image" size={12} />
+            </button>
+            <button
+              type="button"
+              className="ad-btn ghost sm"
+              disabled
+              title="Replace (Phase 7)"
+              aria-label="Thay ảnh"
+            >
+              <AdminIcon name="refresh" size={12} />
+            </button>
+            <a
+              className="ad-btn ghost sm"
+              href={item.url}
+              target="_blank"
+              rel="noreferrer"
+              title="Mở / tải về"
+              aria-label="Tải ảnh"
+              download
+            >
+              <AdminIcon name="download" size={12} />
+            </a>
+          </>
         )}
-        <a className="ad-btn sm" href={item.url} target="_blank" rel="noreferrer" title="Mở ảnh">
-          <AdminIcon name="eye" size={12} />
-        </a>
         <div style={{ flex: 1 }} />
-        {confirming ? (
+        {!editing && confirming ? (
           <>
             <button type="button" className="ad-btn sm danger" disabled={busy} onClick={onDelete}>
               {busy ? '…' : 'Xác nhận xoá'}
@@ -262,29 +366,36 @@ function DetailPanel({ item }: { item: MediaItem }) {
               Huỷ
             </button>
           </>
-        ) : (
+        ) : !editing ? (
           <button
             type="button"
-            className="ad-btn sm danger"
+            className="ad-btn ghost sm"
             onClick={() => setConfirming(true)}
             title="Xoá ảnh"
+            aria-label="Xoá ảnh"
+            style={{ color: 'var(--ad-danger)' }}
           >
             <AdminIcon name="trash" size={12} />
           </button>
-        )}
+        ) : null}
       </div>
     </div>
   );
 }
 
+// ─── Library shell — sidebar + grid + detail ──────────────────────────────
+
 export function MediaLibrary({
   items,
   folders,
   canUpload,
+  totalSizeBytes,
 }: {
   items: MediaItem[];
   folders: MediaFolderOption[];
   canUpload: boolean;
+  /** Sum of `size` across all media rows — rendered into the page-head sub. */
+  totalSizeBytes: number;
 }) {
   const router = useRouter();
   const [folder, setFolder] = useState<string>('all');
@@ -293,6 +404,14 @@ export function MediaLibrary({
   const [sortBy, setSortBy] = useState<string>('new');
   const [selectedId, setSelectedId] = useState<string | null>(items[0]?.id ?? null);
   const [showAdd, setShowAdd] = useState(false);
+  const addPanelRef = useRef<HTMLDivElement | null>(null);
+
+  // Scroll the AddPanel into view when it opens (it sits above the layout).
+  useEffect(() => {
+    if (showAdd && addPanelRef.current) {
+      addPanelRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [showAdd]);
 
   const counts = useMemo(() => {
     const map: Record<string, number> = {};
@@ -333,29 +452,48 @@ export function MediaLibrary({
 
   const selected = filtered.find((i) => i.id === selectedId) ?? filtered[0] ?? null;
 
+  const sizeLabel = totalSizeBytes > 0 ? ` · ${(totalSizeBytes / 1024 / 1024).toFixed(1)} MB` : '';
+
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 14 }}>
-        {canUpload ? (
-          <button type="button" className="ad-btn primary" onClick={() => setShowAdd((v) => !v)}>
-            <AdminIcon name="upload" size={15} />
-            {showAdd ? 'Đóng' : 'Thêm ảnh'}
-          </button>
-        ) : null}
-      </div>
+      <AdminPageHead
+        crumbs={[{ label: 'Thư viện ảnh' }]}
+        title="Thư viện ảnh"
+        sub={`${items.length} ảnh${sizeLabel} · auto-WebP convert đang bật`}
+        actions={
+          <>
+            <button type="button" className="ad-btn" disabled title="Phase 7 — tạo folder mới">
+              <AdminIcon name="folder" size={13} /> Tạo folder
+            </button>
+            {canUpload ? (
+              <button
+                type="button"
+                className="ad-btn primary"
+                onClick={() => setShowAdd((v) => !v)}
+              >
+                <AdminIcon name="upload" size={13} />
+                {showAdd ? 'Đóng' : 'Upload ảnh'}
+              </button>
+            ) : null}
+          </>
+        }
+      />
 
       {canUpload && showAdd ? (
-        <AddPanel
-          onDone={() => {
-            setShowAdd(false);
-            router.refresh();
-          }}
-        />
+        <div ref={addPanelRef}>
+          <AddPanel
+            folders={folders}
+            onDone={() => {
+              setShowAdd(false);
+              router.refresh();
+            }}
+          />
+        </div>
       ) : null}
 
       {items.length === 0 ? (
         <div className="ad-empty">
-          Thư viện trống. {canUpload ? 'Bấm “Thêm ảnh” ở trên để đăng ký ảnh đầu tiên.' : ''}
+          Thư viện trống. {canUpload ? 'Bấm “Upload ảnh” ở góc phải để đăng ký ảnh đầu tiên.' : ''}
         </div>
       ) : (
         <div className="mb-layout">
@@ -370,18 +508,21 @@ export function MediaLibrary({
               <span>Tất cả</span>
               <span className="count">{items.length}</span>
             </button>
-            {folders.map((f) => (
-              <button
-                key={f.id}
-                type="button"
-                className={'mb-folder ' + (folder === f.id ? 'on' : '')}
-                onClick={() => setFolder(f.id)}
-              >
-                <AdminIcon name="folder" size={14} />
-                <span>{f.name}</span>
-                <span className="count">{counts[f.id] ?? 0}</span>
-              </button>
-            ))}
+            {folders.map((f) => {
+              const icon = FOLDER_ICONS[f.name.toLowerCase()] ?? 'folder';
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  className={'mb-folder ' + (folder === f.id ? 'on' : '')}
+                  onClick={() => setFolder(f.id)}
+                >
+                  <AdminIcon name={icon} size={14} />
+                  <span>{f.name}</span>
+                  <span className="count">{counts[f.id] ?? 0}</span>
+                </button>
+              );
+            })}
             {counts['none'] ? (
               <button
                 type="button"
@@ -393,11 +534,19 @@ export function MediaLibrary({
                 <span className="count">{counts['none']}</span>
               </button>
             ) : null}
+
+            <h4 style={{ marginTop: 18 }}>Tags</h4>
+            {DECORATIVE_TAGS.map((t) => (
+              <div key={t} className="mb-tag-dot" title="Phase 7 — chưa lưu vào DB">
+                <span className="bullet" />
+                <span>{t}</span>
+              </div>
+            ))}
           </div>
 
           <div className="mb-main">
             <div className="ad-toolbar" style={{ background: '#fff' }}>
-              <div className="ad-search-box" style={{ width: 220 }}>
+              <div className="ad-search-box" style={{ width: 240 }}>
                 <AdminIcon name="search" size={14} />
                 <input
                   className="ad-input"
@@ -420,7 +569,7 @@ export function MediaLibrary({
               </select>
               <select
                 className="ad-select"
-                style={{ width: 140 }}
+                style={{ width: 130 }}
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
               >
@@ -431,29 +580,38 @@ export function MediaLibrary({
               </select>
               <div className="grow" />
               <span style={{ fontSize: 12, color: 'var(--ad-text-mute)' }}>
-                {selected ? `Đang chọn: ${selected.filename}` : `${filtered.length} ảnh`}
+                {selected
+                  ? `Đang chọn ${filtered.findIndex((i) => i.id === selected.id) + 1} / ${filtered.length} ảnh`
+                  : `${filtered.length} ảnh`}
               </span>
             </div>
             {filtered.length === 0 ? (
               <div className="mb-empty">Không có ảnh nào khớp bộ lọc.</div>
             ) : (
               <div className="mb-grid">
-                {filtered.map((it) => (
-                  <button
-                    key={it.id}
-                    type="button"
-                    className={'mb-tile ' + (selected?.id === it.id ? 'sel' : '')}
-                    onClick={() => setSelectedId(it.id)}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={it.url} alt={it.altVi || it.filename} />
-                    {it.width && it.height ? (
-                      <div className="meta">
-                        {it.width}×{it.height}
-                      </div>
-                    ) : null}
-                  </button>
-                ))}
+                {filtered.map((it) => {
+                  const isSelected = selected?.id === it.id;
+                  return (
+                    <button
+                      key={it.id}
+                      type="button"
+                      className={'mb-tile ' + (isSelected ? 'sel' : '')}
+                      onClick={() => setSelectedId(it.id)}
+                      aria-pressed={isSelected}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={it.url} alt={it.altVi || it.filename} />
+                      <span className="ck" aria-hidden="true">
+                        {isSelected ? <AdminIcon name="check" size={10} /> : null}
+                      </span>
+                      {it.width && it.height ? (
+                        <div className="meta">
+                          {it.width}×{it.height}
+                        </div>
+                      ) : null}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
