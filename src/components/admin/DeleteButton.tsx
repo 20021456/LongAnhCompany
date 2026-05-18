@@ -7,16 +7,21 @@ import { AdminIcon } from './AdminIcon';
 /**
  * Confirm-then-delete button. `action` is a server action that takes the
  * id and removes the row; on success we refresh the current route.
+ *
+ * Pass `iconOnly` to render the compact 30×30 trash button used in row
+ * action strips (matches the news / pages list style).
  */
 export function DeleteButton({
   id,
   action,
   label = 'Xoá',
+  iconOnly = false,
   confirmText = 'Xoá mục này? Hành động không thể hoàn tác.',
 }: {
   id: string;
   action: (id: string) => Promise<{ ok?: boolean; error?: string }>;
   label?: string;
+  iconOnly?: boolean;
   confirmText?: string;
 }) {
   const [pending, startTransition] = useTransition();
@@ -56,6 +61,21 @@ export function DeleteButton({
     );
   }
 
+  if (iconOnly) {
+    return (
+      <button
+        type="button"
+        className="ad-btn ghost sm"
+        title={confirmText}
+        aria-label={label}
+        onClick={() => setConfirming(true)}
+        style={{ color: 'var(--ad-danger)' }}
+      >
+        <AdminIcon name="trash" size={13} />
+      </button>
+    );
+  }
+
   return (
     <button
       type="button"
@@ -63,7 +83,7 @@ export function DeleteButton({
       title={confirmText}
       onClick={() => setConfirming(true)}
     >
-      <AdminIcon name="logout" size={13} />
+      <AdminIcon name="trash" size={13} />
       {label}
     </button>
   );

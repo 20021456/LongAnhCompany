@@ -118,11 +118,34 @@ export function JobsTable({
                 </span>
               </td>
               <td>
-                <div className="row-actions">
-                  <Link href={`/admin/jobs/${j.slug}`} className="ad-btn sm">
-                    <AdminIcon name="edit" size={13} /> Sửa
+                <div className="row-actions tight">
+                  <Link
+                    href={`/admin/jobs/${j.slug}`}
+                    className="ad-btn ghost sm"
+                    title="Sửa vị trí"
+                    aria-label="Sửa vị trí"
+                  >
+                    <AdminIcon name="edit" size={13} />
                   </Link>
-                  <DeleteButton id={j.id} action={deleteAction} />
+                  <a
+                    href={`/vi/career#job-${j.slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="ad-btn ghost sm"
+                    title="Xem trên web"
+                    aria-label="Xem trên web"
+                  >
+                    <AdminIcon name="eye" size={13} />
+                  </a>
+                  <Link
+                    href={`/admin/jobs/${j.slug}/applications`}
+                    className="ad-btn ghost sm"
+                    title="Đơn ứng tuyển"
+                    aria-label="Đơn ứng tuyển"
+                  >
+                    <AdminIcon name="users" size={13} />
+                  </Link>
+                  <DeleteButton id={j.id} action={deleteAction} iconOnly />
                 </div>
               </td>
             </tr>

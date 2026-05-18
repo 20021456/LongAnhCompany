@@ -233,11 +233,26 @@ export function ProductsBrowser({
                 </td>
                 <td style={{ color: 'var(--ad-text-soft)' }}>{<TimeAgo iso={p.updatedAt} />}</td>
                 <td>
-                  <div className="row-actions">
-                    <Link href={`/admin/products/${p.code}`} className="ad-btn sm">
-                      <AdminIcon name="edit" size={13} /> Sửa
+                  <div className="row-actions tight">
+                    <Link
+                      href={`/admin/products/${p.code}`}
+                      className="ad-btn ghost sm"
+                      title="Sửa sản phẩm"
+                      aria-label="Sửa sản phẩm"
+                    >
+                      <AdminIcon name="edit" size={13} />
                     </Link>
-                    <DeleteButton id={p.id} action={deleteAction} />
+                    <a
+                      href={`/vi/products/${p.code}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="ad-btn ghost sm"
+                      title="Xem trên web"
+                      aria-label="Xem trên web"
+                    >
+                      <AdminIcon name="eye" size={13} />
+                    </a>
+                    <DeleteButton id={p.id} action={deleteAction} iconOnly />
                   </div>
                 </td>
               </tr>
