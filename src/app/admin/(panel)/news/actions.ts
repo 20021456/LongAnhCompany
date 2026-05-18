@@ -30,6 +30,17 @@ const schema = z.object({
   tags: z.array(z.string()).optional(),
   metaTitleVi: z.string().optional(),
   metaDescVi: z.string().optional(),
+  /** Image gallery attached to the article. The item flagged `featured: true`
+   *  becomes the cover (saved as `coverImageUrl` for fast list rendering). */
+  gallery: z
+    .array(
+      z.object({
+        src: z.string().min(1),
+        alt: z.string().default(''),
+        featured: z.boolean().default(false),
+      }),
+    )
+    .optional(),
 });
 
 export type ArticleInput = z.input<typeof schema>;
@@ -54,6 +65,12 @@ export async function saveArticle(raw: ArticleInput): Promise<ActionResult> {
           ? new Date()
           : null;
 
+    // Sync cover: when a gallery tile is flagged featured, use its src as the
+    // article cover so the list view + social card stay consistent.
+    const gallery = d.gallery ?? [];
+    const featuredTile = gallery.find((g) => g.featured) ?? gallery[0];
+    const coverImageUrl = d.coverImageUrl || featuredTile?.src || null;
+
     const data = {
       categoryId: d.categoryId || null,
       authorId: d.authorId || null,
@@ -66,12 +83,13 @@ export async function saveArticle(raw: ArticleInput): Promise<ActionResult> {
       contentVi: d.contentVi || null,
       contentEn: d.contentEn || null,
       contentZh: d.contentZh || null,
-      coverImageUrl: d.coverImageUrl || null,
+      coverImageUrl,
       readTimeMin: d.readTimeMin,
       status: d.status,
       isFeatured: d.isFeatured,
       publishedAt,
       tags: (d.tags ?? []) as unknown as Prisma.InputJsonValue,
+      gallery: gallery as unknown as Prisma.InputJsonValue,
       metaTitleVi: d.metaTitleVi || null,
       metaDescVi: d.metaDescVi || null,
     };

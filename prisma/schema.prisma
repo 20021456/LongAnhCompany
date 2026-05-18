@@ -407,6 +407,7 @@ model Article {
   authorId      String?
   author        User?    @relation("ArticleAuthor", fields: [authorId], references: [id])
   tags          Json?                              // ["industry","export"]
+  gallery       Json?                              // [{ src, alt, featured }]
   views         Int      @default(0)
   commentCount  Int      @default(0)
   readTimeMin   Int?

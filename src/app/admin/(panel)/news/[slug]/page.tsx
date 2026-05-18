@@ -6,6 +6,7 @@ import {
   type ArticleFormValue,
   type CategoryOption,
   type AuthorOption,
+  type GalleryItem,
 } from '@/components/admin/ArticleForm';
 
 /** Today as yyyy-mm-dd (browser-locale-independent) — used for new articles. */
@@ -35,11 +36,35 @@ const EMPTY = (): ArticleFormValue => ({
   isFeatured: false,
   publishedDate: todayIso(),
   tags: [],
+  gallery: [],
   metaTitleVi: '',
   metaDescVi: '',
   views: 0,
   comments: 0,
 });
+
+/** Cast `gallery Json?` into a typed list. Tolerant of legacy shapes. */
+function galleryFromJson(raw: unknown, fallbackCover: string): GalleryItem[] {
+  if (Array.isArray(raw)) {
+    return raw
+      .map((g): GalleryItem | null => {
+        if (typeof g === 'string') return { src: g, alt: '', featured: false };
+        if (g && typeof g === 'object' && typeof (g as { src?: unknown }).src === 'string') {
+          return {
+            src: (g as { src: string }).src,
+            alt: typeof (g as { alt?: unknown }).alt === 'string' ? (g as { alt: string }).alt : '',
+            featured: Boolean((g as { featured?: unknown }).featured),
+          };
+        }
+        return null;
+      })
+      .filter((g): g is GalleryItem => g !== null);
+  }
+  // No gallery JSON yet — show the cover as the single tile so the section
+  // isn't empty for legacy posts.
+  if (fallbackCover) return [{ src: fallbackCover, alt: '', featured: true }];
+  return [];
+}
 
 /** Cast `tags Json?` (whatever shape) into a `string[]` for the form. */
 function tagsFromJson(raw: unknown): string[] {
@@ -97,6 +122,7 @@ export default async function ArticleEditPage({ params }: { params: { slug: stri
       isFeatured: a.isFeatured,
       publishedDate: a.publishedAt ? a.publishedAt.toISOString().slice(0, 10) : todayIso(),
       tags: tagsFromJson(a.tags),
+      gallery: galleryFromJson(a.gallery, a.coverImageUrl ?? ''),
       metaTitleVi: a.metaTitleVi ?? '',
       metaDescVi: a.metaDescVi ?? '',
       views: a.views,

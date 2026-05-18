@@ -17,6 +17,13 @@ import {
 
 const SUF: Record<Lang, string> = { vi: 'Vi', en: 'En', zh: 'Zh' };
 
+/** One image attached to the article. The `featured` tile is the cover. */
+export interface GalleryItem {
+  src: string;
+  alt: string;
+  featured: boolean;
+}
+
 export interface ArticleFormValue {
   id?: string;
   slug: string;
@@ -39,6 +46,7 @@ export interface ArticleFormValue {
   /** ISO yyyy-mm-dd string for the <input type="date"> field. */
   publishedDate: string;
   tags: string[];
+  gallery: GalleryItem[];
   metaTitleVi: string;
   metaDescVi: string;
   /** Read-only when editing — displayed in the stats panel. */
@@ -91,8 +99,102 @@ export function ArticleForm({
   const [pinToTop, setPinToTop] = useState(false);
   const [allowComments, setAllowComments] = useState(true);
 
+  // Gallery "Edit alt text" modal state.
+  const [editAltIdx, setEditAltIdx] = useState(-1);
+  const [altDraft, setAltDraft] = useState('');
+
   const set = <K extends keyof ArticleFormValue>(k: K, val: ArticleFormValue[K]) =>
     setV((p) => ({ ...p, [k]: val }));
+
+  // ─── Gallery helpers ────────────────────────────────────────────────────
+  /** Append a new tile from a File using FileReader (data-URL). */
+  function gAddFromFiles(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    const readers = Array.from(files).map(
+      (f) =>
+        new Promise<GalleryItem>((resolve, reject) => {
+          const r = new FileReader();
+          r.onload = () => {
+            if (typeof r.result === 'string') {
+              resolve({ src: r.result, alt: '', featured: false });
+            } else reject(new Error('not a string'));
+          };
+          r.onerror = () => reject(r.error);
+          r.readAsDataURL(f);
+        }),
+    );
+    Promise.all(readers).then((items) => {
+      setV((p) => {
+        const next = [...p.gallery, ...items];
+        // First image added becomes featured by default so the cover isn't blank.
+        if (!next.some((g) => g.featured) && next.length > 0) next[0].featured = true;
+        return { ...p, gallery: next };
+      });
+    });
+  }
+  function gPickFromDevice() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.multiple = true;
+    input.onchange = () => gAddFromFiles(input.files);
+    input.click();
+  }
+  function gMakeFeatured(i: number) {
+    setV((p) => {
+      const next = p.gallery.map((g, j) => ({ ...g, featured: j === i }));
+      // Keep the form's coverImageUrl pointer in sync with the chosen featured.
+      return { ...p, gallery: next, coverImageUrl: next[i]?.src ?? p.coverImageUrl };
+    });
+  }
+  function gMoveUp(i: number) {
+    if (i === 0) return;
+    setV((p) => {
+      const c = [...p.gallery];
+      [c[i - 1], c[i]] = [c[i], c[i - 1]];
+      return { ...p, gallery: c };
+    });
+  }
+  function gMoveDown(i: number) {
+    setV((p) => {
+      if (i >= p.gallery.length - 1) return p;
+      const c = [...p.gallery];
+      [c[i], c[i + 1]] = [c[i + 1], c[i]];
+      return { ...p, gallery: c };
+    });
+  }
+  function gDelete(i: number) {
+    setV((p) => {
+      const next = p.gallery.filter((_, j) => j !== i);
+      // Re-promote the first remaining tile to featured if we just removed the cover.
+      const wasFeatured = p.gallery[i]?.featured;
+      if (wasFeatured && next.length > 0) next[0] = { ...next[0], featured: true };
+      const cover = next.find((g) => g.featured)?.src ?? '';
+      return {
+        ...p,
+        gallery: next,
+        coverImageUrl: wasFeatured ? cover : p.coverImageUrl,
+      };
+    });
+  }
+  function gInsertIntoBody(src: string) {
+    setV((p) => {
+      const current = p[contentKey] as string;
+      const sep = current && !current.endsWith('\n') ? '\n\n' : '';
+      return { ...p, [contentKey]: `${current}${sep}![](${src})\n\n` };
+    });
+  }
+  function gOpenAlt(i: number) {
+    setEditAltIdx(i);
+    setAltDraft(v.gallery[i]?.alt ?? '');
+  }
+  function gSaveAlt() {
+    setV((p) => ({
+      ...p,
+      gallery: p.gallery.map((g, j) => (j === editAltIdx ? { ...g, alt: altDraft } : g)),
+    }));
+    setEditAltIdx(-1);
+  }
 
   const titleKey = (`title` + SUF[lang]) as keyof ArticleFormValue;
   const excerptKey = (`excerpt` + SUF[lang]) as keyof ArticleFormValue;
@@ -407,9 +509,162 @@ export function ArticleForm({
             </div>
           </EditorSection>
 
-          {/* 04 — TAGS & RELATED */}
+          {/* 04 — IMAGE GALLERY */}
           <EditorSection
             num="04"
+            icon="image"
+            title="Thư viện ảnh"
+            sub={`Quản lý ảnh đính kèm bài viết · ${v.gallery.length} ảnh`}
+          >
+            <div
+              className="ne-gallery"
+              onDragOver={(e) => {
+                if (Array.from(e.dataTransfer.types).includes('Files')) {
+                  e.preventDefault();
+                }
+              }}
+              onDrop={(e) => {
+                if (e.dataTransfer.files.length > 0) {
+                  e.preventDefault();
+                  gAddFromFiles(e.dataTransfer.files);
+                }
+              }}
+            >
+              {v.gallery.map((g, i) => (
+                <div key={`${g.src.slice(-12)}-${i}`} className="ne-gimg">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={g.src} alt={g.alt} />
+                  <span className="badge">IMG {String(i + 1).padStart(2, '0')}</span>
+                  {g.featured ? (
+                    <span className="featured-flag">
+                      <AdminIcon name="star" size={10} /> Bìa
+                    </span>
+                  ) : null}
+                  {g.alt ? <div className="alt">{g.alt}</div> : null}
+                  <div className="over">
+                    <button
+                      type="button"
+                      className="ad-btn sm"
+                      title="Đặt làm ảnh bìa"
+                      onClick={() => gMakeFeatured(i)}
+                    >
+                      <AdminIcon name="star" size={12} />
+                    </button>
+                    <button
+                      type="button"
+                      className="ad-btn sm"
+                      title="Sửa mô tả (alt)"
+                      onClick={() => gOpenAlt(i)}
+                    >
+                      <AdminIcon name="edit" size={12} />
+                    </button>
+                    <button
+                      type="button"
+                      className="ad-btn sm"
+                      title="Chèn vào nội dung"
+                      onClick={() => gInsertIntoBody(g.src)}
+                    >
+                      <AdminIcon name="plus" size={12} />
+                    </button>
+                    <button
+                      type="button"
+                      className="ad-btn sm"
+                      title="Đẩy lên"
+                      onClick={() => gMoveUp(i)}
+                      disabled={i === 0}
+                    >
+                      <AdminIcon name="chevron" size={12} />
+                    </button>
+                    <button
+                      type="button"
+                      className="ad-btn sm"
+                      title="Đẩy xuống"
+                      onClick={() => gMoveDown(i)}
+                      disabled={i === v.gallery.length - 1}
+                    >
+                      <AdminIcon name="chevron" size={12} />
+                    </button>
+                    <button
+                      type="button"
+                      className="ad-btn sm danger"
+                      title="Xoá"
+                      onClick={() => gDelete(i)}
+                    >
+                      <AdminIcon name="trash" size={12} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button type="button" className="ne-gadd" onClick={gPickFromDevice}>
+                <AdminIcon name="upload" size={22} />
+                <div>Tải ảnh lên</div>
+                <div style={{ fontSize: 11, opacity: 0.7 }}>hoặc kéo thả</div>
+              </button>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                gap: 8,
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                marginTop: 12,
+              }}
+            >
+              <button type="button" className="ad-btn" onClick={gPickFromDevice}>
+                <AdminIcon name="upload" size={13} /> Thêm ảnh
+              </button>
+              <button type="button" className="ad-btn" disabled title="Phase 7">
+                <AdminIcon name="image" size={13} /> Chọn từ thư viện chung
+              </button>
+              <div
+                style={{
+                  fontSize: 12,
+                  color: 'var(--ad-text-mute)',
+                  marginLeft: 'auto',
+                }}
+              >
+                Khuyến nghị: JPG/WebP · &lt; 1MB · ảnh ngang 1200×800px
+              </div>
+            </div>
+          </EditorSection>
+
+          {editAltIdx >= 0 ? (
+            <div className="ne-galt-modal" onClick={() => setEditAltIdx(-1)} role="presentation">
+              <div
+                className="ne-galt-card"
+                onClick={(e) => e.stopPropagation()}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Sửa mô tả ảnh"
+              >
+                <h3>Mô tả ảnh (alt text)</h3>
+                <Field
+                  label="Văn bản thay thế"
+                  help="Quan trọng cho SEO và screen reader. Mô tả ngắn gọn nội dung ảnh."
+                >
+                  <input
+                    className="ad-input"
+                    autoFocus
+                    value={altDraft}
+                    onChange={(e) => setAltDraft(e.target.value)}
+                    placeholder="Ví dụ: Bao bột đá CaCO₃ tại kho xuất khẩu"
+                  />
+                </Field>
+                <div className="actions">
+                  <button type="button" className="ad-btn" onClick={() => setEditAltIdx(-1)}>
+                    Huỷ
+                  </button>
+                  <button type="button" className="ad-btn primary" onClick={gSaveAlt}>
+                    <AdminIcon name="check" size={13} /> Lưu
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {/* 05 — TAGS & RELATED */}
+          <EditorSection
+            num="05"
             icon="folder"
             title="Tags & Bài liên quan"
             sub='Tags hỗ trợ tìm kiếm và section "Bài liên quan"'
@@ -424,10 +679,10 @@ export function ArticleForm({
             </div>
           </EditorSection>
 
-          {/* 05 — STATS (only when editing existing) */}
+          {/* 06 — STATS (only when editing existing) */}
           {!isNew ? (
             <EditorSection
-              num="05"
+              num="06"
               icon="trend"
               title="Thống kê bài viết"
               sub="Hiển thị, không cho phép sửa"
@@ -450,9 +705,9 @@ export function ArticleForm({
             </EditorSection>
           ) : null}
 
-          {/* 06 — SEO */}
+          {/* 07 — SEO */}
           <EditorSection
-            num={isNew ? '05' : '06'}
+            num={isNew ? '06' : '07'}
             icon="seo"
             title="SEO & Mạng xã hội"
             sub="Meta title, meta description và xem trước trên Google"
