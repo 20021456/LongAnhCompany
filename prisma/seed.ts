@@ -11,7 +11,10 @@
  * certifications, core values, stats, header/footer menus.
  */
 
+import { promises as fs } from 'fs';
+import path from 'path';
 import { PrismaClient, Prisma } from '@prisma/client';
+import { imageSize } from 'image-size';
 import bcrypt from 'bcryptjs';
 import { DEFAULT_ROLE_PERMISSIONS } from '../src/lib/permissions';
 import { COPY } from '../src/data/copy';
@@ -958,7 +961,183 @@ async function main() {
     `  ✓ pages (home + ${HOME_SECTION_KEYS.length}, about + ${ABOUT_SECTION_KEYS.length}, products + ${PRODUCTS_PAGE_SECTION_KEYS.length}, career + ${CAREERS_PAGE_SECTION_KEYS.length}, news + ${NEWS_PAGE_SECTION_KEYS.length}, contact + ${CONTACT_PAGE_SECTION_KEYS.length} sections)`,
   );
 
+  // ─── 14. Media library ─────────────────────────────────────────────────
+  await seedMedia(adminEmail);
+
   console.log('\n✅ Seed complete.');
+}
+
+// ─── Media seed ──────────────────────────────────────────────────────────
+
+/**
+ * Folder catalogue for the media library. Files matching `match` (against
+ * the filename, lowercase) end up in this folder. The first folder whose
+ * matcher matches wins; everything else falls into "Chưa phân loại".
+ */
+const MEDIA_FOLDERS: { name: string; match: (file: string, dir: string) => boolean }[] = [
+  // Logo & icons — long-anh logo + cert SVGs.
+  {
+    name: 'Logo & icons',
+    match: (f) => /^long-anh-|logo|^cert-/.test(f) || f.endsWith('.svg'),
+  },
+  // Product photos — anything in /products/, plus stone/powder SKUs.
+  {
+    name: 'Product',
+    match: (f, dir) =>
+      /\/products\//.test(dir) || /^(p-\d+|bao-bi|bot-|da-|product-tree|hero-product)/.test(f),
+  },
+  // Banner / hero — wide marketing shots.
+  {
+    name: 'Banner',
+    match: (f, dir) =>
+      /\/hero\//.test(dir) || /^(hero-|co-so-ha-tang|nha-may-|infrastructure|plant-)/.test(f),
+  },
+  // Gallery — warehouse, packaging, QC, news samples.
+  {
+    name: 'Gallery',
+    match: (f, dir) =>
+      /\/(news|facility)\//.test(dir) || /^(kho-|warehouse|packaging|kiem-dinh|sample-)/.test(f),
+  },
+];
+
+async function dimsOf(absolutePath: string): Promise<{ w: number | null; h: number | null }> {
+  try {
+    const buf = await fs.readFile(absolutePath);
+    const r = imageSize(buf);
+    return { w: r.width ?? null, h: r.height ?? null };
+  } catch {
+    return { w: null, h: null };
+  }
+}
+
+/** Best-effort alt text generated from the filename so the seeded rows
+ *  aren't completely blank. Editors can refine via /admin/media. */
+function altFromFilename(file: string): string {
+  return file
+    .replace(/\.[^.]+$/, '') // drop ext
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/^./, (c) => c.toUpperCase());
+}
+
+/** Mime type from the extension — enough for filter chips in /admin/media. */
+function mimeOf(file: string): string {
+  const ext = path.extname(file).toLowerCase();
+  return ext === '.jpg' || ext === '.jpeg'
+    ? 'image/jpeg'
+    : ext === '.png'
+      ? 'image/png'
+      : ext === '.webp'
+        ? 'image/webp'
+        : ext === '.svg'
+          ? 'image/svg+xml'
+          : 'application/octet-stream';
+}
+
+/** Recursively collect image files under `dir` (relative to repo root). */
+async function walkImages(absDir: string, rel = ''): Promise<string[]> {
+  let out: string[] = [];
+  let entries: import('fs').Dirent[];
+  try {
+    entries = await fs.readdir(absDir, { withFileTypes: true });
+  } catch {
+    return out;
+  }
+  for (const ent of entries) {
+    const childAbs = path.join(absDir, ent.name);
+    const childRel = path.posix.join(rel, ent.name);
+    if (ent.isDirectory()) {
+      out = out.concat(await walkImages(childAbs, childRel));
+    } else if (/\.(webp|jpe?g|png|svg)$/i.test(ent.name)) {
+      out.push(childRel);
+    }
+  }
+  return out;
+}
+
+async function seedMedia(adminEmail: string) {
+  // Look up the admin user we just created — every seeded media row records
+  // them as the uploader so the detail panel doesn't show "—".
+  const admin = await db.user.findUnique({ where: { email: adminEmail } });
+  if (!admin) {
+    console.warn('  ⚠ media skipped — admin user not found.');
+    return;
+  }
+
+  // Ensure each catalogue folder exists; collect their IDs by name.
+  const folderId: Record<string, string> = {};
+  for (const f of MEDIA_FOLDERS) {
+    const row = await db.mediaFolder.upsert({
+      where: { id: `seed-folder-${f.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+      update: { name: f.name },
+      create: {
+        id: `seed-folder-${f.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+        name: f.name,
+        path: `/${f.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+      },
+    });
+    folderId[f.name] = row.id;
+  }
+
+  // Scan /public/assets + /public/images. Anything else gets `null` folder.
+  const publicDir = path.join(process.cwd(), 'public');
+  const subdirs = ['assets', 'images'];
+  let total = 0;
+  const perFolder: Record<string, number> = { unfiled: 0 };
+  for (const f of MEDIA_FOLDERS) perFolder[f.name] = 0;
+
+  for (const sub of subdirs) {
+    const absSub = path.join(publicDir, sub);
+    const files = await walkImages(absSub, sub);
+    for (const rel of files) {
+      const file = path.posix.basename(rel).toLowerCase();
+      const url = `/${rel}`;
+      const abs = path.join(publicDir, rel);
+      const stat = await fs.stat(abs).catch(() => null);
+      if (!stat) continue;
+
+      // Pick the first matching folder; "unfiled" otherwise.
+      const folder = MEDIA_FOLDERS.find((m) => m.match(file, rel));
+      const fid = folder ? folderId[folder.name] : null;
+
+      const { w, h } = await dimsOf(abs);
+      const alt = altFromFilename(file);
+
+      await db.media.upsert({
+        // Use `url` as a stable natural key — already unique in practice.
+        where: { id: `seed-media-${rel.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}` },
+        update: {
+          folderId: fid,
+          width: w,
+          height: h,
+          size: stat.size,
+          mimeType: mimeOf(file),
+        },
+        create: {
+          id: `seed-media-${rel.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`,
+          url,
+          filename: path.posix.basename(rel),
+          originalName: path.posix.basename(rel),
+          folderId: fid,
+          mimeType: mimeOf(file),
+          size: stat.size,
+          width: w,
+          height: h,
+          altVi: alt,
+          uploadedById: admin.id,
+        },
+      });
+      total++;
+      perFolder[folder ? folder.name : 'unfiled']++;
+    }
+  }
+
+  const breakdown = Object.entries(perFolder)
+    .filter(([, n]) => n > 0)
+    .map(([k, n]) => `${k}: ${n}`)
+    .join(', ');
+  console.log(`  ✓ media library (${total} ảnh — ${breakdown})`);
 }
 
 main()
