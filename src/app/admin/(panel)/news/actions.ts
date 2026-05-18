@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
 import { requirePermission } from '@/lib/auth-helpers';
 import { recordAudit } from '@/lib/audit';
@@ -10,6 +11,7 @@ const schema = z.object({
   id: z.string().optional(),
   slug: z.string().min(1),
   categoryId: z.string().optional(),
+  authorId: z.string().optional(),
   titleVi: z.string().min(1),
   titleEn: z.string().optional(),
   titleZh: z.string().optional(),
@@ -23,6 +25,11 @@ const schema = z.object({
   readTimeMin: z.coerce.number().int().min(1).default(3),
   status: z.enum(['draft', 'published', 'archived']).default('draft'),
   isFeatured: z.boolean().default(false),
+  /** ISO yyyy-mm-dd string from the date input. */
+  publishedDate: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  metaTitleVi: z.string().optional(),
+  metaDescVi: z.string().optional(),
 });
 
 export type ArticleInput = z.input<typeof schema>;
@@ -37,8 +44,19 @@ export async function saveArticle(raw: ArticleInput): Promise<ActionResult> {
   const d = parsed.data;
 
   try {
+    // Prefer the explicit date from the form; fall back to "now" the first
+    // time a post is flipped to "published" without one supplied.
+    const explicitDate = d.publishedDate ? new Date(d.publishedDate) : null;
+    const publishedAt =
+      explicitDate && !Number.isNaN(explicitDate.getTime())
+        ? explicitDate
+        : d.status === 'published'
+          ? new Date()
+          : null;
+
     const data = {
       categoryId: d.categoryId || null,
+      authorId: d.authorId || null,
       titleVi: d.titleVi,
       titleEn: d.titleEn || null,
       titleZh: d.titleZh || null,
@@ -52,7 +70,10 @@ export async function saveArticle(raw: ArticleInput): Promise<ActionResult> {
       readTimeMin: d.readTimeMin,
       status: d.status,
       isFeatured: d.isFeatured,
-      publishedAt: d.status === 'published' ? new Date() : null,
+      publishedAt,
+      tags: (d.tags ?? []) as unknown as Prisma.InputJsonValue,
+      metaTitleVi: d.metaTitleVi || null,
+      metaDescVi: d.metaDescVi || null,
     };
 
     const article = await db.article.upsert({
