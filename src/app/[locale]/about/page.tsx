@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
@@ -5,8 +6,25 @@ import { COPY } from '@/data/copy';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { PageHeader } from '@/components/public/PageHeader';
 import { getAboutSections, getCertifications } from '@/lib/queries';
+import { buildPageMetadata } from '@/lib/page-metadata';
 
 const VALUE_ICONS: IconName[] = ['drop', 'spark', 'ship'];
+
+export async function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  return buildPageMetadata({
+    pageKey: 'about',
+    locale: locale as Locale,
+    pathStripped: '/about',
+    fallbackTitle: 'Giới thiệu · KS Long Anh',
+    fallbackDescription:
+      'Hơn 20 năm khai thác và chế biến khoáng đá tại Quỳ Hợp — Nghệ An. Mỏ riêng, dây chuyền EU, ISO 9001.',
+    fallbackOgImage: '/assets/da-nguyen-lieu-cao-cap.webp',
+  });
+}
 
 export default async function AboutPage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);

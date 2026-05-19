@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
@@ -6,6 +7,24 @@ import { ProductCarousel } from '@/components/public/ProductCarousel';
 import { ExportMap } from '@/components/public/ExportMap';
 import { ContactForm } from '@/components/public/ContactForm';
 import { getProducts, getHomeSections } from '@/lib/queries';
+import { buildPageMetadata } from '@/lib/page-metadata';
+import { JsonLd, organizationSchema, webSiteSchema } from '@/components/seo/JsonLd';
+
+export async function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  return buildPageMetadata({
+    pageKey: 'home',
+    locale: locale as Locale,
+    pathStripped: '/',
+    fallbackTitle: 'KS Long Anh — Khoáng đá nguyên sinh từ Nghệ An',
+    fallbackDescription:
+      'Long Anh chuyên sản xuất bột đá CaCO₃ và đá tự nhiên — phục vụ ngành nhựa, sơn, giấy, xây dựng và xuất khẩu toàn cầu.',
+    fallbackOgImage: '/assets/hero-sw.png',
+  });
+}
 
 export default async function HomePage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
@@ -28,6 +47,17 @@ export default async function HomePage({ params: { locale } }: { params: { local
 
   return (
     <>
+      <JsonLd
+        data={organizationSchema({
+          name: 'KS Long Anh',
+          legalName: 'Công ty TNHH KS Long Anh',
+          logo: '/assets/long-anh-logo.png',
+          email: S.contact.email,
+          phone: S.contact.phone1,
+          address: S.contact.address,
+        })}
+      />
+      <JsonLd data={webSiteSchema({ name: 'KS Long Anh' })} />
       {/* HERO */}
       <section id="home" className="va-hero split">
         <div className="va-wrap va-hero-l">

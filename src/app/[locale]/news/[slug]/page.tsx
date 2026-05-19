@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
@@ -5,6 +6,48 @@ import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { getArticles } from '@/lib/queries';
 import { Icon } from '@/components/ui/Icon';
+import { hreflangAlternates, absUrl } from '@/lib/site-url';
+import { JsonLd, articleSchema, breadcrumbSchema } from '@/components/seo/JsonLd';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string; slug: string };
+}): Promise<Metadata> {
+  const loc = params.locale as Locale;
+  let title = params.slug;
+  let description = '';
+  let ogImage: string | undefined;
+  try {
+    const all = await getArticles();
+    const article = all.find((n) => String(n.id) === params.slug);
+    if (article) {
+      title = article.title[loc] || article.title.vi;
+      description = article.excerpt[loc] || article.excerpt.vi || '';
+      ogImage = article.img;
+    }
+  } catch {
+    /* DB unavailable */
+  }
+  const { canonical, languages } = hreflangAlternates(loc, `/news/${params.slug}`);
+  return {
+    title,
+    description,
+    alternates: { canonical, languages },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: 'article',
+      ...(ogImage ? { images: [{ url: absUrl(ogImage) }] } : {}),
+    },
+    twitter: {
+      title,
+      description,
+      ...(ogImage ? { images: [absUrl(ogImage)] } : {}),
+    },
+  };
+}
 
 export default async function ArticlePage({
   params,
@@ -44,8 +87,30 @@ export default async function ArticlePage({
     return `${d}/${m}/${y}`;
   };
 
+  const articleUrl = `/${loc}/news/${params.slug}`;
+  const homeLabel = loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ';
+  const newsLabel = C.nav[4];
+
   return (
     <div className="nw">
+      <JsonLd
+        data={articleSchema({
+          headline: article.title[loc] || article.title.vi,
+          description: article.excerpt[loc] || article.excerpt.vi,
+          imageUrl: article.img,
+          datePublished: article.date,
+          publisherName: 'KS Long Anh',
+          publisherLogo: '/assets/long-anh-logo.png',
+          url: articleUrl,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: homeLabel, url: `/${loc}` },
+          { name: newsLabel, url: `/${loc}/news` },
+          { name: article.title[loc] || article.title.vi, url: articleUrl },
+        ])}
+      />
       <section className="nw-head">
         <div className="va-wrap">
           <nav className="nw-bcrumb">

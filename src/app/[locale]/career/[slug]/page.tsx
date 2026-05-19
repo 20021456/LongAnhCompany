@@ -1,9 +1,41 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { getJobs } from '@/lib/queries';
 import { Icon } from '@/components/ui/Icon';
+import { hreflangAlternates, siteUrl } from '@/lib/site-url';
+import { JsonLd, jobPostingSchema, breadcrumbSchema } from '@/components/seo/JsonLd';
+import { db } from '@/lib/db';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string; slug: string };
+}): Promise<Metadata> {
+  const loc = params.locale as Locale;
+  let title = params.slug;
+  let description = '';
+  try {
+    const jobs = await getJobs();
+    const job = jobs[params.slug];
+    if (job) {
+      title = job.title[loc] || job.title.vi;
+      description = job.overview[loc] || job.overview.vi || '';
+    }
+  } catch {
+    /* DB unavailable */
+  }
+  const { canonical, languages } = hreflangAlternates(loc, `/career/${params.slug}`);
+  return {
+    title,
+    description,
+    alternates: { canonical, languages },
+    openGraph: { title, description, url: canonical, type: 'article' },
+    twitter: { title, description },
+  };
+}
 
 const L = {
   vi: {
@@ -122,13 +154,66 @@ export default async function JobDetailPage({
   const deptLabel = job.deptLabel[loc];
   const mailto = `mailto:hr@longanhcorp.com?subject=${encodeURIComponent(`[${job.id}] ${title}`)}`;
 
+  // Raw job row for JobPosting schema fields not exposed on the JobDetail
+  // shape (datePosted, validThrough, employmentType, salaryMin/Max).
+  let rawJob: {
+    createdAt: Date;
+    deadline: Date | null;
+    employmentType: string;
+    salaryMin: { toNumber(): number } | null;
+    salaryMax: { toNumber(): number } | null;
+    salaryCurrency: string;
+  } | null = null;
+  try {
+    rawJob = await db.job.findUnique({
+      where: { slug: params.slug },
+      select: {
+        createdAt: true,
+        deadline: true,
+        employmentType: true,
+        salaryMin: true,
+        salaryMax: true,
+        salaryCurrency: true,
+      },
+    });
+  } catch {
+    /* DB unavailable */
+  }
+
   const related = Object.values(jobs)
     .filter((j) => j.id !== job.id)
     .sort((a, b) => (a.dept === job.dept ? -1 : 1) - (b.dept === job.dept ? -1 : 1))
     .slice(0, 3);
 
+  const jobUrl = `/${loc}/career/${params.slug}`;
+  const homeLabel = t.home;
+  const careerLabel = t.career;
+
   return (
     <div className="jd">
+      <JsonLd
+        data={jobPostingSchema({
+          title,
+          description: job.overview[loc] || job.overview.vi,
+          datePosted: (rawJob?.createdAt ?? new Date()).toISOString(),
+          validThrough: rawJob?.deadline ? rawJob.deadline.toISOString() : undefined,
+          employmentType: rawJob?.employmentType ?? 'full_time',
+          location: job.loc[loc] || job.loc.vi,
+          hiringOrgName: 'KS Long Anh',
+          hiringOrgUrl: siteUrl(),
+          salaryMin: rawJob?.salaryMin ? rawJob.salaryMin.toNumber() : undefined,
+          salaryMax: rawJob?.salaryMax ? rawJob.salaryMax.toNumber() : undefined,
+          salaryCurrency: rawJob?.salaryCurrency,
+          url: jobUrl,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: homeLabel, url: `/${loc}` },
+          { name: careerLabel, url: `/${loc}/career` },
+          { name: title, url: jobUrl },
+        ])}
+      />
       {/* HERO */}
       <section className="jd-hero">
         <div className="va-wrap">

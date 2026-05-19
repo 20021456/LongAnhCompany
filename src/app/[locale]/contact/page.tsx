@@ -1,8 +1,26 @@
+import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { ContactForm } from '@/components/public/ContactForm';
 import { getContactPageSections } from '@/lib/queries';
+import { buildPageMetadata } from '@/lib/page-metadata';
+
+export async function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  return buildPageMetadata({
+    pageKey: 'contact',
+    locale: locale as Locale,
+    pathStripped: '/contact',
+    fallbackTitle: 'Liên hệ · KS Long Anh',
+    fallbackDescription:
+      'Liên hệ Long Anh — hotline, email, văn phòng tại Vinh, Nghệ An. Báo giá FOB trong 24h làm việc.',
+    fallbackOgImage: '/assets/co-so-ha-tang.jpg',
+  });
+}
 
 const QUICK_ICON_MAP: Record<string, IconName> = {
   chat: 'mail',

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
@@ -6,6 +7,23 @@ import { Icon } from '@/components/ui/Icon';
 import { PageHeader } from '@/components/public/PageHeader';
 import { ProductsBrowser } from '@/components/public/ProductsBrowser';
 import { getProducts, getProductsPageSections } from '@/lib/queries';
+import { buildPageMetadata } from '@/lib/page-metadata';
+
+export async function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  return buildPageMetadata({
+    pageKey: 'products',
+    locale: locale as Locale,
+    pathStripped: '/products',
+    fallbackTitle: 'Sản phẩm · Bột đá CaCO₃ & đá tự nhiên',
+    fallbackDescription:
+      'Hai dòng sản phẩm chính: bột đá CaCO₃ phủ / không phủ Stearic Acid và đá tự nhiên (Slab, đá xẻ, đá trang trí).',
+    fallbackOgImage: '/assets/bot-caco3-sieu-min.webp',
+  });
+}
 
 interface Product {
   code: string;

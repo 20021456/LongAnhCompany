@@ -1,11 +1,29 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { getJobs, getCareersPageSections } from '@/lib/queries';
+import { buildPageMetadata } from '@/lib/page-metadata';
 
 const VALUE_ICONS: IconName[] = ['drop', 'globe', 'spark', 'check', 'leaf', 'box'];
+
+export async function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  return buildPageMetadata({
+    pageKey: 'career',
+    locale: locale as Locale,
+    pathStripped: '/career',
+    fallbackTitle: 'Tuyển dụng · KS Long Anh',
+    fallbackDescription:
+      'Gia nhập đội ngũ Long Anh — môi trường chuyên nghiệp, năng động, minh bạch. Cơ hội phát triển cùng doanh nghiệp khoáng sản hàng đầu Bắc Trung Bộ.',
+    fallbackOgImage: '/assets/nha-may-bot-sieu-min-3.webp',
+  });
+}
 
 export default async function CareerPage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
