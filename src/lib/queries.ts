@@ -200,6 +200,7 @@ export async function getArticles(): Promise<NewsItem[]> {
     title: l3(a.titleVi, a.titleEn, a.titleZh),
     excerpt: l3(a.excerptVi, a.excerptEn, a.excerptZh),
     content: l3(a.contentVi, a.contentEn, a.contentZh),
+    gallery: (a.gallery as unknown as NewsItem['gallery']) ?? undefined,
   }));
 }
 

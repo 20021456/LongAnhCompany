@@ -187,6 +187,60 @@ export default async function ArticlePage({
             </p>
           )}
         </div>
+
+        {(() => {
+          // Gallery rendered below the body. Skip the tile already used as
+          // the cover (either explicitly flagged or, if none was flagged,
+          // the first item — matching the admin's coverImageUrl logic).
+          const gallery = article.gallery ?? [];
+          if (gallery.length === 0) return null;
+          const featuredIdx = (() => {
+            const i = gallery.findIndex((g) => g.featured);
+            return i >= 0 ? i : 0;
+          })();
+          const rest = gallery.filter((_, i) => i !== featuredIdx);
+          if (rest.length === 0) return null;
+          return (
+            <div style={{ marginTop: 40 }}>
+              <h3
+                style={{
+                  fontSize: 18,
+                  letterSpacing: '-0.01em',
+                  margin: '0 0 16px',
+                }}
+              >
+                {loc === 'vi' ? 'Thư viện ảnh' : loc === 'en' ? 'Gallery' : '图片库'}
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))',
+                  gap: 12,
+                }}
+              >
+                {rest.map((g, i) => (
+                  <figure
+                    key={`${g.src}-${i}`}
+                    style={{
+                      margin: 0,
+                      borderRadius: 12,
+                      overflow: 'hidden',
+                      aspectRatio: '4 / 3',
+                      background: 'var(--va-bg-alt)',
+                    }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={g.src}
+                      alt={g.alt ?? ''}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  </figure>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
       </article>
 
       {related.length > 0 ? (

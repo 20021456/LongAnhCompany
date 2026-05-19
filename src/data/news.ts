@@ -15,6 +15,8 @@ export interface NewsItem {
   excerpt: { vi: string; en: string; zh: string };
   /** Full article body, stored as HTML (from the Tiptap editor). */
   content?: { vi: string; en: string; zh: string };
+  /** Image gallery attached to the article. `featured: true` is the cover. */
+  gallery?: { src: string; alt?: string; featured?: boolean }[];
 }
 
 export const NEWS: NewsItem[] = [
