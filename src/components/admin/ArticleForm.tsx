@@ -8,6 +8,7 @@ import { AdminPageHead } from './AdminPageHead';
 import { Field } from './FormBits';
 import { EditorSection, LangTabs, StatusRadioGroup, type Lang } from './EditorChrome';
 import { PeTags } from './PeTags';
+import { TiptapEditor } from './TiptapEditor';
 import { fmtNumberVn } from '@/lib/format';
 import {
   saveArticle,
@@ -451,44 +452,9 @@ export function ArticleForm({
             title="Nội dung bài viết"
             sub="Soạn thảo nội dung chính (rich text)"
           >
-            <div className="ne-body-toolbar" aria-label="Thanh công cụ định dạng">
-              <button type="button" title="Bold" disabled>
-                <b style={{ fontSize: 13 }}>B</b>
-              </button>
-              <button type="button" title="Italic" disabled>
-                <i style={{ fontSize: 13 }}>I</i>
-              </button>
-              <button type="button" title="Underline" disabled>
-                <u style={{ fontSize: 13 }}>U</u>
-              </button>
-              <div className="sep" />
-              <button type="button" title="Heading" disabled>
-                <b style={{ fontSize: 11 }}>H₂</b>
-              </button>
-              <button type="button" title="Quote" disabled>
-                &quot;
-              </button>
-              <button type="button" title="Link" disabled>
-                <AdminIcon name="globe" size={13} />
-              </button>
-              <div className="sep" />
-              <button type="button" title="Bullet list" disabled>
-                <AdminIcon name="list" size={13} />
-              </button>
-              <button type="button" title="Image" disabled>
-                <AdminIcon name="image" size={13} />
-              </button>
-              <div className="sep" />
-              <button type="button" title="Hoàn tác" disabled>
-                <AdminIcon name="refresh" size={13} />
-              </button>
-            </div>
-            <textarea
-              className="ne-body"
+            <TiptapEditor
               value={body}
-              onChange={(e) =>
-                set(contentKey, e.target.value as ArticleFormValue[typeof contentKey])
-              }
+              onChange={(html) => set(contentKey, html as ArticleFormValue[typeof contentKey])}
               placeholder="Viết nội dung bài viết…"
             />
             <div
