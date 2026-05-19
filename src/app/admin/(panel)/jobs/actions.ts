@@ -119,6 +119,7 @@ export async function saveJob(raw: JobInput): Promise<ActionResult> {
 
     revalidatePath('/admin/jobs');
     revalidatePath('/[locale]/career', 'page');
+    revalidatePath(`/[locale]/career/${d.slug}`, 'page');
     return { ok: true };
   } catch (err) {
     console.error('saveJob error:', err);
@@ -129,10 +130,12 @@ export async function saveJob(raw: JobInput): Promise<ActionResult> {
 export async function deleteJob(id: string): Promise<ActionResult> {
   const user = await requirePermission('jobs.delete');
   try {
+    const existing = await db.job.findUnique({ where: { id }, select: { slug: true } });
     await db.job.delete({ where: { id } });
     await recordAudit({ userId: user.id, action: 'delete', entityType: 'job', entityId: id });
     revalidatePath('/admin/jobs');
     revalidatePath('/[locale]/career', 'page');
+    if (existing) revalidatePath(`/[locale]/career/${existing.slug}`, 'page');
     return { ok: true };
   } catch (err) {
     console.error('deleteJob error:', err);

@@ -109,6 +109,7 @@ export async function saveArticle(raw: ArticleInput): Promise<ActionResult> {
 
     revalidatePath('/admin/news');
     revalidatePath('/[locale]/news', 'page');
+    revalidatePath(`/[locale]/news/${d.slug}`, 'page');
     return { ok: true };
   } catch (err) {
     console.error('saveArticle error:', err);
@@ -119,10 +120,16 @@ export async function saveArticle(raw: ArticleInput): Promise<ActionResult> {
 export async function deleteArticle(id: string): Promise<ActionResult> {
   const user = await requirePermission('news.delete');
   try {
+    // Fetch the slug before deleting so we can revalidate the detail page too.
+    const existing = await db.article.findUnique({
+      where: { id },
+      select: { slug: true },
+    });
     await db.article.delete({ where: { id } });
     await recordAudit({ userId: user.id, action: 'delete', entityType: 'article', entityId: id });
     revalidatePath('/admin/news');
     revalidatePath('/[locale]/news', 'page');
+    if (existing) revalidatePath(`/[locale]/news/${existing.slug}`, 'page');
     return { ok: true };
   } catch (err) {
     console.error('deleteArticle error:', err);

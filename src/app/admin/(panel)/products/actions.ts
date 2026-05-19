@@ -138,10 +138,12 @@ export async function saveProduct(raw: ProductInput): Promise<ActionResult> {
 export async function deleteProduct(id: string): Promise<ActionResult> {
   const user = await requirePermission('products.delete');
   try {
+    const existing = await db.product.findUnique({ where: { id }, select: { slug: true } });
     await db.product.delete({ where: { id } });
     await recordAudit({ userId: user.id, action: 'delete', entityType: 'product', entityId: id });
     revalidatePath('/admin/products');
     revalidatePath('/[locale]/products', 'page');
+    if (existing) revalidatePath(`/[locale]/products/${existing.slug}`, 'page');
     return { ok: true };
   } catch (err) {
     console.error('deleteProduct error:', err);
