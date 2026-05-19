@@ -168,79 +168,128 @@ export default async function ArticlePage({
 
         <div style={{ fontSize: 16, lineHeight: 1.8, opacity: 0.85 }}>
           <p style={{ fontWeight: 500, fontSize: 18, marginBottom: 20 }}>{article.excerpt[loc]}</p>
-          {article.content?.[loc] ? (
-            <div
-              className="nw-prose"
-              // Content is HTML produced by the Tiptap editor in the admin and
-              // saved into `articles.content_*`. The editor only emits a known
-              // tag set (paragraphs, headings, lists, blockquotes, inline
-              // marks) so rendering as HTML here is safe.
-              dangerouslySetInnerHTML={{ __html: article.content[loc] }}
-            />
-          ) : (
-            <p>
-              {loc === 'vi'
+          {(() => {
+            // Split the Tiptap HTML on top-level block closing tags and weave
+            // the (non-cover) gallery tiles in between so each image sits next
+            // to a paragraph instead of getting dumped at the end.
+            const html = article.content?.[loc] ?? '';
+            const fallback =
+              loc === 'vi'
                 ? 'Nội dung chi tiết của bài viết sẽ được biên tập viên cập nhật qua hệ thống CMS.'
                 : loc === 'en'
                   ? 'The full article body will be managed through the CMS.'
-                  : '文章的详细内容将通过CMS系统由编辑更新。'}
-            </p>
-          )}
-        </div>
+                  : '文章的详细内容将通过CMS系统由编辑更新。';
 
-        {(() => {
-          // Gallery rendered below the body. Skip the tile already used as
-          // the cover (either explicitly flagged or, if none was flagged,
-          // the first item — matching the admin's coverImageUrl logic).
-          const gallery = article.gallery ?? [];
-          if (gallery.length === 0) return null;
-          const featuredIdx = (() => {
-            const i = gallery.findIndex((g) => g.featured);
-            return i >= 0 ? i : 0;
-          })();
-          const rest = gallery.filter((_, i) => i !== featuredIdx);
-          if (rest.length === 0) return null;
-          return (
-            <div style={{ marginTop: 40 }}>
-              <h3
-                style={{
-                  fontSize: 18,
-                  letterSpacing: '-0.01em',
-                  margin: '0 0 16px',
-                }}
-              >
-                {loc === 'vi' ? 'Thư viện ảnh' : loc === 'en' ? 'Gallery' : '图片库'}
-              </h3>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))',
-                  gap: 12,
-                }}
-              >
-                {rest.map((g, i) => (
-                  <figure
-                    key={`${g.src}-${i}`}
-                    style={{
-                      margin: 0,
-                      borderRadius: 12,
-                      overflow: 'hidden',
-                      aspectRatio: '4 / 3',
-                      background: 'var(--va-bg-alt)',
-                    }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={g.src}
-                      alt={g.alt ?? ''}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            const gallery = article.gallery ?? [];
+            const featuredIdx = (() => {
+              const i = gallery.findIndex((g) => g.featured);
+              return i >= 0 ? i : gallery.length > 0 ? 0 : -1;
+            })();
+            const images = gallery.filter((_, i) => i !== featuredIdx);
+
+            // Block-level chunks produced by Tiptap's StarterKit.
+            const blocks: string[] = [];
+            if (html.trim()) {
+              const re = /<\/(?:p|h[1-6]|ul|ol|blockquote|pre|hr)>/gi;
+              let last = 0;
+              let m: RegExpExecArray | null;
+              while ((m = re.exec(html)) !== null) {
+                blocks.push(html.slice(last, m.index + m[0].length));
+                last = m.index + m[0].length;
+              }
+              if (last < html.length) blocks.push(html.slice(last));
+            }
+            const trimmed = blocks.map((b) => b.trim()).filter(Boolean);
+
+            if (trimmed.length === 0 && images.length === 0) {
+              return <p>{fallback}</p>;
+            }
+
+            // Distribute images: insert one after every `stride` blocks so the
+            // first image lands roughly a third of the way down, the next two
+            // thirds in, etc. Any leftovers append after the last block.
+            const slots = images.length;
+            const stride = slots > 0 ? Math.max(1, Math.ceil(trimmed.length / (slots + 1))) : 0;
+            const nodes: Array<{ kind: 'html'; html: string } | { kind: 'img'; idx: number }> = [];
+            let placed = 0;
+            trimmed.forEach((chunk, i) => {
+              nodes.push({ kind: 'html', html: chunk });
+              if (
+                placed < slots &&
+                stride > 0 &&
+                (i + 1) % stride === 0 &&
+                i < trimmed.length - 1
+              ) {
+                nodes.push({ kind: 'img', idx: placed });
+                placed += 1;
+              }
+            });
+            while (placed < slots) {
+              nodes.push({ kind: 'img', idx: placed });
+              placed += 1;
+            }
+
+            return (
+              <div className="nw-prose">
+                {nodes.map((n, i) =>
+                  n.kind === 'html' ? (
+                    <div
+                      key={`b${i}`}
+                      // Content is HTML produced by the Tiptap editor in the
+                      // admin. The editor only emits a known tag set
+                      // (paragraphs, headings, lists, blockquotes, inline
+                      // marks) so rendering as HTML here is safe.
+                      dangerouslySetInnerHTML={{ __html: n.html }}
                     />
-                  </figure>
-                ))}
+                  ) : (
+                    <figure
+                      key={`g${i}`}
+                      style={{
+                        margin: '32px 0',
+                        padding: 0,
+                      }}
+                    >
+                      <div
+                        style={{
+                          borderRadius: 14,
+                          overflow: 'hidden',
+                          background: 'var(--va-bg-alt)',
+                          maxHeight: 560,
+                        }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={images[n.idx].src}
+                          alt={images[n.idx].alt ?? ''}
+                          style={{
+                            width: '100%',
+                            height: 'auto',
+                            display: 'block',
+                            objectFit: 'contain',
+                          }}
+                        />
+                      </div>
+                      {images[n.idx].alt ? (
+                        <figcaption
+                          style={{
+                            fontSize: 13.5,
+                            textAlign: 'center',
+                            opacity: 0.7,
+                            fontStyle: 'italic',
+                            marginTop: 10,
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          {images[n.idx].alt}
+                        </figcaption>
+                      ) : null}
+                    </figure>
+                  ),
+                )}
               </div>
-            </div>
-          );
-        })()}
+            );
+          })()}
+        </div>
       </article>
 
       {related.length > 0 ? (
