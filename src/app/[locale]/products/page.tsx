@@ -23,9 +23,9 @@ export default async function ProductsPage({ params: { locale } }: { params: { l
   const C = COPY[loc];
   const cats: string[] = C.catTitles ?? ['Bột đá CaCO₃', 'Đá ốp lát tự nhiên'];
 
-  // Products catalogue + editable page sections (header / stats / spec table /
-  // CTA come from page_sections; tiles + particle table are still rendered by
-  // <ProductsBrowser> until that client component is wired in a follow-up).
+  // Products catalogue + every editable page section come from page_sections.
+  // ProductsBrowser receives tiles + particle + sku-list as props so admin
+  // edits to those sections show up immediately on the public page.
   const [productMap, S] = await Promise.all([getProducts(), getProductsPageSections(loc)]);
   const products: Product[] = Object.values(productMap).map((p) => ({
     code: p.code,
@@ -60,7 +60,14 @@ export default async function ProductsPage({ params: { locale } }: { params: { l
       </section>
 
       {/* CATEGORY TILES + FILTERED PRODUCT BLOCKS + PARTICLE SIZE (client) */}
-      <ProductsBrowser locale={loc} products={products} cats={cats} />
+      <ProductsBrowser
+        locale={loc}
+        products={products}
+        cats={cats}
+        tiles={S.tiles.items}
+        particle={S.particle}
+        skuListCodes={S.skuList.codes}
+      />
 
       {/* SPEC TABLE */}
       <section className="pr-spec-section">

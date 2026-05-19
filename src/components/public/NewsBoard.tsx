@@ -6,10 +6,12 @@ import type { Locale } from '@/lib/i18n/config';
 import type { NewsItem } from '@/data/news';
 import { Icon } from '@/components/ui/Icon';
 import { fmtNumberVn } from '@/lib/format';
+import type { NewsPageSectionsLocale } from '@/lib/news-page-content';
 
 interface Props {
   locale: Locale;
   items: NewsItem[];
+  sections: NewsPageSectionsLocale;
 }
 
 const I18N: Record<
@@ -138,17 +140,49 @@ function fmtDate(iso: string, lang: Locale) {
   return `${d}/${m}/${y}`;
 }
 
-const CATS = ['all', 'business', 'milestone', 'tech', 'product', 'event', 'csr'];
+const FALLBACK_CATS = ['all', 'business', 'milestone', 'tech', 'product', 'event', 'csr'];
 
-export function NewsBoard({ locale, items }: Props) {
+export function NewsBoard({ locale, items, sections }: Props) {
   const t = I18N[locale];
   const [activeCat, setActiveCat] = useState('all');
   const [tab, setTab] = useState<'latest' | 'popular'>('latest');
 
-  const display = activeCat === 'all' ? items : items.filter((n) => n.cat === activeCat);
+  // Category chips: use CMS list if provided, else the hardcoded fallback.
+  const catSlugs =
+    sections.categories.items.length > 0
+      ? sections.categories.items.map((c) => c.slug)
+      : FALLBACK_CATS.filter((c) => c !== 'all');
+  const catLabels = new Map<string, string>(
+    sections.categories.items.map((c) => [c.slug, c.label]),
+  );
+  const labelFor = (slug: string) => catLabels.get(slug) ?? t.categories[slug] ?? slug;
+
+  const filtered = activeCat === 'all' ? items : items.filter((n) => n.cat === activeCat);
+
+  // Featured-article selection.
+  const display = (() => {
+    const mode = sections.featured.mode;
+    if (mode === 'manual') {
+      const byId = new Map(items.map((n) => [String(n.id), n]));
+      const picked = sections.featured.articleIds
+        .map((id) => byId.get(id))
+        .filter(Boolean) as typeof items;
+      const pickedIds = new Set(picked.map((n) => n.id));
+      // Manual picks first, then the rest in the current filter order.
+      return [...picked, ...filtered.filter((n) => !pickedIds.has(n.id))];
+    }
+    if (mode === 'auto-views') {
+      return [...filtered].sort((a, b) => b.views - a.views);
+    }
+    // 'flag' (or anything else) → keep the current filter order.
+    return filtered;
+  })();
+
   const featured = display[0];
   const sub3 = display.slice(1, 4);
-  const rest = display.slice(4);
+  const restAll = display.slice(4);
+  const perPage = sections.listConfig.perPage > 0 ? sections.listConfig.perPage : restAll.length;
+  const rest = restAll.slice(0, Math.max(0, perPage - 4));
 
   const sortedByDate = [...items].sort((a, b) => b.date.localeCompare(a.date));
   const sortedByViews = [...items].sort((a, b) => b.views - a.views);
@@ -174,7 +208,26 @@ export function NewsBoard({ locale, items }: Props) {
             <Icon name="chevron" size={11} />
             <span className="now">{t.news}</span>
           </nav>
-          <h1>{t.pageTitle}</h1>
+          {sections.hero.eyebrow ? (
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: '.18em',
+                textTransform: 'uppercase',
+                color: 'var(--brand-accent,#F08023)',
+                marginBottom: 8,
+              }}
+            >
+              {sections.hero.eyebrow}
+            </div>
+          ) : null}
+          <h1>{sections.hero.title || t.pageTitle}</h1>
+          {sections.hero.sub ? (
+            <p style={{ opacity: 0.75, fontSize: 15, lineHeight: 1.6, marginTop: 10 }}>
+              {sections.hero.sub}
+            </p>
+          ) : null}
         </div>
       </section>
 
@@ -182,7 +235,17 @@ export function NewsBoard({ locale, items }: Props) {
       <div className="nw-subnav">
         <div className="va-wrap">
           <div className="nw-subnav-row">
-            {CATS.map((c) => (
+            <a
+              className={activeCat === 'all' ? 'on' : ''}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveCat('all');
+              }}
+              href="#all"
+            >
+              {t.filterAll}
+            </a>
+            {catSlugs.map((c) => (
               <a
                 key={c}
                 className={activeCat === c ? 'on' : ''}
@@ -192,7 +255,7 @@ export function NewsBoard({ locale, items }: Props) {
                 }}
                 href={`#${c}`}
               >
-                {c === 'all' ? t.filterAll : t.categories[c]}
+                {labelFor(c)}
               </a>
             ))}
           </div>
@@ -200,23 +263,25 @@ export function NewsBoard({ locale, items }: Props) {
       </div>
 
       {/* HOT TOPICS */}
-      <div className="nw-hot">
-        <div className="va-wrap nw-hot-row">
-          <div className="nw-hot-label">
-            <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" width="14" height="14">
-              <path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4-1 3 0 4 2 4 2 0 1-5 1-11z" />
-            </svg>
-            {t.hotTopics}
-          </div>
-          <div className="nw-hot-tags">
-            {t.hot.map((h, i) => (
-              <a key={i} className="nw-hot-tag" href="#">
-                {h}
-              </a>
-            ))}
+      {sections.listConfig.sidebarHotTopics ? (
+        <div className="nw-hot">
+          <div className="va-wrap nw-hot-row">
+            <div className="nw-hot-label">
+              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" width="14" height="14">
+                <path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4-1 3 0 4 2 4 2 0 1-5 1-11z" />
+              </svg>
+              {t.hotTopics}
+            </div>
+            <div className="nw-hot-tags">
+              {t.hot.map((h, i) => (
+                <a key={i} className="nw-hot-tag" href="#">
+                  {h}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      ) : null}
 
       {/* MAIN */}
       <section className="nw-main">
@@ -298,6 +363,7 @@ export function NewsBoard({ locale, items }: Props) {
 
             {/* SIDEBAR */}
             <aside className="nw-side">
+              {sections.listConfig.sidebarLatest ? (
               <div className="nw-side-card">
                 <div className="nw-tabs" style={{ display: 'flex', borderBottom: '1px solid var(--va-line)' }}>
                   <button
@@ -355,13 +421,28 @@ export function NewsBoard({ locale, items }: Props) {
                   ))}
                 </div>
               </div>
+              ) : null}
 
-              <div className="nw-side-news">
-                <h4>{t.newsletterTitle}</h4>
-                <p>{t.newsletterBody}</p>
-                <input type="email" placeholder={t.emailPlaceholder} />
-                <button type="button">{t.subscribe}</button>
-              </div>
+              {sections.listConfig.sidebarNewsletter ? (
+                <div className="nw-side-news">
+                  <h4>{sections.newsletter.title || t.newsletterTitle}</h4>
+                  <p>{sections.newsletter.sub || t.newsletterBody}</p>
+                  <input
+                    type="email"
+                    placeholder={sections.newsletter.inputPlaceholder || t.emailPlaceholder}
+                  />
+                  <button type="button">
+                    {sections.newsletter.buttonLabel || t.subscribe}
+                  </button>
+                  {sections.newsletter.footer ? (
+                    <div
+                      style={{ marginTop: 8, fontSize: 11.5, opacity: 0.6, lineHeight: 1.5 }}
+                    >
+                      {sections.newsletter.footer}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
             </aside>
           </div>
         </div>
@@ -381,22 +462,32 @@ export function NewsBoard({ locale, items }: Props) {
                 marginBottom: 8,
               }}
             >
-              {t.sectionByCat}
+              {sections.byCategory.eyebrow || t.sectionByCat}
             </div>
-            <h2 style={{ fontSize: 'clamp(22px,2.4vw,30px)' }}>{t.byCatTitle}</h2>
+            <h2 style={{ fontSize: 'clamp(22px,2.4vw,30px)' }}>
+              {sections.byCategory.title || t.byCatTitle}
+            </h2>
           </div>
 
           {catRows.map((pair, row) => (
             <div key={row} className="nw-bycat-grid">
               {pair.map((catKey) => {
-                const catItems = (byCat[catKey] ?? []).slice(0, 3);
+                const perCat =
+                  sections.byCategory.mode === 'top-2'
+                    ? 2
+                    : sections.byCategory.mode === 'top-3'
+                      ? 3
+                      : sections.byCategory.articlesPerCategory > 0
+                        ? sections.byCategory.articlesPerCategory
+                        : 3;
+                const catItems = (byCat[catKey] ?? []).slice(0, perCat);
                 if (catItems.length === 0) return null;
                 const feat = catItems[0];
                 const others = catItems.slice(1);
                 return (
                   <div key={catKey}>
                     <div className="nw-sec-head">
-                      <h3>{t.categories[catKey]}</h3>
+                      <h3>{labelFor(catKey)}</h3>
                       <a
                         className="more"
                         href={`#${catKey}`}
