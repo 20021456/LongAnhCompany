@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { Locale } from '@/lib/i18n/config';
 import type { ProductDetail } from '@/data/products';
 import { Icon, type IconName } from '@/components/ui/Icon';
+import { SmartImage } from '@/components/ui/SmartImage';
 import { fmtNumberVn } from '@/lib/format';
 
 interface Props {
@@ -182,8 +183,14 @@ export function ProductDetailView({ locale, product, related }: Props) {
           <div className="pd-hero-grid" style={{ marginTop: 24 }}>
             <div className="pd-gallery">
               <div className="pd-gallery-main">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img key={activeImg} src={product.images[activeImg]} alt={productName} />
+                <SmartImage
+                  key={activeImg}
+                  src={product.images[activeImg]}
+                  alt={productName}
+                  width={1000}
+                  height={750}
+                  priority
+                />
                 <div className="pd-gallery-cat">{categoryName}</div>
               </div>
               <div className="pd-gallery-thumbs">
@@ -193,8 +200,7 @@ export function ProductDetailView({ locale, product, related }: Props) {
                     className={'pd-gallery-thumb' + (i === activeImg ? ' on' : '')}
                     onClick={() => setActiveImg(i)}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img} alt="" />
+                    <SmartImage src={img} alt="" width={200} height={200} sizes="120px" />
                   </div>
                 ))}
               </div>
@@ -496,8 +502,7 @@ export function ProductDetailView({ locale, product, related }: Props) {
                   className="pd-related-card"
                 >
                   <div className="pd-related-img">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={r.images[0]} alt="" />
+                    <SmartImage src={r.images[0]} alt="" width={400} height={300} sizes="300px" />
                   </div>
                   <div className="pd-related-body">
                     <div className="meta">

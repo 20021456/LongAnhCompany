@@ -4,6 +4,7 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { Icon, type IconName } from '@/components/ui/Icon';
+import { SmartImage } from '@/components/ui/SmartImage';
 import { PageHeader } from '@/components/public/PageHeader';
 import { getAboutSections, getCertifications } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
@@ -51,14 +52,17 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
       {/* STORY */}
       <section className="ab-section ab-intro-wrap">
         <div className="ab-intro-bg">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/nha-may-bot-sieu-min-1.webp" alt="" />
+          <SmartImage src="/assets/nha-may-bot-sieu-min-1.webp" alt="" width={1600} height={900} />
         </div>
         <div className="va-wrap">
           <div className="ab-intro">
             <div className="ab-intro-img">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={S.story.imageUrl} alt={S.story.imageAlt} />
+              <SmartImage
+                src={S.story.imageUrl}
+                alt={S.story.imageAlt}
+                width={1000}
+                height={1200}
+              />
             </div>
             <div>
               <div className="ab-eyebrow">{S.story.eyebrow}</div>
@@ -126,8 +130,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         <div className="va-wrap">
           <div className="ab-caps">
             <div className="ab-caps-img">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={S.caps.imageUrl} alt={S.caps.imageAlt} />
+              <SmartImage src={S.caps.imageUrl} alt={S.caps.imageAlt} width={1000} height={1100} />
             </div>
             <div>
               <div className="ab-eyebrow">{S.caps.eyebrow}</div>
@@ -161,28 +164,24 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
           <div className="ab-warehouse-grid">
             {S.warehouse.images[0] ? (
               <div className="ab-wh-img">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={S.warehouse.images[0]} alt="" />
+                <SmartImage src={S.warehouse.images[0]} alt="" width={1000} height={1200} />
               </div>
             ) : null}
             <div className="ab-wh-col">
               {S.warehouse.images[1] ? (
                 <div className="ab-wh-img">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={S.warehouse.images[1]} alt="" />
+                  <SmartImage src={S.warehouse.images[1]} alt="" width={900} height={700} />
                 </div>
               ) : null}
               {S.warehouse.images[2] ? (
                 <div className="ab-wh-img">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={S.warehouse.images[2]} alt="" />
+                  <SmartImage src={S.warehouse.images[2]} alt="" width={900} height={700} />
                 </div>
               ) : null}
             </div>
             {S.warehouse.images[3] ? (
               <div className="ab-wh-img">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={S.warehouse.images[3]} alt="" />
+                <SmartImage src={S.warehouse.images[3]} alt="" width={1000} height={1200} />
               </div>
             ) : null}
           </div>
@@ -210,8 +209,13 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
                   <div key={i} className="ab-cert-card">
                     <div className="ab-cert-img">
                       {cat?.badge ? (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img src={cat.badge} alt={c.name} />
+                        <SmartImage
+                          src={cat.badge}
+                          alt={c.name}
+                          width={400}
+                          height={400}
+                          sizes="240px"
+                        />
                       ) : null}
                     </div>
                     <div className="ab-cert-body">

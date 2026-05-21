@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import type { Locale } from '@/lib/i18n/config';
+import { SmartImage } from '@/components/ui/SmartImage';
 
 interface Product {
   code: string;
@@ -77,8 +78,7 @@ export function ProductCarousel({ products, locale, accent = '#F08023', sideArro
             >
               <div className="la-cc-img-wrap">
                 <div className="la-cc-img">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={p.img} alt={p.name} />
+                  <SmartImage src={p.img} alt={p.name} width={600} height={450} sizes="360px" />
                 </div>
                 <div className="la-cc-badge">
                   {(locale === 'en' ? badgeLabels : badgeLabelsVi)[p.cat] || 'Product'}

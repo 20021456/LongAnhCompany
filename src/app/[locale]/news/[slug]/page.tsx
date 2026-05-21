@@ -6,6 +6,7 @@ import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { getArticles } from '@/lib/queries';
 import { Icon } from '@/components/ui/Icon';
+import { SmartImage } from '@/components/ui/SmartImage';
 import { hreflangAlternates, absUrl } from '@/lib/site-url';
 import { JsonLd, articleSchema, breadcrumbSchema } from '@/components/seo/JsonLd';
 
@@ -158,10 +159,12 @@ export default async function ArticlePage({
             background: 'var(--va-bg-alt)',
           }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <SmartImage
             src={article.img}
             alt=""
+            width={1280}
+            height={720}
+            priority
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         </div>
@@ -257,10 +260,12 @@ export default async function ArticlePage({
                           maxHeight: 560,
                         }}
                       >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <SmartImage
                           src={images[n.idx].src}
                           alt={images[n.idx].alt ?? ''}
+                          width={1000}
+                          height={750}
+                          sizes="(max-width: 860px) 100vw, 820px"
                           style={{
                             width: '100%',
                             height: 'auto',
@@ -308,8 +313,7 @@ export default async function ArticlePage({
               {related.map((n) => (
                 <Link key={n.id} className="nw-sub-card" href={`/${loc}/news/${n.id}`}>
                   <div className="nw-img">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={n.img} alt="" />
+                    <SmartImage src={n.img} alt="" width={400} height={300} sizes="260px" />
                   </div>
                   <h3>{n.title[loc]}</h3>
                 </Link>

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import type { Locale } from '@/lib/i18n/config';
 import type { NewsItem } from '@/data/news';
 import { Icon } from '@/components/ui/Icon';
+import { SmartImage } from '@/components/ui/SmartImage';
 import { fmtNumberVn } from '@/lib/format';
 import type { NewsPageSectionsLocale } from '@/lib/news-page-content';
 
@@ -291,8 +292,7 @@ export function NewsBoard({ locale, items, sections }: Props) {
               {featured ? (
                 <Link className="nw-feat-card" href={`/${locale}/news/${featured.id}`}>
                   <div className="nw-feat-img">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={featured.img} alt="" />
+                    <SmartImage src={featured.img} alt="" width={1200} height={750} />
                   </div>
                   <h2>{featured.title[locale]}</h2>
                   <p>{featured.excerpt[locale]}</p>
@@ -317,8 +317,7 @@ export function NewsBoard({ locale, items, sections }: Props) {
                   {sub3.map((n) => (
                     <Link key={n.id} className="nw-sub-card" href={`/${locale}/news/${n.id}`}>
                       <div className="nw-img">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={n.img} alt="" />
+                        <SmartImage src={n.img} alt="" width={600} height={400} sizes="400px" />
                       </div>
                       <h3>{n.title[locale]}</h3>
                     </Link>
@@ -335,8 +334,7 @@ export function NewsBoard({ locale, items, sections }: Props) {
                     {rest.map((n) => (
                       <Link key={n.id} className="nw-list-item" href={`/${locale}/news/${n.id}`}>
                         <div className="nw-img">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={n.img} alt="" />
+                          <SmartImage src={n.img} alt="" width={400} height={300} sizes="220px" />
                         </div>
                         <div className="nw-body">
                           <span className="nw-cat-pill">{t.categories[n.cat]}</span>
@@ -502,8 +500,7 @@ export function NewsBoard({ locale, items, sections }: Props) {
                     </div>
                     <Link className="nw-cat-feat" href={`/${locale}/news/${feat.id}`}>
                       <div className="nw-img">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={feat.img} alt="" />
+                        <SmartImage src={feat.img} alt="" width={900} height={560} />
                       </div>
                       <h3>{feat.title[locale]}</h3>
                       <p>{feat.excerpt[locale]}</p>
@@ -520,8 +517,7 @@ export function NewsBoard({ locale, items, sections }: Props) {
                             href={`/${locale}/news/${n.id}`}
                           >
                             <div className="nw-img">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={n.img} alt="" />
+                              <SmartImage src={n.img} alt="" width={400} height={300} sizes="220px" />
                             </div>
                             <div className="nw-body">
                               <h4>{n.title[locale]}</h4>

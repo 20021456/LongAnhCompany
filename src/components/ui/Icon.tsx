@@ -1,4 +1,5 @@
 import type { SVGProps } from 'react';
+import { SmartImage } from './SmartImage';
 
 export type IconName =
   | 'arrow'
@@ -43,7 +44,9 @@ const paths: Record<IconName, JSX.Element> = {
       <circle cx="12" cy="9" r="2.5" />
     </>
   ),
-  phone: <path d="M5 4h4l2 5-3 2a12 12 0 005 5l2-3 5 2v4a2 2 0 01-2 2A17 17 0 013 6a2 2 0 012-2z" />,
+  phone: (
+    <path d="M5 4h4l2 5-3 2a12 12 0 005 5l2-3 5 2v4a2 2 0 01-2 2A17 17 0 013 6a2 2 0 012-2z" />
+  ),
   mail: (
     <>
       <rect x="3" y="5" width="18" height="14" rx="2" />
@@ -94,10 +97,12 @@ export function Logo({ size = 30 }: { size?: number }) {
         justifyContent: 'center',
       }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <SmartImage
         src="/assets/long-anh-logo.png"
         alt="Long Anh"
+        width={size}
+        height={size}
+        sizes={`${size}px`}
         style={{ width: '100%', height: '100%', objectFit: 'contain' }}
       />
     </span>

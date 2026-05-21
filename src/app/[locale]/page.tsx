@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { Icon } from '@/components/ui/Icon';
+import { SmartImage } from '@/components/ui/SmartImage';
 import { ProductCarousel } from '@/components/public/ProductCarousel';
 import { ExportMap } from '@/components/public/ExportMap';
 import { ContactForm } from '@/components/public/ContactForm';
@@ -80,8 +81,14 @@ export default async function HomePage({ params: { locale } }: { params: { local
         <div className="va-hero-r">
           <div className="va-hero-art" />
           <div className="va-hero-grid" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="va-hero-img" src={S.hero.imageUrl} alt={S.hero.imageAlt} />
+          <SmartImage
+            className="va-hero-img"
+            src={S.hero.imageUrl}
+            alt={S.hero.imageAlt}
+            width={1600}
+            height={1100}
+            priority
+          />
         </div>
       </section>
 
@@ -157,8 +164,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
             {S.certs.items.map((c, i) => (
               <div key={i} className="va-cert-card">
                 <div className="va-cert-img">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={c.logoUrl} alt={c.name} />
+                  <SmartImage src={c.logoUrl} alt={c.name} width={400} height={400} sizes="200px" />
                 </div>
                 <div className="va-cert-body">
                   <div className="va-cert-meta">{c.issuer}</div>

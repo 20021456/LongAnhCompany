@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import type { Locale } from '@/lib/i18n/config';
 import { Icon } from '@/components/ui/Icon';
+import { SmartImage } from '@/components/ui/SmartImage';
 import type { ProductsTile, ProductsParticleSection } from '@/lib/products-page-content';
 
 interface Product {
@@ -136,8 +137,14 @@ export function ProductsBrowser({
                     onTileClick(ti, anchor);
                   }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={tile.imageUrl} alt="" className="pr-cat-tile-img" />
+                  <SmartImage
+                    src={tile.imageUrl}
+                    alt=""
+                    className="pr-cat-tile-img"
+                    width={800}
+                    height={600}
+                    sizes="(max-width: 768px) 100vw, 400px"
+                  />
                   <div className="pr-cat-tile-overlay" />
                   <div className="pr-cat-tile-arrow">
                     <Icon name="arrow" size={16} />
@@ -198,8 +205,7 @@ export function ProductsBrowser({
                     href={`/${loc}/products/${p.code.toLowerCase()}`}
                   >
                     <div className="pr-card-img">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={p.img} alt={p.name} />
+                      <SmartImage src={p.img} alt={p.name} width={600} height={450} sizes="380px" />
                       <div className="pr-card-cat">{cats[p.cat]}</div>
                     </div>
                     <div className="pr-card-body">
