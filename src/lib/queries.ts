@@ -294,6 +294,44 @@ export async function getSettings(): Promise<Record<string, Record<string, L3>>>
   return out;
 }
 
+// ─── SEO defaults ─────────────────────────────────────────────────────────
+
+export interface SeoDefaults {
+  metaTitle: L3;
+  metaDesc: L3;
+  keywords: L3;
+  ogImage: string;
+  canonicalBaseUrl: string;
+  twitterHandle: string;
+  gaMeasurementId: string;
+  gtmId: string;
+  robotsIndexable: boolean;
+}
+
+/**
+ * Site-wide SEO defaults edited at /admin/seo (settings group `seo`).
+ * Consumed by the root layout, `buildPageMetadata` and `robots.ts`.
+ */
+export async function getSeoDefaults(): Promise<SeoDefaults> {
+  const rows = await db.setting.findMany({ where: { group: 'seo' } });
+  const m = new Map(rows.map((r) => [r.key, r]));
+  const loc = (k: string): L3 =>
+    l3(m.get(k)?.valueVi ?? null, m.get(k)?.valueEn ?? null, m.get(k)?.valueZh ?? null);
+  const str = (k: string): string => (m.get(k)?.valueVi ?? '').trim();
+  return {
+    metaTitle: loc('seo.meta_title_default'),
+    metaDesc: loc('seo.meta_desc_default'),
+    keywords: loc('seo.keywords'),
+    ogImage: str('seo.og_image'),
+    canonicalBaseUrl: str('seo.canonical_base_url'),
+    twitterHandle: str('seo.twitter_handle'),
+    gaMeasurementId: str('seo.ga_measurement_id'),
+    gtmId: str('seo.gtm_id'),
+    // Default to indexable — only an explicit "false" deindexes the site.
+    robotsIndexable: (m.get('seo.robots_indexable')?.valueVi ?? 'true') !== 'false',
+  };
+}
+
 export interface MenuLink {
   label: L3;
   url: string;

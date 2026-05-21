@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { Locale } from '@/lib/i18n/config';
 import { db } from '@/lib/db';
+import { getSeoDefaults } from '@/lib/queries';
 import { absUrl, hreflangAlternates } from '@/lib/site-url';
 
 const SUF: Record<Locale, 'Vi' | 'En' | 'Zh'> = { vi: 'Vi', en: 'En', zh: 'Zh' };
@@ -40,17 +41,30 @@ export async function buildPageMetadata({
   let title = fallbackTitle;
   let description = fallbackDescription;
   let ogImage = fallbackOgImage;
+  let keywords: string | undefined;
+  let twitterHandle: string | undefined;
 
   try {
-    const row = await db.page.findUnique({ where: { key: pageKey } });
+    const [row, seo] = await Promise.all([
+      db.page.findUnique({ where: { key: pageKey } }),
+      getSeoDefaults(),
+    ]);
+
+    // Precedence: page-row override → site-wide SEO default → static fallback.
+    if (seo.metaTitle[locale]) title = seo.metaTitle[locale];
+    if (seo.metaDesc[locale]) description = seo.metaDesc[locale];
+    if (seo.ogImage) ogImage = seo.ogImage;
+    keywords = seo.keywords[locale] || undefined;
+    twitterHandle = seo.twitterHandle || undefined;
+
     if (row) {
       const suf = SUF[locale];
       const metaTitle =
         (row[`metaTitle${suf}` as 'metaTitleVi'] as string | null | undefined) ?? null;
       const baseTitle = (row[`title${suf}` as 'titleVi'] as string | null | undefined) ?? null;
       const metaDesc = (row[`metaDesc${suf}` as 'metaDescVi'] as string | null | undefined) ?? null;
-      title = metaTitle || baseTitle || fallbackTitle;
-      description = metaDesc || fallbackDescription;
+      title = metaTitle || baseTitle || title;
+      description = metaDesc || description;
       ogImage = row.ogImageUrl || ogImage;
     }
   } catch {
@@ -63,6 +77,7 @@ export async function buildPageMetadata({
   return {
     title,
     description,
+    ...(keywords ? { keywords } : {}),
     alternates: { canonical, languages },
     openGraph: {
       title,
@@ -74,6 +89,7 @@ export async function buildPageMetadata({
     twitter: {
       title,
       description,
+      ...(twitterHandle ? { site: twitterHandle, creator: twitterHandle } : {}),
       ...(ogImage ? { images: [absUrl(ogImage)] } : {}),
     },
   };
