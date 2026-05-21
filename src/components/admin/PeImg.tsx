@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { AdminIcon } from './AdminIcon';
+import { uploadImage } from '@/lib/upload-client';
 
 /**
  * Image preview card — port of prototype's PeImg.
@@ -10,7 +11,8 @@ import { AdminIcon } from './AdminIcon';
  * "Đổi / Crop" overlay; bottom badge shows the natural pixel size (auto-
  * detected on load if no `size` prop is passed).
  *
- * Phase 7 will swap the local data URL for a real upload to /api/media.
+ * Picked files go through `/api/admin/upload` (S3 when configured, inline
+ * data URL otherwise) and the resulting URL is handed back via `onChange`.
  */
 export function PeImg({
   src,
@@ -22,8 +24,8 @@ export function PeImg({
   alt?: string;
   /** Optional caption shown in the bottom badge (e.g. "2048×1521 · PNG"). */
   size?: string;
-  /** Called when the user picks a new file — receives a data URL. */
-  onChange?: (dataUrl: string) => void;
+  /** Called when the user picks a new file — receives the stored image URL. */
+  onChange?: (url: string) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -32,14 +34,10 @@ export function PeImg({
     fileInputRef.current?.click();
   }
 
-  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file || !onChange) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') onChange(reader.result);
-    };
-    reader.readAsDataURL(file);
+    onChange(await uploadImage(file, 'pages'));
   }
 
   return (
@@ -86,7 +84,7 @@ export function PeImg({
         type="file"
         accept="image/*"
         style={{ display: 'none' }}
-        onChange={handleFile}
+        onChange={(e) => void handleFile(e)}
       />
       {/* Hidden second input keeps the focused styles consistent across browsers */}
       <input ref={inputRef} type="text" hidden defaultValue={src} />

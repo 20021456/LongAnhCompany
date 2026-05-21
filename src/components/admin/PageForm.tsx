@@ -8,6 +8,7 @@ import { AdminPageHead } from './AdminPageHead';
 import { Field } from './FormBits';
 import { LangTabs, EditorSection, StatusRadioGroup, type Lang } from './EditorChrome';
 import { PeImg } from './PeImg';
+import { uploadImage } from '@/lib/upload-client';
 import { savePage, type PageInput, type ActionResult } from '@/app/admin/(panel)/pages/actions';
 import { HOME_SECTION_KEYS, type HomeSections, type HomeSectionKey } from '@/lib/home-content';
 import type { AboutSections, AboutSectionKey } from '@/lib/about-content';
@@ -714,15 +715,11 @@ export function PageForm({
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (!file) return;
-                            const reader = new FileReader();
-                            reader.onload = () => {
-                              if (typeof reader.result === 'string') {
-                                const cards = [...C.about.cards];
-                                cards[i] = { ...cards[i], imageUrl: reader.result };
-                                patch('about', { cards });
-                              }
-                            };
-                            reader.readAsDataURL(file);
+                            void uploadImage(file, 'pages').then((url) => {
+                              const cards = [...C.about.cards];
+                              cards[i] = { ...cards[i], imageUrl: url };
+                              patch('about', { cards });
+                            });
                           }}
                         />
                         <button

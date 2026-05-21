@@ -6,6 +6,7 @@ import { AdminIcon, type AdminIconName } from './AdminIcon';
 import { AdminPageHead } from './AdminPageHead';
 import { Field, FieldRow } from './FormBits';
 import { fmtDateVn } from '@/lib/format';
+import { uploadImage } from '@/lib/upload-client';
 import {
   addMedia,
   updateMedia,
@@ -64,6 +65,22 @@ function AddPanel({ onDone, folders }: { onDone: () => void; folders: MediaFolde
   const [folderId, setFolderId] = useState('');
   const [state, setState] = useState<ActionResult | null>(null);
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  async function onPickFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setState(null);
+    try {
+      const uploaded = await uploadImage(file, 'media');
+      setUrl(uploaded);
+      if (!filename) setFilename(file.name);
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -86,10 +103,21 @@ function AddPanel({ onDone, folders }: { onDone: () => void; folders: MediaFolde
         <div>
           <h3>Thêm ảnh vào thư viện</h3>
           <p>
-            Đăng ký ảnh bằng đường dẫn (URL hoặc đường dẫn trong <code>/public</code>) — auto-WebP
-            convert sẽ chạy ở Phase 7.
+            Tải ảnh từ máy lên hoặc dán đường dẫn có sẵn (URL hoặc đường dẫn trong{' '}
+            <code>/public</code>).
           </p>
         </div>
+        <label className="ad-btn" style={{ cursor: uploading ? 'wait' : 'pointer' }}>
+          <AdminIcon name="upload" size={14} />
+          {uploading ? 'Đang tải lên…' : 'Tải ảnh từ máy'}
+          <input
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            disabled={uploading}
+            onChange={(e) => void onPickFile(e)}
+          />
+        </label>
       </div>
       <div className="ad-card-body">
         {state?.error ? (
@@ -100,7 +128,7 @@ function AddPanel({ onDone, folders }: { onDone: () => void; folders: MediaFolde
         ) : null}
         <form onSubmit={onSubmit}>
           <FieldRow>
-            <Field label="Đường dẫn ảnh" required>
+            <Field label="Đường dẫn ảnh" required help="Tự điền sau khi tải ảnh từ máy.">
               <input
                 className="ad-input"
                 value={url}

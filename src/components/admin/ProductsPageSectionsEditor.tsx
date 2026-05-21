@@ -5,6 +5,7 @@ import { AdminIcon } from './AdminIcon';
 import { Field } from './FormBits';
 import { EditorSection, type Lang } from './EditorChrome';
 import { PeImg } from './PeImg';
+import { uploadImage } from '@/lib/upload-client';
 import {
   PRODUCTS_PAGE_SECTION_KEYS,
   type ProductsPageSections,
@@ -175,15 +176,11 @@ export function ProductsPageSectionsEditor({
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                      if (typeof reader.result === 'string') {
-                        const items = [...C.tiles.items];
-                        items[i] = { ...t, imageUrl: reader.result };
-                        onPatch('tiles', { items });
-                      }
-                    };
-                    reader.readAsDataURL(file);
+                    void uploadImage(file, 'products').then((url) => {
+                      const items = [...C.tiles.items];
+                      items[i] = { ...t, imageUrl: url };
+                      onPatch('tiles', { items });
+                    });
                   }}
                 />
                 <button

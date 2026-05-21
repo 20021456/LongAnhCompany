@@ -4,6 +4,7 @@ import { AdminIcon } from './AdminIcon';
 import { Field } from './FormBits';
 import { EditorSection, type Lang } from './EditorChrome';
 import { PeImg } from './PeImg';
+import { uploadImage } from '@/lib/upload-client';
 import {
   ABOUT_SECTION_KEYS,
   type AboutSections,
@@ -493,15 +494,11 @@ export function AboutSectionsEditor({
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
-                  const reader = new FileReader();
-                  reader.onload = () => {
-                    if (typeof reader.result === 'string') {
-                      const images = [...C.warehouse.images];
-                      images[i] = reader.result;
-                      onPatch('warehouse', { images });
-                    }
-                  };
-                  reader.readAsDataURL(file);
+                  void uploadImage(file, 'pages').then((url) => {
+                    const images = [...C.warehouse.images];
+                    images[i] = url;
+                    onPatch('warehouse', { images });
+                  });
                 }}
               />
               <button

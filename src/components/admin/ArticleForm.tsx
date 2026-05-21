@@ -10,6 +10,7 @@ import { EditorSection, LangTabs, StatusRadioGroup, type Lang } from './EditorCh
 import { PeTags } from './PeTags';
 import { TiptapEditor } from './TiptapEditor';
 import { fmtNumberVn } from '@/lib/format';
+import { uploadImage } from '@/lib/upload-client';
 import {
   saveArticle,
   type ArticleInput,
@@ -108,29 +109,21 @@ export function ArticleForm({
     setV((p) => ({ ...p, [k]: val }));
 
   // ─── Gallery helpers ────────────────────────────────────────────────────
-  /** Append a new tile from a File using FileReader (data-URL). */
-  function gAddFromFiles(files: FileList | null) {
+  /** Append new tiles from picked files, uploading each to storage. */
+  async function gAddFromFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
-    const readers = Array.from(files).map(
-      (f) =>
-        new Promise<GalleryItem>((resolve, reject) => {
-          const r = new FileReader();
-          r.onload = () => {
-            if (typeof r.result === 'string') {
-              resolve({ src: r.result, alt: '', featured: false });
-            } else reject(new Error('not a string'));
-          };
-          r.onerror = () => reject(r.error);
-          r.readAsDataURL(f);
-        }),
+    const items: GalleryItem[] = await Promise.all(
+      Array.from(files).map(async (f) => ({
+        src: await uploadImage(f, 'articles'),
+        alt: '',
+        featured: false,
+      })),
     );
-    Promise.all(readers).then((items) => {
-      setV((p) => {
-        const next = [...p.gallery, ...items];
-        // First image added becomes featured by default so the cover isn't blank.
-        if (!next.some((g) => g.featured) && next.length > 0) next[0].featured = true;
-        return { ...p, gallery: next };
-      });
+    setV((p) => {
+      const next = [...p.gallery, ...items];
+      // First image added becomes featured by default so the cover isn't blank.
+      if (!next.some((g) => g.featured) && next.length > 0) next[0].featured = true;
+      return { ...p, gallery: next };
     });
   }
   function gPickFromDevice() {
@@ -138,7 +131,7 @@ export function ArticleForm({
     input.type = 'file';
     input.accept = 'image/*';
     input.multiple = true;
-    input.onchange = () => gAddFromFiles(input.files);
+    input.onchange = () => void gAddFromFiles(input.files);
     input.click();
   }
   function gMakeFeatured(i: number) {
@@ -222,14 +215,10 @@ export function ArticleForm({
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
-    input.onchange = () => {
+    input.onchange = async () => {
       const file = input.files?.[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') set('coverImageUrl', reader.result);
-      };
-      reader.readAsDataURL(file);
+      set('coverImageUrl', await uploadImage(file, 'articles'));
     };
     input.click();
   }
@@ -492,7 +481,7 @@ export function ArticleForm({
               onDrop={(e) => {
                 if (e.dataTransfer.files.length > 0) {
                   e.preventDefault();
-                  gAddFromFiles(e.dataTransfer.files);
+                  void gAddFromFiles(e.dataTransfer.files);
                 }
               }}
             >
