@@ -3,26 +3,39 @@ import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { Icon, Logo } from '@/components/ui/Icon';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { getMenu, getSettings } from '@/lib/queries';
 
 interface Props {
   locale: Locale;
   active?: 'home' | 'about' | 'products' | 'career' | 'news' | 'contact';
 }
 
-export function SiteHeader({ locale, active }: Props) {
-  const C = COPY[locale];
-  const navIds = ['home', 'about', 'products', 'career', 'news', 'contact'] as const;
-  const navHrefs = [
-    `/${locale}`,
-    `/${locale}/about`,
-    `/${locale}/products`,
-    `/${locale}/career`,
-    `/${locale}/news`,
-    `/${locale}/contact`,
-  ];
+/** Prefix a CMS menu URL with the active locale (external URLs untouched). */
+function localizeHref(url: string, locale: Locale): string {
+  if (/^https?:\/\//i.test(url)) return url;
+  const path = url.startsWith('/') ? url : `/${url}`;
+  return `/${locale}${path === '/' ? '' : path}`;
+}
 
+const FALLBACK_PATHS = ['/', '/about', '/products', '/career', '/news', '/contact'];
+
+export async function SiteHeader({ locale, active }: Props) {
+  const C = COPY[locale];
+  const [menu, settings] = await Promise.all([getMenu('header'), getSettings()]);
+
+  const phone = settings.contact?.phone_main?.[locale] || C.phone[0];
+  const email = settings.contact?.email_main?.[locale] || C.email;
   const shortBrand =
-    locale === 'zh' ? '龙英矿业' : locale === 'en' ? 'LONG ANH MINERAL' : 'KS LONG ANH';
+    settings.site?.brand_short?.[locale] ||
+    (locale === 'zh' ? '龙英矿业' : locale === 'en' ? 'LONG ANH MINERAL' : 'KS LONG ANH');
+  const tagline = settings.site?.tagline?.[locale] || C.tagline;
+
+  // Nav comes from the CMS menu (Admin → Menu); fall back to the static COPY
+  // nav when no menu has been configured yet.
+  const navItems: { label: string; url: string }[] =
+    menu.length > 0
+      ? menu.map((m) => ({ label: m.label[locale] || m.label.vi, url: m.url }))
+      : C.nav.map((label: string, i: number) => ({ label, url: FALLBACK_PATHS[i] }));
 
   return (
     <>
@@ -31,11 +44,11 @@ export function SiteHeader({ locale, active }: Props) {
         <div className="va-wrap va-strip-in">
           <span>
             {locale === 'zh' ? '销售热线:' : locale === 'en' ? 'Sales hotline:' : 'Hotline kinh doanh:'}{' '}
-            <b style={{ color: '#fff' }}>{C.phone[0]}</b>
+            <b style={{ color: '#fff' }}>{phone}</b>
           </span>
           <div className="va-strip-r">
-            <a href={`mailto:${C.email}`}>
-              <Icon name="mail" size={13} /> {C.email}
+            <a href={`mailto:${email}`}>
+              <Icon name="mail" size={13} /> {email}
             </a>
             <span style={{ opacity: 0.4 }}>·</span>
             <a href={`/${locale}/contact`}>ISO 9001 : 2015</a>
@@ -52,21 +65,22 @@ export function SiteHeader({ locale, active }: Props) {
             </span>
             <span className="va-brand-name">
               <b>{shortBrand}</b>
-              <span>{C.tagline}</span>
+              <span>{tagline}</span>
             </span>
           </Link>
 
           <nav className="va-nav">
-            {C.nav.map((label: string, i: number) => {
-              const id = navIds[i];
-              const href = navHrefs[i];
-              const isActive = active === id;
+            {navItems.map((item, i) => {
+              const href = localizeHref(item.url, locale);
+              const isActive =
+                (active === 'home' && item.url === '/') ||
+                (!!active && item.url === `/${active}`);
 
-              if (id === 'products') {
+              if (item.url === '/products') {
                 return (
                   <div key={i} className="va-nav-item">
                     <Link href={href} className={isActive ? 'is-active' : ''}>
-                      {label}
+                      {item.label}
                     </Link>
                     <div className="va-nav-dropdown">
                       <Link href={`/${locale}/products#powder`}>
@@ -100,7 +114,7 @@ export function SiteHeader({ locale, active }: Props) {
                 );
               }
 
-              if (id === 'career') {
+              if (item.url === '/career') {
                 const cdept = [
                   ['Sản xuất', 'Manufacturing', '生产', 'san-xuat'],
                   ['Kinh doanh', 'Sales', '销售', 'kinh-doanh'],
@@ -119,7 +133,7 @@ export function SiteHeader({ locale, active }: Props) {
                 return (
                   <div key={i} className="va-nav-item">
                     <Link href={href} className={isActive ? 'is-active' : ''}>
-                      {label}
+                      {item.label}
                     </Link>
                     <div className="va-nav-dropdown">
                       {cdept.map((d, j) => (
@@ -135,7 +149,7 @@ export function SiteHeader({ locale, active }: Props) {
 
               return (
                 <Link key={i} href={href} className={isActive ? 'is-active' : ''}>
-                  {label}
+                  {item.label}
                 </Link>
               );
             })}
