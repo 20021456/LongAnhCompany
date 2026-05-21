@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AdminIcon } from './AdminIcon';
 import { fmtDateTimeVn } from '@/lib/format';
@@ -40,6 +40,15 @@ export function ChatThread({
   const [state, setState] = useState<ActionResult | null>(null);
   const [busy, setBusy] = useState(false);
   const closed = status === 'closed';
+
+  // Poll for new visitor messages — the public widget posts over the
+  // `/api/chat` route, so re-fetching this server component keeps the
+  // agent's view current without a socket connection.
+  useEffect(() => {
+    if (closed) return;
+    const timer = setInterval(() => router.refresh(), 5000);
+    return () => clearInterval(timer);
+  }, [closed, router]);
 
   async function onSend(e: React.FormEvent) {
     e.preventDefault();

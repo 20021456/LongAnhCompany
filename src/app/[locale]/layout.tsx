@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { locales, type Locale } from '@/lib/i18n/config';
 import { SiteHeader } from '@/components/public/SiteHeader';
 import { SiteFooter } from '@/components/public/SiteFooter';
+import { ChatWidget } from '@/components/public/ChatWidget';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -31,6 +32,7 @@ export default async function LocaleLayout({
         <SiteHeader locale={locale as Locale} />
         {children}
         <SiteFooter locale={locale as Locale} />
+        {process.env.ENABLE_LIVE_CHAT === 'true' ? <ChatWidget locale={locale as Locale} /> : null}
       </div>
     </NextIntlClientProvider>
   );
