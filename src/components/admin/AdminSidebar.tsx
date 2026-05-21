@@ -22,24 +22,115 @@ const NAV: NavEntry[] = [
   { type: 'item', id: 'dashboard', label: 'Dashboard', icon: 'home', href: '/admin/dashboard' },
 
   { type: 'section', label: 'Nội dung' },
-  { type: 'item', id: 'pages', label: 'Trang', icon: 'file', href: '/admin/pages', perm: 'pages.read' },
-  { type: 'item', id: 'news', label: 'Tin tức', icon: 'news', href: '/admin/news', perm: 'news.read' },
-  { type: 'item', id: 'products', label: 'Sản phẩm', icon: 'rock', href: '/admin/products', perm: 'products.read' },
-  { type: 'item', id: 'jobs', label: 'Tuyển dụng', icon: 'users', href: '/admin/jobs', perm: 'jobs.read' },
-  { type: 'item', id: 'media', label: 'Thư viện ảnh', icon: 'image', href: '/admin/media', perm: 'media.read' },
+  {
+    type: 'item',
+    id: 'pages',
+    label: 'Trang',
+    icon: 'file',
+    href: '/admin/pages',
+    perm: 'pages.read',
+  },
+  {
+    type: 'item',
+    id: 'news',
+    label: 'Tin tức',
+    icon: 'news',
+    href: '/admin/news',
+    perm: 'news.read',
+  },
+  {
+    type: 'item',
+    id: 'products',
+    label: 'Sản phẩm',
+    icon: 'rock',
+    href: '/admin/products',
+    perm: 'products.read',
+  },
+  {
+    type: 'item',
+    id: 'certifications',
+    label: 'Chứng nhận',
+    icon: 'shield',
+    href: '/admin/certifications',
+    perm: 'pages.read',
+  },
+  {
+    type: 'item',
+    id: 'jobs',
+    label: 'Tuyển dụng',
+    icon: 'users',
+    href: '/admin/jobs',
+    perm: 'jobs.read',
+  },
+  {
+    type: 'item',
+    id: 'media',
+    label: 'Thư viện ảnh',
+    icon: 'image',
+    href: '/admin/media',
+    perm: 'media.read',
+  },
 
   { type: 'section', label: 'Cấu hình' },
-  { type: 'item', id: 'settings', label: 'Cài đặt site', icon: 'settings', href: '/admin/settings', perm: 'settings.update' },
-  { type: 'item', id: 'menu', label: 'Menu navigation', icon: 'nav', href: '/admin/menu', perm: 'menu.update' },
-  { type: 'item', id: 'i18n', label: 'Ngôn ngữ', icon: 'globe', href: '/admin/i18n', perm: 'i18n.update' },
-  { type: 'item', id: 'seo', label: 'SEO mặc định', icon: 'seo', href: '/admin/seo', perm: 'seo.update' },
+  {
+    type: 'item',
+    id: 'settings',
+    label: 'Cài đặt site',
+    icon: 'settings',
+    href: '/admin/settings',
+    perm: 'settings.update',
+  },
+  {
+    type: 'item',
+    id: 'menu',
+    label: 'Menu navigation',
+    icon: 'nav',
+    href: '/admin/menu',
+    perm: 'menu.update',
+  },
+  {
+    type: 'item',
+    id: 'i18n',
+    label: 'Ngôn ngữ',
+    icon: 'globe',
+    href: '/admin/i18n',
+    perm: 'i18n.update',
+  },
+  {
+    type: 'item',
+    id: 'seo',
+    label: 'SEO mặc định',
+    icon: 'seo',
+    href: '/admin/seo',
+    perm: 'seo.update',
+  },
 
   { type: 'section', label: 'Tương tác' },
-  { type: 'item', id: 'contacts', label: 'Liên hệ / Leads', icon: 'mail', href: '/admin/contacts', perm: 'contacts.read' },
-  { type: 'item', id: 'livechat', label: 'Hỗ trợ trực tiếp', icon: 'chat', href: '/admin/livechat' },
+  {
+    type: 'item',
+    id: 'contacts',
+    label: 'Liên hệ / Leads',
+    icon: 'mail',
+    href: '/admin/contacts',
+    perm: 'contacts.read',
+  },
+  {
+    type: 'item',
+    id: 'livechat',
+    label: 'Hỗ trợ trực tiếp',
+    icon: 'chat',
+    href: '/admin/livechat',
+  },
 
   { type: 'section', label: 'Hệ thống' },
-  { type: 'item', id: 'roles', label: 'Phân quyền', icon: 'shield', href: '/admin/roles', perm: 'users.manage' },
+  {
+    type: 'item',
+    id: 'roles',
+    label: 'Phân quyền',
+    icon: 'shield',
+    href: '/admin/roles',
+    perm: 'users.manage',
+  },
 ];
 
 interface Props {
@@ -97,9 +188,7 @@ export function AdminSidebar({ role, permissions }: Props) {
             <Link
               key={entry.id}
               href={entry.href}
-              className={
-                'ad-side-item' + (pathname.startsWith(entry.href) ? ' active' : '')
-              }
+              className={'ad-side-item' + (pathname.startsWith(entry.href) ? ' active' : '')}
             >
               <AdminIcon name={entry.icon} size={17} />
               <span>{entry.label}</span>
