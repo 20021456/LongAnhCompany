@@ -4,12 +4,34 @@ import Link from 'next/link';
 import { AdminIcon } from './AdminIcon';
 import { Field } from './FormBits';
 import { EditorSection, type Lang } from './EditorChrome';
+import type { IconName } from '@/components/ui/Icon';
 import {
   CAREERS_PAGE_SECTION_KEYS,
   type CareersPageSections,
   type CareersPageSectionKey,
   type CareersPageSectionsLocale,
 } from '@/lib/careers-page-content';
+
+/** Selectable icon names — mirrors the `IconName` union from Icon.tsx. */
+const ICON_NAMES: IconName[] = [
+  'arrow',
+  'plus',
+  'check',
+  'chevron',
+  'globe',
+  'leaf',
+  'factory',
+  'ship',
+  'spark',
+  'box',
+  'drop',
+  'grid',
+  'pin',
+  'phone',
+  'mail',
+  'sun',
+  'moon',
+];
 
 /** Minimal job catalog entry passed in from the server. */
 export interface JobChip {
@@ -384,6 +406,23 @@ export function CareersPageSectionsEditor({
                   }}
                 />
               </Field>
+              <Field label="Icon">
+                <select
+                  className="ad-select"
+                  value={v.icon || 'check'}
+                  onChange={(e) => {
+                    const items = [...C.values.items];
+                    items[i] = { ...v, icon: e.target.value };
+                    onPatch('values', { items });
+                  }}
+                >
+                  {ICON_NAMES.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
               <Field label={`Mô tả (${L})`}>
                 <textarea
                   className="ad-textarea"
@@ -403,7 +442,11 @@ export function CareersPageSectionsEditor({
           type="button"
           className="ad-btn sm"
           style={{ width: 'fit-content', marginTop: 10 }}
-          onClick={() => onPatch('values', { items: [...C.values.items, { name: '', body: '' }] })}
+          onClick={() =>
+            onPatch('values', {
+              items: [...C.values.items, { name: '', body: '', icon: 'check' }],
+            })
+          }
         >
           <AdminIcon name="plus" size={13} /> Thêm giá trị
         </button>

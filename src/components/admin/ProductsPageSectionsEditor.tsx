@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { AdminIcon } from './AdminIcon';
 import { Field } from './FormBits';
 import { EditorSection, type Lang } from './EditorChrome';
-import { PeImg } from './PeImg';
 import { uploadImage } from '@/lib/upload-client';
 import {
   PRODUCTS_PAGE_SECTION_KEYS,
@@ -67,6 +66,13 @@ export function ProductsPageSectionsEditor({
         title="Page header"
         sub="Tiêu đề và mô tả ngắn ở đầu trang"
       >
+        <Field label={`Eyebrow (${L})`}>
+          <input
+            className="ad-input"
+            value={C.header.eyebrow}
+            onChange={(e) => onPatch('header', { eyebrow: e.target.value })}
+          />
+        </Field>
         <Field label={`Tiêu đề chính (${L})`}>
           <input
             className="ad-input"
@@ -389,6 +395,22 @@ export function ProductsPageSectionsEditor({
             onChange={(e) => onPatch('specTable', { title: e.target.value })}
           />
         </Field>
+        <div className="pe-row">
+          <Field label={`Cột "Bột không phủ" (${L})`}>
+            <input
+              className="ad-input"
+              value={C.specTable.colUncoated}
+              onChange={(e) => onPatch('specTable', { colUncoated: e.target.value })}
+            />
+          </Field>
+          <Field label={`Cột "Bột phủ Stearic" (${L})`}>
+            <input
+              className="ad-input"
+              value={C.specTable.colCoated}
+              onChange={(e) => onPatch('specTable', { colCoated: e.target.value })}
+            />
+          </Field>
+        </div>
         <div className="pe-list" style={{ marginTop: 12 }}>
           {C.specTable.rows.map((r, i) => (
             <div key={i} className="pe-list-item">

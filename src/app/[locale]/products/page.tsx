@@ -58,7 +58,7 @@ export default async function ProductsPage({ params: { locale } }: { params: { l
   return (
     <div className="pr">
       <PageHeader
-        eyebrow={C.productsEy}
+        eyebrow={S.header.eyebrow}
         title={S.header.title}
         sub={S.header.sub}
         breadcrumb={[
@@ -105,12 +105,8 @@ export default async function ProductsPage({ params: { locale } }: { params: { l
               <div className="pr-spec-cell h">
                 {loc === 'zh' ? '指标' : loc === 'en' ? 'Property' : 'Chỉ tiêu'}
               </div>
-              <div className="pr-spec-cell h">
-                {loc === 'zh' ? '未涂层' : loc === 'en' ? 'Uncoated' : 'Bột không phủ'}
-              </div>
-              <div className="pr-spec-cell h">
-                {loc === 'zh' ? '涂层' : loc === 'en' ? 'Coated' : 'Bột phủ Stearic'}
-              </div>
+              <div className="pr-spec-cell h">{S.specTable.colUncoated}</div>
+              <div className="pr-spec-cell h">{S.specTable.colCoated}</div>
               <div className="pr-spec-cell h">
                 {loc === 'zh' ? '单位' : loc === 'en' ? 'Unit' : 'Đơn vị'}
               </div>

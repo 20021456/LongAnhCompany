@@ -23,6 +23,7 @@ import type { Locale } from './i18n/config';
 // ─── Per-section content shapes (one locale) ──────────────────────────────
 
 export interface AboutHeaderSection {
+  eyebrow: string;
   title: string;
   sub: string;
 }
@@ -35,6 +36,7 @@ export interface AboutStorySection {
   paragraph3: string;
   imageUrl: string;
   imageAlt: string;
+  bgImageUrl: string;
   signerName: string;
   signerTitle: string;
 }
@@ -53,6 +55,7 @@ export interface AboutTimelineSection {
 export interface AboutValueCard {
   name: string;
   body: string;
+  icon: string;
 }
 export interface AboutValuesSection {
   eyebrow: string;
@@ -128,14 +131,17 @@ export type AboutSectionKey = (typeof ABOUT_SECTION_KEYS)[number];
 
 const HEADER: Record<Locale, AboutHeaderSection> = {
   vi: {
+    eyebrow: 'Về chúng tôi',
     title: 'Khoáng đá nguyên sinh từ Nghệ An',
     sub: 'Hơn 20 năm khai thác và chế biến — chúng tôi xây dựng từng mối quan hệ qua từng container giao đúng hẹn.',
   },
   en: {
+    eyebrow: 'About us',
     title: 'Pure mineral stone from Nghe An',
     sub: 'Over 20 years of mining and processing — we build every relationship one on-time container at a time.',
   },
   zh: {
+    eyebrow: '关于我们',
     title: '来自义安省的原生矿石',
     sub: '20多年的开采和加工经验 — 我们通过每个按时交付的集装箱建立每段合作关系。',
   },
@@ -153,6 +159,7 @@ const STORY: Record<Locale, AboutStorySection> = {
       'Chúng tôi xem mỗi tấn bột đá là một cam kết — về chất lượng, thời hạn và mối quan hệ lâu dài với đối tác.',
     imageUrl: '/assets/da-nguyen-lieu-cao-cap.webp',
     imageAlt: 'Mỏ đá Long Anh tại Quỳ Hợp',
+    bgImageUrl: '/assets/nha-may-bot-sieu-min-1.webp',
     signerName: 'Nguyễn Long Anh',
     signerTitle: 'Chủ tịch · Sáng lập',
   },
@@ -167,6 +174,7 @@ const STORY: Record<Locale, AboutStorySection> = {
       'Every ton of stone powder is a promise — quality, schedule, and a long-term partnership.',
     imageUrl: '/assets/da-nguyen-lieu-cao-cap.webp',
     imageAlt: 'Long Anh quarry in Quy Hop',
+    bgImageUrl: '/assets/nha-may-bot-sieu-min-1.webp',
     signerName: 'Nguyen Long Anh',
     signerTitle: 'Chairman · Founder',
   },
@@ -178,6 +186,7 @@ const STORY: Record<Locale, AboutStorySection> = {
     paragraph3: '每一吨石粉都是一个承诺 — 质量、进度和长期合作关系。',
     imageUrl: '/assets/da-nguyen-lieu-cao-cap.webp',
     imageAlt: '龙英归合矿场',
+    bgImageUrl: '/assets/nha-may-bot-sieu-min-1.webp',
     signerName: 'Nguyen Long Anh',
     signerTitle: '主席 · 创始人',
   },
@@ -267,14 +276,17 @@ const VALUES: Record<Locale, AboutValuesSection> = {
       {
         name: 'Chất lượng nguyên sinh',
         body: 'Mỏ riêng tại Quỳ Hợp với độ trắng > 98% và CaCO₃ > 98.5% — kiểm soát từ gốc.',
+        icon: 'drop',
       },
       {
         name: 'Công nghệ chính xác',
         body: 'Dây chuyền nghiền và phủ Stearic Acid theo công nghệ Châu Âu, kiểm tra từng lô.',
+        icon: 'spark',
       },
       {
         name: 'Cam kết giao hàng',
         body: 'Cảng Cửa Lò & Hải Phòng — đóng gói linh hoạt, lịch giao đúng hẹn.',
+        icon: 'ship',
       },
     ],
   },
@@ -285,14 +297,17 @@ const VALUES: Record<Locale, AboutValuesSection> = {
       {
         name: 'Pure raw material',
         body: 'Owned quarry in Quy Hop · whiteness >98%, CaCO₃ >98.5% — controlled at the source.',
+        icon: 'drop',
       },
       {
         name: 'Precision technology',
         body: 'EU-spec grinding and stearic-acid coating lines · per-batch QC.',
+        icon: 'spark',
       },
       {
         name: 'On-time delivery',
         body: 'Cua Lo & Hai Phong ports · flexible packaging, schedules we keep.',
+        icon: 'ship',
       },
     ],
   },
@@ -300,9 +315,13 @@ const VALUES: Record<Locale, AboutValuesSection> = {
     eyebrow: '核心价值',
     title: '我们永不妥协的三件事',
     items: [
-      { name: '纯原料', body: '归合自有矿场 · 白度>98%、碳酸钙>98.5% — 从源头控制。' },
-      { name: '精密技术', body: '欧洲标准研磨和硬脂酸涂层生产线 · 每批次QC。' },
-      { name: '准时交付', body: '窗碧港和海防港 · 灵活包装,按期履约。' },
+      {
+        name: '纯原料',
+        body: '归合自有矿场 · 白度>98%、碳酸钙>98.5% — 从源头控制。',
+        icon: 'drop',
+      },
+      { name: '精密技术', body: '欧洲标准研磨和硬脂酸涂层生产线 · 每批次QC。', icon: 'spark' },
+      { name: '准时交付', body: '窗碧港和海防港 · 灵活包装,按期履约。', icon: 'ship' },
     ],
   },
 };

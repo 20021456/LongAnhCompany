@@ -23,6 +23,7 @@ import type { Locale } from './i18n/config';
 // ─── Per-section content shapes ───────────────────────────────────────────
 
 export interface ProductsHeaderSection {
+  eyebrow: string;
   title: string;
   sub: string;
 }
@@ -67,6 +68,8 @@ export interface ProductsSpecRow {
 }
 export interface ProductsSpecTableSection {
   title: string;
+  colUncoated: string;
+  colCoated: string;
   rows: ProductsSpecRow[];
   certBadges: string[];
 }
@@ -105,14 +108,17 @@ export type ProductsPageSectionKey = (typeof PRODUCTS_PAGE_SECTION_KEYS)[number]
 
 const HEADER: Record<Locale, ProductsHeaderSection> = {
   vi: {
+    eyebrow: 'Sản phẩm',
     title: 'Hai dòng sản phẩm. Năm tiêu chuẩn.',
     sub: 'Từ bột đá CaCO₃ siêu mịn cho compound nhựa, đến đá tự nhiên cỡ lớn cho công trình cao cấp — tất cả đều đến từ một mỏ duy nhất.',
   },
   en: {
+    eyebrow: 'Products',
     title: 'Two product families. Five standards.',
     sub: 'From ultra-fine CaCO₃ powder for plastic compounds to large natural stone for premium construction — all sourced from a single quarry.',
   },
   zh: {
+    eyebrow: '产品',
     title: '两大产品系列。五项标准。',
     sub: '从用于塑料复合的超细碳酸钙粉到用于高端建筑的大型天然石材 — 全部来自同一个矿场。',
   },
@@ -233,6 +239,8 @@ const PARTICLE: Record<Locale, ProductsParticleSection> = {
 const SPEC_TABLE: Record<Locale, ProductsSpecTableSection> = {
   vi: {
     title: 'Chỉ tiêu chất lượng — Bột đá CaCO₃',
+    colUncoated: 'Bột không phủ',
+    colCoated: 'Bột phủ Stearic',
     rows: [
       { label: 'Độ trắng', coated: '≥ 98', uncoated: '96–98', unit: '%' },
       { label: 'CaCO₃', coated: '≥ 98.5', uncoated: '97–98.5', unit: '%' },
@@ -244,6 +252,8 @@ const SPEC_TABLE: Record<Locale, ProductsSpecTableSection> = {
   },
   en: {
     title: 'Quality specs — CaCO₃ powder',
+    colUncoated: 'Uncoated',
+    colCoated: 'Coated',
     rows: [
       { label: 'Whiteness', coated: '≥ 98', uncoated: '96–98', unit: '%' },
       { label: 'CaCO₃', coated: '≥ 98.5', uncoated: '97–98.5', unit: '%' },
@@ -255,6 +265,8 @@ const SPEC_TABLE: Record<Locale, ProductsSpecTableSection> = {
   },
   zh: {
     title: '质量规格 — 碳酸钙粉',
+    colUncoated: '未涂层',
+    colCoated: '涂层',
     rows: [
       { label: '白度', coated: '≥ 98', uncoated: '96–98', unit: '%' },
       { label: '碳酸钙', coated: '≥ 98.5', uncoated: '97–98.5', unit: '%' },

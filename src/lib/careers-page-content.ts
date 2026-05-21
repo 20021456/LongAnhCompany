@@ -46,6 +46,7 @@ export interface CareersJobsSection {
 export interface CareersValueCard {
   name: string;
   body: string;
+  icon: string;
 }
 export interface CareersValuesSection {
   eyebrow: string;
@@ -175,26 +176,32 @@ const VALUES: Record<Locale, CareersValuesSection> = {
       {
         name: 'Chính trực & Minh bạch',
         body: 'Mọi quyết định đều dựa trên dữ liệu và sự thật. Chúng tôi đối thoại cởi mở và nhận trách nhiệm về kết quả.',
+        icon: 'drop',
       },
       {
         name: 'Tinh thần đồng đội',
         body: 'Thành công là kết quả của tập thể. Chúng tôi đặt lợi ích chung lên trên và hỗ trợ nhau phát triển mỗi ngày.',
+        icon: 'globe',
       },
       {
         name: 'Đổi mới liên tục',
         body: 'Chúng tôi liên tục cải tiến quy trình, nâng cấp công nghệ và tìm kiếm các giải pháp sáng tạo để dẫn đầu ngành.',
+        icon: 'spark',
       },
       {
         name: 'Chất lượng là cốt lõi',
         body: 'Từ nguyên liệu đầu vào đến sản phẩm đầu ra, tiêu chuẩn ISO 9001 không phải là đích đến — mà là nền tảng tối thiểu.',
+        icon: 'check',
       },
       {
         name: 'Phát triển bền vững',
         body: 'Chúng tôi khai thác và sản xuất có trách nhiệm với môi trường và cộng đồng địa phương — vì một tương lai lâu dài.',
+        icon: 'leaf',
       },
       {
         name: 'Hướng ra quốc tế',
         body: 'Với 12 thị trường xuất khẩu, nhân viên Long Anh được tiếp xúc với tư duy và tiêu chuẩn toàn cầu ngay tại Nghệ An.',
+        icon: 'box',
       },
     ],
   },
@@ -206,26 +213,32 @@ const VALUES: Record<Locale, CareersValuesSection> = {
       {
         name: 'Integrity & Transparency',
         body: 'Every decision rests on data and truth. We talk openly and own outcomes.',
+        icon: 'drop',
       },
       {
         name: 'Team spirit',
         body: 'Success is collective. We put the common good first and lift each other up every day.',
+        icon: 'globe',
       },
       {
         name: 'Continuous improvement',
         body: 'We refine processes, upgrade technology, and chase creative answers to lead the industry.',
+        icon: 'spark',
       },
       {
         name: 'Quality is core',
         body: 'From raw input to finished output, ISO 9001 is the floor — not the ceiling.',
+        icon: 'check',
       },
       {
         name: 'Sustainable growth',
         body: 'We mine and produce responsibly toward the environment and the local community — for the long run.',
+        icon: 'leaf',
       },
       {
         name: 'Global outlook',
         body: 'With 12 export markets, the Long Anh team works to global standards from day one in Nghe An.',
+        icon: 'box',
       },
     ],
   },
@@ -234,12 +247,32 @@ const VALUES: Record<Locale, CareersValuesSection> = {
     title: '龙英之所以是龙英',
     sub: '我们不仅生产矿产 — 我们建设具有长期价值的人才和组织。',
     items: [
-      { name: '正直与透明', body: '所有决策都基于数据和事实。我们开放沟通,对结果负责。' },
-      { name: '团队精神', body: '成功来自集体。我们把共同利益放在首位,每天彼此扶持成长。' },
-      { name: '持续创新', body: '我们持续优化流程、升级技术、寻找创新方案以引领行业。' },
-      { name: '质量至上', body: '从原料到成品,ISO 9001 不是终点 — 而是最低基础。' },
-      { name: '可持续发展', body: '我们对环境和当地社区负责地开采和生产 — 着眼长远。' },
-      { name: '国际化视野', body: '凭借12个出口市场,龙英员工在义安省就能接触全球思维与标准。' },
+      {
+        name: '正直与透明',
+        body: '所有决策都基于数据和事实。我们开放沟通,对结果负责。',
+        icon: 'drop',
+      },
+      {
+        name: '团队精神',
+        body: '成功来自集体。我们把共同利益放在首位,每天彼此扶持成长。',
+        icon: 'globe',
+      },
+      {
+        name: '持续创新',
+        body: '我们持续优化流程、升级技术、寻找创新方案以引领行业。',
+        icon: 'spark',
+      },
+      { name: '质量至上', body: '从原料到成品,ISO 9001 不是终点 — 而是最低基础。', icon: 'check' },
+      {
+        name: '可持续发展',
+        body: '我们对环境和当地社区负责地开采和生产 — 着眼长远。',
+        icon: 'leaf',
+      },
+      {
+        name: '国际化视野',
+        body: '凭借12个出口市场,龙英员工在义安省就能接触全球思维与标准。',
+        icon: 'box',
+      },
     ],
   },
 };

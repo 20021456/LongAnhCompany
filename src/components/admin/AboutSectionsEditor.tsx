@@ -5,12 +5,34 @@ import { Field } from './FormBits';
 import { EditorSection, type Lang } from './EditorChrome';
 import { PeImg } from './PeImg';
 import { uploadImage } from '@/lib/upload-client';
+import type { IconName } from '@/components/ui/Icon';
 import {
   ABOUT_SECTION_KEYS,
   type AboutSections,
   type AboutSectionKey,
   type AboutSectionsLocale,
 } from '@/lib/about-content';
+
+/** Selectable icon names — mirrors the `IconName` union from Icon.tsx. */
+const ICON_NAMES: IconName[] = [
+  'arrow',
+  'plus',
+  'check',
+  'chevron',
+  'globe',
+  'leaf',
+  'factory',
+  'ship',
+  'spark',
+  'box',
+  'drop',
+  'grid',
+  'pin',
+  'phone',
+  'mail',
+  'sun',
+  'moon',
+];
 
 /**
  * 8-section editor for the about page (`/admin/pages/about`).
@@ -45,6 +67,13 @@ export function AboutSectionsEditor({
         title="Page header — Banner trang"
         sub="Tiêu đề và mô tả ngắn ở đầu trang giới thiệu"
       >
+        <Field label={`Eyebrow (${L})`}>
+          <input
+            className="ad-input"
+            value={C.header.eyebrow}
+            onChange={(e) => onPatch('header', { eyebrow: e.target.value })}
+          />
+        </Field>
         <Field label={`Tiêu đề chính (${L})`}>
           <input
             className="ad-input"
@@ -147,6 +176,38 @@ export function AboutSectionsEditor({
                   spellCheck={false}
                   style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
                   onChange={(e) => onPatch('story', { imageUrl: e.target.value })}
+                />
+              </Field>
+            </div>
+          </div>
+
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              color: 'var(--ad-text-mute)',
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              margin: '16px 0 10px',
+            }}
+          >
+            Ảnh nền mờ
+          </div>
+          <div className="pe-imgrow">
+            <PeImg
+              src={C.story.bgImageUrl}
+              alt=""
+              size={C.story.bgImageUrl ? '1600×900' : undefined}
+              onChange={(dataUrl) => onPatch('story', { bgImageUrl: dataUrl })}
+            />
+            <div className="pe-stack">
+              <Field label="Đường dẫn ảnh nền">
+                <input
+                  className="ad-input"
+                  value={C.story.bgImageUrl}
+                  spellCheck={false}
+                  style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
+                  onChange={(e) => onPatch('story', { bgImageUrl: e.target.value })}
                 />
               </Field>
             </div>
@@ -313,6 +374,23 @@ export function AboutSectionsEditor({
                     onPatch('values', { items });
                   }}
                 />
+              </Field>
+              <Field label="Icon">
+                <select
+                  className="ad-select"
+                  value={v.icon || 'check'}
+                  onChange={(e) => {
+                    const items = [...C.values.items];
+                    items[i] = { ...v, icon: e.target.value };
+                    onPatch('values', { items });
+                  }}
+                >
+                  {ICON_NAMES.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
               </Field>
               <Field label={`Mô tả (${L})`}>
                 <textarea

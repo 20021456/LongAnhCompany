@@ -9,8 +9,6 @@ import { PageHeader } from '@/components/public/PageHeader';
 import { getAboutSections, getCertifications } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
-const VALUE_ICONS: IconName[] = ['drop', 'spark', 'ship'];
-
 export async function generateMetadata({
   params: { locale },
 }: {
@@ -43,7 +41,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
   return (
     <div className="ab">
       <PageHeader
-        eyebrow={C.aboutEy}
+        eyebrow={S.header.eyebrow}
         title={S.header.title}
         sub={S.header.sub}
         breadcrumb={[{ label: homeLabel, href: `/${loc}` }, { label: C.nav[1] }]}
@@ -52,7 +50,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
       {/* STORY */}
       <section className="ab-section ab-intro-wrap">
         <div className="ab-intro-bg">
-          <SmartImage src="/assets/nha-may-bot-sieu-min-1.webp" alt="" width={1600} height={900} />
+          <SmartImage src={S.story.bgImageUrl} alt="" width={1600} height={900} />
         </div>
         <div className="va-wrap">
           <div className="ab-intro">
@@ -115,7 +113,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
             {S.values.items.map((it, i) => (
               <div key={i} className="ab-val">
                 <div className="ab-val-i">
-                  <Icon name={VALUE_ICONS[i] ?? 'check'} size={24} />
+                  <Icon name={(it.icon || 'check') as IconName} size={24} />
                 </div>
                 <h3>{it.name}</h3>
                 <p>{it.body}</p>

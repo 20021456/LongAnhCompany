@@ -7,8 +7,6 @@ import { Icon, type IconName } from '@/components/ui/Icon';
 import { getJobs, getCareersPageSections } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
-const VALUE_ICONS: IconName[] = ['drop', 'globe', 'spark', 'check', 'leaf', 'box'];
-
 export async function generateMetadata({
   params: { locale },
 }: {
@@ -157,7 +155,7 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
             {S.values.items.map((v, i) => (
               <div key={i} className="cr-value-card">
                 <div className="cr-value-icon">
-                  <Icon name={VALUE_ICONS[i] ?? 'check'} size={22} />
+                  <Icon name={(v.icon || 'check') as IconName} size={22} />
                 </div>
                 <h3>{v.name}</h3>
                 <p>{v.body}</p>
