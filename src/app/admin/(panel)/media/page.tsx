@@ -27,6 +27,8 @@ export default async function AdminMediaPage() {
     altVi: m.altVi ?? '',
     altEn: m.altEn ?? '',
     altZh: m.altZh ?? '',
+    caption: m.caption ?? '',
+    tags: m.tags,
     folderId: m.folderId,
     folderName: m.folder?.name ?? null,
     width: m.width,

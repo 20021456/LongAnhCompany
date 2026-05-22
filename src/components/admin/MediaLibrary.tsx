@@ -1,17 +1,21 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AdminIcon, type AdminIconName } from './AdminIcon';
 import { AdminPageHead } from './AdminPageHead';
 import { Field, FieldRow } from './FormBits';
+import { PeTags } from './PeTags';
 import { fmtDateVn } from '@/lib/format';
 import { uploadImage } from '@/lib/upload-client';
 import {
   addMedia,
   updateMedia,
   deleteMedia,
+  findMediaUsage,
   type ActionResult,
+  type MediaUsage,
 } from '@/app/admin/(panel)/media/actions';
 
 export interface MediaItem {
@@ -21,6 +25,8 @@ export interface MediaItem {
   altVi: string;
   altEn: string;
   altZh: string;
+  caption: string;
+  tags: string[];
   folderId: string | null;
   folderName: string | null;
   width: number | null;
@@ -44,10 +50,12 @@ const FOLDER_ICONS: Record<string, AdminIconName> = {
   logo: 'star',
 };
 
-/** Visual-only tag chips at the bottom of the sidebar — schema doesn't
- *  track media tags yet (Phase 7), but keeping the strip matches the
- *  prototype and gives users a hint of the future feature. */
-const DECORATIVE_TAGS = ['đá tự nhiên', 'bột đá', 'kho hàng', 'nhà máy'];
+/** Vietnamese label per usage entity type. */
+const USAGE_LABEL: Record<MediaUsage['type'], string> = {
+  article: 'Bài viết',
+  product: 'Sản phẩm',
+  page: 'Trang',
+};
 
 function fmtSize(bytes: number | null): string {
   if (!bytes) return '—';
@@ -189,8 +197,11 @@ function DetailPanel({ item }: { item: MediaItem }) {
   const [altVi, setAltVi] = useState(item.altVi);
   const [altEn, setAltEn] = useState(item.altEn);
   const [altZh, setAltZh] = useState(item.altZh);
+  const [caption, setCaption] = useState(item.caption);
+  const [tags, setTags] = useState<string[]>(item.tags);
   const [busy, setBusy] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [usage, setUsage] = useState<MediaUsage[] | null>(null);
 
   // Reset local edit state whenever a different image is selected.
   const [trackedId, setTrackedId] = useState(item.id);
@@ -202,11 +213,30 @@ function DetailPanel({ item }: { item: MediaItem }) {
     setAltVi(item.altVi);
     setAltEn(item.altEn);
     setAltZh(item.altZh);
+    setCaption(item.caption);
+    setTags(item.tags);
+    setUsage(null);
   }
+
+  // Look up where this image is used (articles / products / pages).
+  useEffect(() => {
+    let active = true;
+    setUsage(null);
+    findMediaUsage(item.url)
+      .then((rows) => {
+        if (active) setUsage(rows);
+      })
+      .catch(() => {
+        if (active) setUsage([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, [item.id, item.url]);
 
   async function onSave() {
     setBusy(true);
-    const res = await updateMedia({ id: item.id, filename, altVi, altEn, altZh });
+    const res = await updateMedia({ id: item.id, filename, altVi, altEn, altZh, caption, tags });
     setBusy(false);
     if (res.error) {
       alert(res.error);
@@ -300,31 +330,61 @@ function DetailPanel({ item }: { item: MediaItem }) {
           </dl>
         )}
 
-        <Field label="Caption" help="Phase 7 — chưa lưu vào DB.">
-          <textarea
-            className="ad-textarea"
-            style={{ minHeight: 60 }}
-            disabled
-            placeholder="Khu vực kho đá nguyên liệu nhập từ mỏ Quỳ Hợp."
-          />
+        <Field label="Caption" help="Chú thích hiển thị kèm ảnh.">
+          {editing ? (
+            <textarea
+              className="ad-textarea"
+              style={{ minHeight: 60 }}
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              placeholder="Khu vực kho đá nguyên liệu nhập từ mỏ Quỳ Hợp."
+            />
+          ) : (
+            <div
+              style={{ fontSize: 13, color: caption ? 'var(--ad-text)' : 'var(--ad-text-mute)' }}
+            >
+              {caption || 'chưa có'}
+            </div>
+          )}
         </Field>
 
-        <Field label="Tags" help="Phase 7 — chưa lưu vào DB.">
-          <div className="ad-tags" aria-disabled="true">
-            <span className="ad-tag" style={{ opacity: 0.6 }}>
-              đá
-            </span>
-            <span className="ad-tag" style={{ opacity: 0.6 }}>
-              nguyên liệu
-            </span>
-          </div>
+        <Field label="Tags" help="Nhãn để tìm & phân loại ảnh.">
+          {editing ? (
+            <PeTags tags={tags} onChange={setTags} />
+          ) : tags.length > 0 ? (
+            <div className="ad-tags">
+              {tags.map((t) => (
+                <span key={t} className="ad-tag">
+                  {t}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <div style={{ fontSize: 13, color: 'var(--ad-text-mute)' }}>chưa có</div>
+          )}
         </Field>
 
         <div className="mb-usage">
           <b>📍 Đang được dùng ở:</b>
-          <div style={{ color: 'var(--ad-text-soft)' }}>
-            Phase 7 — sẽ liệt kê các bài viết / sản phẩm / trang đang dùng ảnh này.
-          </div>
+          {usage === null ? (
+            <div style={{ color: 'var(--ad-text-soft)' }}>Đang kiểm tra…</div>
+          ) : usage.length === 0 ? (
+            <div style={{ color: 'var(--ad-text-soft)' }}>
+              Chưa có bài viết / sản phẩm / trang nào dùng ảnh này.
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 4 }}>
+              {usage.map((u) => (
+                <Link
+                  key={`${u.type}-${u.href}`}
+                  href={u.href}
+                  style={{ color: 'var(--ad-primary)', fontWeight: 600, fontSize: 12.5 }}
+                >
+                  {USAGE_LABEL[u.type]}: {u.label}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <div className="actions">
@@ -465,7 +525,13 @@ export function MediaLibrary({
       if (folder === 'none' && it.folderId !== null) return false;
       if (folder !== 'all' && folder !== 'none' && it.folderId !== folder) return false;
       if (!matchType(it.mimeType)) return false;
-      if (q && !it.filename.toLowerCase().includes(q) && !it.altVi.toLowerCase().includes(q))
+      if (
+        q &&
+        !it.filename.toLowerCase().includes(q) &&
+        !it.altVi.toLowerCase().includes(q) &&
+        !it.caption.toLowerCase().includes(q) &&
+        !it.tags.some((t) => t.toLowerCase().includes(q))
+      )
         return false;
       return true;
     });
@@ -477,6 +543,13 @@ export function MediaLibrary({
     });
     return rows;
   }, [items, folder, query, typeFilter, sortBy]);
+
+  // Distinct tags across the whole library — drives the sidebar tag filter.
+  const allTags = useMemo(() => {
+    const set = new Set<string>();
+    for (const it of items) for (const t of it.tags) set.add(t);
+    return [...set].sort((a, b) => a.localeCompare(b));
+  }, [items]);
 
   const selected = filtered.find((i) => i.id === selectedId) ?? filtered[0] ?? null;
 
@@ -564,12 +637,32 @@ export function MediaLibrary({
             ) : null}
 
             <h4 style={{ marginTop: 18 }}>Tags</h4>
-            {DECORATIVE_TAGS.map((t) => (
-              <div key={t} className="mb-tag-dot" title="Phase 7 — chưa lưu vào DB">
-                <span className="bullet" />
-                <span>{t}</span>
+            {allTags.length === 0 ? (
+              <div style={{ fontSize: 12, color: 'var(--ad-text-mute)', padding: '2px 4px' }}>
+                Chưa có tag nào.
               </div>
-            ))}
+            ) : (
+              allTags.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  className="mb-tag-dot"
+                  onClick={() => setQuery(query === t ? '' : t)}
+                  style={{
+                    cursor: 'pointer',
+                    width: '100%',
+                    border: 0,
+                    borderRadius: 6,
+                    textAlign: 'left',
+                    font: 'inherit',
+                    background: query === t ? 'var(--ad-line-soft)' : 'transparent',
+                  }}
+                >
+                  <span className="bullet" />
+                  <span>{t}</span>
+                </button>
+              ))
+            )}
           </div>
 
           <div className="mb-main">

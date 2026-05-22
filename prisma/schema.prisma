@@ -595,6 +595,8 @@ model Media {
   altVi        String?
   altEn        String?
   altZh        String?
+  caption      String?
+  tags         String[] @default([])
   folderId     String?
   folder       MediaFolder? @relation(fields: [folderId], references: [id])
   uploadedById String?

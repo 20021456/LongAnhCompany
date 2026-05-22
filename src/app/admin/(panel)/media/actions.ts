@@ -60,6 +60,8 @@ const updateSchema = z.object({
   altVi: z.string().optional(),
   altEn: z.string().optional(),
   altZh: z.string().optional(),
+  caption: z.string().optional(),
+  tags: z.array(z.string()).optional(),
 });
 
 export async function updateMedia(raw: z.input<typeof updateSchema>): Promise<ActionResult> {
@@ -78,6 +80,8 @@ export async function updateMedia(raw: z.input<typeof updateSchema>): Promise<Ac
         altVi: d.altVi || null,
         altEn: d.altEn || null,
         altZh: d.altZh || null,
+        caption: d.caption || null,
+        tags: d.tags ?? [],
       },
     });
     await recordAudit({
@@ -92,6 +96,63 @@ export async function updateMedia(raw: z.input<typeof updateSchema>): Promise<Ac
     console.error('updateMedia error:', err);
     return { error: 'Không cập nhật được ảnh.' };
   }
+}
+
+export interface MediaUsage {
+  type: 'article' | 'product' | 'page';
+  label: string;
+  /** Admin edit URL for the entity using this image. */
+  href: string;
+}
+
+/**
+ * Find where an image URL is used across the site content. Scans articles
+ * (cover / gallery / body HTML), products (cover / gallery) and page
+ * sections. The dataset is small, so a stringify + substring scan is
+ * simpler and more reliable than per-column JSON queries.
+ */
+export async function findMediaUsage(url: string): Promise<MediaUsage[]> {
+  await requirePermission('media.read');
+  const needle = url.trim();
+  if (!needle) return [];
+
+  const [articles, products, pages] = await Promise.all([
+    db.article.findMany({
+      select: {
+        slug: true,
+        titleVi: true,
+        coverImageUrl: true,
+        gallery: true,
+        contentVi: true,
+        contentEn: true,
+        contentZh: true,
+      },
+    }),
+    db.product.findMany({
+      select: { code: true, nameVi: true, coverImageUrl: true, gallery: true },
+    }),
+    db.page.findMany({
+      select: { key: true, titleVi: true, sections: { select: { content: true } } },
+    }),
+  ]);
+
+  const out: MediaUsage[] = [];
+  for (const a of articles) {
+    if (JSON.stringify(a).includes(needle)) {
+      out.push({ type: 'article', label: a.titleVi, href: `/admin/news/${a.slug}` });
+    }
+  }
+  for (const p of products) {
+    if (JSON.stringify(p).includes(needle)) {
+      out.push({ type: 'product', label: p.nameVi, href: `/admin/products/${p.code}` });
+    }
+  }
+  for (const pg of pages) {
+    if (JSON.stringify(pg.sections).includes(needle)) {
+      out.push({ type: 'page', label: pg.titleVi ?? pg.key, href: `/admin/pages/${pg.key}` });
+    }
+  }
+  return out;
 }
 
 export async function deleteMedia(id: string): Promise<ActionResult> {
