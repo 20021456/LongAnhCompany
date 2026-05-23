@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 import { AdminPageHead } from '@/components/admin/AdminPageHead';
 import { StatusSelect } from '@/components/admin/StatusSelect';
 import { ContactNoteForm } from '@/components/admin/ContactNoteForm';
-import { setContactStatus } from '../actions';
+import { setContactStatus, setContactAssignee } from '../actions';
 
 const STATUS_OPTIONS = [
   { value: 'new', label: 'Mới' },
@@ -16,8 +16,17 @@ const STATUS_OPTIONS = [
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--ad-line-soft)' }}>
-      <div style={{ width: 130, color: 'var(--ad-text-mute)', fontSize: 12.5, flexShrink: 0 }}>{label}</div>
+    <div
+      style={{
+        display: 'flex',
+        gap: 12,
+        padding: '10px 0',
+        borderBottom: '1px solid var(--ad-line-soft)',
+      }}
+    >
+      <div style={{ width: 130, color: 'var(--ad-text-mute)', fontSize: 12.5, flexShrink: 0 }}>
+        {label}
+      </div>
       <div style={{ fontSize: 13.5 }}>{value || '—'}</div>
     </div>
   );
@@ -26,15 +35,28 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 export default async function ContactDetailPage({ params }: { params: { id: string } }) {
   await requirePermission('contacts.read');
 
-  const contact = await db.contact.findUnique({
-    where: { id: params.id },
-    include: {
-      notes: { orderBy: { createdAt: 'desc' }, include: { user: true } },
-      productInterest: true,
-      variant: true,
-    },
-  });
+  const [contact, users] = await Promise.all([
+    db.contact.findUnique({
+      where: { id: params.id },
+      include: {
+        notes: { orderBy: { createdAt: 'desc' }, include: { user: true } },
+        productInterest: true,
+        variant: true,
+        assignedTo: { select: { id: true, fullName: true, email: true } },
+      },
+    }),
+    db.user.findMany({
+      where: { isActive: true },
+      orderBy: { fullName: 'asc' },
+      select: { id: true, fullName: true, email: true },
+    }),
+  ]);
   if (!contact) notFound();
+
+  const assigneeOptions = [
+    { value: '', label: '— Chưa gán —' },
+    ...users.map((u) => ({ value: u.id, label: u.fullName || u.email })),
+  ];
 
   return (
     <>
@@ -55,7 +77,9 @@ export default async function ContactDetailPage({ params }: { params: { id: stri
         }
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20, alignItems: 'start' }}>
+      <div
+        style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20, alignItems: 'start' }}
+      >
         {/* Lead detail */}
         <div className="ad-card">
           <div className="ad-card-head">
@@ -69,6 +93,17 @@ export default async function ContactDetailPage({ params }: { params: { id: stri
             <Row label="Quốc gia" value={contact.country} />
             <Row label="Nguồn" value={contact.source} />
             <Row
+              label="Phụ trách"
+              value={
+                <StatusSelect
+                  id={contact.id}
+                  value={contact.assignedToId ?? ''}
+                  options={assigneeOptions}
+                  action={setContactAssignee}
+                />
+              }
+            />
+            <Row
               label="Sản phẩm quan tâm"
               value={contact.productInterest ? contact.productInterest.nameVi : null}
             />
@@ -76,7 +111,9 @@ export default async function ContactDetailPage({ params }: { params: { id: stri
             <Row label="Cảng đến" value={contact.destinationPort} />
             <Row
               label="Nội dung"
-              value={<div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{contact.message}</div>}
+              value={
+                <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{contact.message}</div>
+              }
             />
           </div>
         </div>
@@ -106,7 +143,9 @@ export default async function ContactDetailPage({ params }: { params: { id: stri
                       padding: '10px 12px',
                     }}
                   >
-                    <div style={{ fontSize: 13, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{n.note}</div>
+                    <div style={{ fontSize: 13, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
+                      {n.note}
+                    </div>
                     <div style={{ fontSize: 11, color: 'var(--ad-text-mute)', marginTop: 6 }}>
                       {n.user.fullName} · {n.createdAt.toLocaleString('vi-VN')}
                     </div>
