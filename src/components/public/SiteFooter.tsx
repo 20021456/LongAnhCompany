@@ -97,7 +97,7 @@ export async function SiteFooter({ locale }: Props) {
           </div>
 
           <div>
-            <h5>{locale === 'zh' ? '产品' : locale === 'en' ? 'Products' : 'Sản phẩm'}</h5>
+            <h3>{locale === 'zh' ? '产品' : locale === 'en' ? 'Products' : 'Sản phẩm'}</h3>
             {C.products.map((p: { name: string }, i: number) => (
               <Link key={i} href={`/${locale}/products`}>
                 {p.name}
@@ -106,7 +106,7 @@ export async function SiteFooter({ locale }: Props) {
           </div>
 
           <div>
-            <h5>{locale === 'zh' ? '公司' : locale === 'en' ? 'Company' : 'Công ty'}</h5>
+            <h3>{locale === 'zh' ? '公司' : locale === 'en' ? 'Company' : 'Công ty'}</h3>
             {companyLinks.map((link, i) => (
               <Link key={i} href={localizeHref(link.url, locale)}>
                 {link.label}
@@ -115,7 +115,7 @@ export async function SiteFooter({ locale }: Props) {
           </div>
 
           <div>
-            <h5>{locale === 'zh' ? '联系' : locale === 'en' ? 'Contact' : 'Liên hệ'}</h5>
+            <h3>{locale === 'zh' ? '联系' : locale === 'en' ? 'Contact' : 'Liên hệ'}</h3>
             {phoneMain ? <a href={`tel:${phoneMain}`}>{phoneMain}</a> : null}
             {phoneSecondary ? <a href={`tel:${phoneSecondary}`}>{phoneSecondary}</a> : null}
             {emailMain ? <a href={`mailto:${emailMain}`}>{emailMain}</a> : null}

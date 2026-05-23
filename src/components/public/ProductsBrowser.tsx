@@ -128,7 +128,7 @@ export function ProductsBrowser({
                   key={anchor || ti}
                   href={`#cat-${anchor}`}
                   className="pr-cat-tile"
-                  aria-pressed={isActive}
+                  aria-current={isActive ? 'true' : undefined}
                   style={
                     isActive ? { outline: '3px solid var(--brand-accent,#F08023)' } : undefined
                   }

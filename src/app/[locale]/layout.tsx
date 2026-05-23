@@ -30,7 +30,7 @@ export default async function LocaleLayout({
     <NextIntlClientProvider locale={locale} messages={messages}>
       <div className="va">
         <SiteHeader locale={locale as Locale} />
-        {children}
+        <main>{children}</main>
         <SiteFooter locale={locale as Locale} />
         {process.env.ENABLE_LIVE_CHAT === 'true' ? <ChatWidget locale={locale as Locale} /> : null}
       </div>
