@@ -1,10 +1,13 @@
-# Production self-host stack (alternative to Vercel)
-# Run: docker compose -f docker-compose.prod.yml up -d
+# Production self-host stack (Path B from PLAN.md §8).
+# Run: docker compose -f docker-compose.prod.yml up -d --build
 #
-# Stack:
-#   - nginx     : reverse proxy + SSL termination
-#   - app       : Next.js standalone (3 replicas optional)
-#   - postgres  : managed by you; consider managed DB in production
+# Required env (set in .env.production at repo root):
+#   SERVER_NAME=longanhcorp.com              # the bare domain — also used for the cert
+#   POSTGRES_USER / POSTGRES_PASSWORD / POSTGRES_DB
+#   LETSENCRYPT_EMAIL=ops@example.com        # only used by certbot for renewal warnings
+#   DATABASE_URL + DIRECT_URL + NEXTAUTH_URL + NEXTAUTH_SECRET + ... (see .env.production.example)
+#
+# First-time SSL: see scripts/init-certs.sh — issues the cert once nginx is up.
 
 services:
   postgres:
@@ -22,6 +25,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    # postgres only listens on the docker network — no port published.
 
   app:
     build:
@@ -35,6 +39,7 @@ services:
       - .env.production
     expose:
       - '3000'
+    # Apply pending migrations on every deploy, then boot the standalone server.
     command: sh -c "npx prisma migrate deploy && node server.js"
 
   nginx:
@@ -45,11 +50,42 @@ services:
     ports:
       - '80:80'
       - '443:443'
+    environment:
+      SERVER_NAME: ${SERVER_NAME}
     volumes:
-      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./docker/ssl:/etc/nginx/ssl:ro
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf.template:ro
+      - certbot_etc:/etc/letsencrypt:ro
+      - certbot_webroot:/var/www/certbot:ro
       - nginx_cache:/var/cache/nginx
+    # Render the SERVER_NAME placeholder, then exec nginx normally. Reload
+    # every 6h so renewed certs picked up without a restart.
+    command: >
+      sh -c "envsubst '$$SERVER_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+      && nginx -g 'daemon off;' &
+      NGINX_PID=$$!
+      while :; do sleep 6h; nginx -s reload; done &
+      wait $$NGINX_PID"
+
+  # Certbot: issues + renews Let's Encrypt certs via webroot challenge. The
+  # `init-certs.sh` script runs this image once with `certonly` to issue the
+  # first cert; this long-running instance just renews every 12h.
+  certbot:
+    image: certbot/certbot:latest
+    restart: always
+    depends_on:
+      - nginx
+    volumes:
+      - certbot_etc:/etc/letsencrypt
+      - certbot_webroot:/var/www/certbot
+    entrypoint: >
+      sh -c "trap exit TERM;
+      while :; do
+        certbot renew --webroot -w /var/www/certbot --quiet --no-random-sleep-on-renew;
+        sleep 12h & wait $${!};
+      done"
 
 volumes:
   postgres_data:
   nginx_cache:
+  certbot_etc:
+  certbot_webroot:
