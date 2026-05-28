@@ -39,8 +39,7 @@ services:
       - .env.production
     expose:
       - '3000'
-    # Apply pending migrations on every deploy, then boot the standalone server.
-    command: sh -c "npx prisma migrate deploy && node server.js"
+    # `prisma migrate deploy` runs from the Dockerfile CMD on every boot.
 
   nginx:
     image: nginx:1.27-alpine

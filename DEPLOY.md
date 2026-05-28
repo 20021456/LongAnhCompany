@@ -5,9 +5,11 @@ trên một VPS Linux. Gồm 3 container chạy cạnh nhau — **nginx**, **app
 (Next.js standalone), **postgres** — và một container **certbot** tự gia hạn
 SSL.
 
-> Path A (Vercel + Supabase) không nằm trong tài liệu này. Nếu đổi sang Path
-> A thì chỉ cần đẩy code lên Vercel + trỏ `DATABASE_URL` về Supabase, không
-> cần file nào ở dưới.
+> **Đang dùng Dokploy?** → đọc [`DEPLOY-DOKPLOY.md`](./DEPLOY-DOKPLOY.md)
+> thay file này. Dokploy lo Traefik / SSL / log / restart, đơn giản hơn nhiều.
+>
+> **Đang dùng Vercel + Supabase?** → push code lên Vercel + trỏ
+> `DATABASE_URL` về Supabase, không cần file nào ở dưới.
 
 ---
 
