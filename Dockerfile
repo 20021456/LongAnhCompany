@@ -30,6 +30,11 @@ RUN npm run build
 FROM node:20-alpine AS runner
 WORKDIR /app
 
+# Prisma engines require:
+#   - libc6-compat: shim cho native binaries link glibc trên musl Alpine
+#   - openssl: cung cấp libssl.so.3, không có sẽ default về openssl-1.1.x
+RUN apk add --no-cache libc6-compat openssl
+
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
