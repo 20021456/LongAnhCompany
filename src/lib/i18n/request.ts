@@ -1,7 +1,7 @@
 import { getRequestConfig } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import type { AbstractIntlMessages } from 'next-intl';
-import { locales, type Locale } from './config';
+import { locales, defaultLocale, type Locale } from './config';
 import { db } from '@/lib/db';
 
 /** Write a dotted-path value into a nested messages object. */
@@ -16,8 +16,14 @@ function setByPath(obj: Record<string, unknown>, path: string, value: string) {
   node[parts[parts.length - 1]] = value;
 }
 
-export default getRequestConfig(async ({ locale }) => {
-  if (!locales.includes(locale as Locale)) notFound();
+export default getRequestConfig(async ({ requestLocale }) => {
+  // next-intl 3.22+: requestLocale is a Promise<string|undefined>. Fall back
+  // to defaultLocale if missing (e.g. requests outside /[locale]/* routes).
+  let locale = await requestLocale;
+  if (!locale || !locales.includes(locale as Locale)) {
+    if (locale) notFound();
+    locale = defaultLocale;
+  }
 
   const base = (await import(`../../../messages/${locale}.json`)).default;
   // Clone so DB overrides never mutate the cached JSON module.
@@ -33,6 +39,7 @@ export default getRequestConfig(async ({ locale }) => {
   }
 
   return {
+    locale,
     messages: messages as AbstractIntlMessages,
     timeZone: 'Asia/Ho_Chi_Minh',
   };

@@ -67,6 +67,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modul
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 
+# next/image optimizer cần sharp lúc runtime. Next.js standalone đôi khi
+# không trace đủ sharp binary → copy explicit.
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/sharp ./node_modules/sharp
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@img ./node_modules/@img
+
 USER nextjs
 EXPOSE 3000
 
