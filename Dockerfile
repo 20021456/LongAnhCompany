@@ -37,6 +37,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN npx prisma generate
 RUN npm run build
 
+# Bundle seed.ts thành self-contained JS — runner image không có tsx/src/.
+# External các native/Prisma deps để dùng version đã install ở runner.
+RUN npx esbuild prisma/seed.ts --bundle --platform=node --format=cjs \
+  --external:@prisma/client --external:bcryptjs --external:image-size \
+  --outfile=prisma/seed.cjs
+
 # ---------- Stage 3: runtime ----------
 FROM node:20-slim AS runner
 WORKDIR /app
@@ -71,6 +77,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 # không trace đủ sharp binary → copy explicit.
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/sharp ./node_modules/sharp
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@img ./node_modules/@img
+
+# Seed deps — bundled seed.cjs runs `node prisma/seed.cjs` để populate DB
+# lần đầu. External từ esbuild → cần copy thực vào runner.
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/bcryptjs ./node_modules/bcryptjs
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/image-size ./node_modules/image-size
 
 USER nextjs
 EXPOSE 3000
