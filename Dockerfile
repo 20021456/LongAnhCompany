@@ -1,21 +1,32 @@
 # Long Anh Corp — Production Dockerfile
 # Multi-stage build for Next.js standalone output
-# Final image ~150-200 MB
+# Final image ~200-250 MB
+#
+# Sử dụng node:20-slim (Debian) thay vì alpine vì Prisma engine detection
+# trên Alpine hay fail ("Prisma failed to detect libssl version") → load
+# nhầm engine cần libssl 1.1 → crash. Debian slim chỉ to hơn ~30MB nhưng
+# zero-config: openssl 3 sẵn có, libc glibc native.
 
 # ---------- Stage 1: install deps ----------
-FROM node:20-alpine AS deps
+FROM node:20-slim AS deps
 WORKDIR /app
 
-# libc6-compat needed for some native modules on Alpine
-RUN apk add --no-cache libc6-compat
+# openssl + ca-certificates cần cho Prisma engine + HTTPS outbound
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  openssl ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json* ./
 COPY prisma ./prisma
 RUN npm ci --no-audit --no-fund
 
 # ---------- Stage 2: build ----------
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  openssl ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -27,21 +38,20 @@ RUN npx prisma generate
 RUN npm run build
 
 # ---------- Stage 3: runtime ----------
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 WORKDIR /app
 
-# Prisma engines require:
-#   - libc6-compat: shim cho native binaries link glibc trên musl Alpine
-#   - openssl: cung cấp libssl.so.3, không có sẽ default về openssl-1.1.x
-RUN apk add --no-cache libc6-compat openssl
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  openssl ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-RUN addgroup --system --gid 1001 nodejs \
-  && adduser --system --uid 1001 nextjs
+RUN groupadd --system --gid 1001 nodejs \
+  && useradd --system --uid 1001 --gid nodejs nextjs
 
 # Standalone output from Next.js
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
