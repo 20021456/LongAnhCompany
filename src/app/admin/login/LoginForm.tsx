@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { AdminIcon } from '@/components/admin/AdminIcon';
 
 export function LoginForm() {
   const router = useRouter();
@@ -87,7 +86,6 @@ export function LoginForm() {
                 id="email"
                 className="ad-input"
                 type="email"
-                autoFocus
                 autoComplete="username"
                 required
                 value={email}
@@ -115,17 +113,12 @@ export function LoginForm() {
                   aria-label={showPw ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                   onClick={() => setShowPw((s) => !s)}
                 >
-                  <AdminIcon name={showPw ? 'check' : 'search'} size={15} />
+                  {showPw ? '🙈' : '👁'}
                 </button>
               </div>
             </div>
 
-            {error ? (
-              <div className="lg-err">
-                <AdminIcon name="shield" size={14} />
-                {error}
-              </div>
-            ) : null}
+            {error ? <div className="lg-err">{error}</div> : null}
 
             <div className="lg-options">
               <label>
