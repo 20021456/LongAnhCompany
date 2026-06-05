@@ -130,28 +130,6 @@ export function LoginForm() {
               {busy ? 'Đang đăng nhập…' : 'Đăng nhập'}
             </button>
           </form>
-
-          <div className="lg-demo">
-            <div className="demo-head">Tài khoản mặc định (sau khi seed)</div>
-            <div className="demo-row">
-              <div>
-                <div className="demo-name">Long Anh Admin</div>
-                <div className="demo-role">
-                  <code>admin@longanhcorp.com</code> · <code>ChangeMe123!</code>
-                </div>
-              </div>
-              <button
-                type="button"
-                className="use"
-                onClick={() => {
-                  setEmail('admin@longanhcorp.com');
-                  setPassword('ChangeMe123!');
-                }}
-              >
-                Dùng
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
