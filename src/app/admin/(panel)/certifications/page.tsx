@@ -18,7 +18,7 @@ export default async function AdminCertificationsPage() {
         title="Chứng nhận"
         sub={`${certs.length} chứng nhận hiển thị trên trang Giới thiệu`}
         actions={
-          <Link href="/admin/certifications/new" className="ad-btn primary">
+          <Link href="/admin/certifications/new" className="lac-btn primary">
             <AdminIcon name="plus" size={15} /> Thêm chứng nhận
           </Link>
         }
@@ -35,8 +35,8 @@ export default async function AdminCertificationsPage() {
           </Link>
         </AdminEmpty>
       ) : (
-        <div className="ad-table-wrap">
-          <table className="ad-table">
+        <div className="lac-table-wrap">
+          <table className="lac-table">
             <thead>
               <tr>
                 <th style={{ width: 70 }}>Thứ tự</th>
@@ -52,7 +52,7 @@ export default async function AdminCertificationsPage() {
                   <td style={{ color: 'var(--ad-text-soft)' }}>{c.sortOrder}</td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div className="ad-iconbox">
+                      <div className="lac-iconbox">
                         {c.badgeImageUrl ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
@@ -93,7 +93,7 @@ export default async function AdminCertificationsPage() {
                     <div className="row-actions tight">
                       <Link
                         href={`/admin/certifications/${c.id}`}
-                        className="ad-btn ghost sm"
+                        className="lac-btn ghost sm"
                         title="Sửa chứng nhận"
                         aria-label="Sửa chứng nhận"
                       >
@@ -107,7 +107,7 @@ export default async function AdminCertificationsPage() {
             </tbody>
           </table>
 
-          <div className="ad-pag">
+          <div className="lac-pag">
             <div>Hiển thị {certs.length} chứng nhận</div>
           </div>
         </div>

@@ -95,7 +95,7 @@ function SortableMenuRow({
       <div style={{ display: 'grid', gridTemplateColumns: '32px 1fr 1fr 1fr', gap: 8 }}>
         <button
           type="button"
-          className="ad-btn sm ghost"
+          className="lac-btn sm ghost"
           {...attributes}
           {...listeners}
           title="Kéo để sắp xếp"
@@ -105,19 +105,19 @@ function SortableMenuRow({
           <AdminIcon name="grid" size={13} />
         </button>
         <input
-          className="ad-input"
+          className="lac-input"
           placeholder="Nhãn (VI)"
           value={it.labelVi}
           onChange={(e) => onChange({ labelVi: e.target.value })}
         />
         <input
-          className="ad-input"
+          className="lac-input"
           placeholder="Label (EN)"
           value={it.labelEn}
           onChange={(e) => onChange({ labelEn: e.target.value })}
         />
         <input
-          className="ad-input"
+          className="lac-input"
           placeholder="标签 (ZH)"
           value={it.labelZh}
           onChange={(e) => onChange({ labelZh: e.target.value })}
@@ -132,20 +132,20 @@ function SortableMenuRow({
         }}
       >
         <input
-          className="ad-input"
+          className="lac-input"
           placeholder="Đường dẫn — /products"
           value={it.url}
           onChange={(e) => onChange({ url: e.target.value })}
         />
         <select
-          className="ad-select"
+          className="lac-select"
           value={it.target}
           onChange={(e) => onChange({ target: e.target.value === '_blank' ? '_blank' : '_self' })}
         >
           <option value="_self">Cùng tab</option>
           <option value="_blank">Tab mới</option>
         </select>
-        <button type="button" className="ad-btn sm danger" title="Xoá mục" onClick={onRemove}>
+        <button type="button" className="lac-btn sm danger" title="Xoá mục" onClick={onRemove}>
           <AdminIcon name="logout" size={13} />
         </button>
       </div>
@@ -201,17 +201,17 @@ function MenuPanel({ data }: { data: MenuData }) {
   }
 
   return (
-    <div className="ad-card">
-      <div className="ad-card-head">
+    <div className="lac-card">
+      <div className="lac-card-head">
         <div>
           <h3>{LOCATION_LABEL[data.location] ?? data.location}</h3>
           <p>{rows.length} mục · kéo biểu tượng ⠿ để sắp xếp</p>
         </div>
-        <button type="button" className="ad-btn sm" onClick={add}>
+        <button type="button" className="lac-btn sm" onClick={add}>
           <AdminIcon name="plus" size={13} /> Thêm mục
         </button>
       </div>
-      <div className="ad-card-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div className="lac-card-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {state?.error ? (
           <div className="lg-err">
             <AdminIcon name="shield" size={14} />
@@ -219,14 +219,14 @@ function MenuPanel({ data }: { data: MenuData }) {
           </div>
         ) : null}
         {state?.ok ? (
-          <div className="ad-badge pub" style={{ padding: '8px 12px' }}>
+          <div className="lac-badge pub" style={{ padding: '8px 12px' }}>
             <span className="dot" />
             Đã lưu menu.
           </div>
         ) : null}
 
         {rows.length === 0 ? (
-          <div className="ad-empty">Chưa có mục nào. Bấm “Thêm mục” để bắt đầu.</div>
+          <div className="lac-empty">Chưa có mục nào. Bấm “Thêm mục” để bắt đầu.</div>
         ) : (
           <DndContext
             sensors={sensors}
@@ -247,7 +247,7 @@ function MenuPanel({ data }: { data: MenuData }) {
         )}
 
         <div>
-          <button type="button" className="ad-btn primary" disabled={busy} onClick={onSave}>
+          <button type="button" className="lac-btn primary" disabled={busy} onClick={onSave}>
             <AdminIcon name="check" size={15} />
             {busy ? 'Đang lưu…' : 'Lưu menu'}
           </button>

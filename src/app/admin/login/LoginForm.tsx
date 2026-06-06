@@ -80,11 +80,11 @@ export function LoginForm() {
           <p className="sub">Đăng nhập bằng tài khoản quản trị của bạn.</p>
 
           <form className="lg-form" onSubmit={onSubmit}>
-            <div className="ad-field">
+            <div className="lac-field">
               <label htmlFor="email">Email</label>
               <input
                 id="email"
-                className="ad-input"
+                className="lac-input"
                 type="email"
                 autoComplete="username"
                 required
@@ -94,12 +94,12 @@ export function LoginForm() {
               />
             </div>
 
-            <div className="ad-field">
+            <div className="lac-field">
               <label htmlFor="password">Mật khẩu</label>
               <div className="pw-wrap">
                 <input
                   id="password"
-                  className="ad-input"
+                  className="lac-input"
                   type={showPw ? 'text' : 'password'}
                   autoComplete="current-password"
                   required
@@ -126,7 +126,7 @@ export function LoginForm() {
               </label>
             </div>
 
-            <button type="submit" className="ad-btn primary" disabled={busy}>
+            <button type="submit" className="lac-btn primary" disabled={busy}>
               {busy ? 'Đang đăng nhập…' : 'Đăng nhập'}
             </button>
           </form>

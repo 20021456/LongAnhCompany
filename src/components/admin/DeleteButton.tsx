@@ -33,7 +33,7 @@ export function DeleteButton({
       <span style={{ display: 'inline-flex', gap: 4 }}>
         <button
           type="button"
-          className="ad-btn sm danger"
+          className="lac-btn sm danger"
           disabled={pending}
           onClick={() =>
             startTransition(async () => {
@@ -51,7 +51,7 @@ export function DeleteButton({
         </button>
         <button
           type="button"
-          className="ad-btn sm ghost"
+          className="lac-btn sm ghost"
           onClick={() => setConfirming(false)}
           disabled={pending}
         >
@@ -65,7 +65,7 @@ export function DeleteButton({
     return (
       <button
         type="button"
-        className="ad-btn ghost sm"
+        className="lac-btn ghost sm"
         title={confirmText}
         aria-label={label}
         onClick={() => setConfirming(true)}
@@ -79,7 +79,7 @@ export function DeleteButton({
   return (
     <button
       type="button"
-      className="ad-btn sm danger"
+      className="lac-btn sm danger"
       title={confirmText}
       onClick={() => setConfirming(true)}
     >

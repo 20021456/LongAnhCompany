@@ -125,7 +125,7 @@ function CardItem({
       ) : null}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
         <select
-          className="ad-select"
+          className="lac-select"
           style={{ fontSize: 11, padding: '3px 6px', flex: 1 }}
           value={card.assignedToId ?? ''}
           onChange={(e) => onAssignChange(e.target.value || null)}
@@ -141,7 +141,7 @@ function CardItem({
         </select>
         <Link
           href={`/admin/contacts/${card.id}`}
-          className="ad-btn sm ghost"
+          className="lac-btn sm ghost"
           style={{ padding: '3px 6px', fontSize: 11 }}
           onPointerDown={(e) => e.stopPropagation()}
         >

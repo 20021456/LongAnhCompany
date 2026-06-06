@@ -160,16 +160,16 @@ export function ProductForm({
         actions={
           !isNew && v.slug ? (
             <>
-              <a href={`/products/${v.slug}`} target="_blank" rel="noreferrer" className="ad-btn">
+              <a href={`/products/${v.slug}`} target="_blank" rel="noreferrer" className="lac-btn">
                 <AdminIcon name="eye" size={14} /> Xem website
               </a>
-              <button type="submit" className="ad-btn primary" disabled={busy}>
+              <button type="submit" className="lac-btn primary" disabled={busy}>
                 <AdminIcon name="check" size={15} />
                 {busy ? 'Đang lưu…' : 'Lưu & Xuất bản'}
               </button>
             </>
           ) : (
-            <button type="submit" className="ad-btn primary" disabled={busy}>
+            <button type="submit" className="lac-btn primary" disabled={busy}>
               <AdminIcon name="check" size={15} />
               {busy ? 'Đang lưu…' : 'Lưu sản phẩm'}
             </button>
@@ -198,7 +198,7 @@ export function ProductForm({
             <div className="pe-row">
               <Field label="Mã sản phẩm" required help="VD: P-06">
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={v.code}
                   disabled={!isNew}
                   onChange={(e) => set('code', e.target.value)}
@@ -207,7 +207,7 @@ export function ProductForm({
               </Field>
               <Field label="Slug (URL)" required>
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={v.slug}
                   onChange={(e) => set('slug', e.target.value)}
                   required
@@ -216,7 +216,7 @@ export function ProductForm({
             </div>
             <Field label={`Tên sản phẩm (${L})`} required={lang === 'vi'}>
               <input
-                className="ad-input"
+                className="lac-input"
                 value={str(lf('name', lang))}
                 onChange={(e) => set(lf('name', lang), e.target.value)}
                 required={lang === 'vi'}
@@ -224,7 +224,7 @@ export function ProductForm({
             </Field>
             <Field label={`Tóm tắt / spec line (${L})`} help="VD: Uncoated · 3–20 µm">
               <input
-                className="ad-input"
+                className="lac-input"
                 value={str(lf('summary', lang))}
                 onChange={(e) => set(lf('summary', lang), e.target.value)}
               />
@@ -234,7 +234,7 @@ export function ProductForm({
               help="Hiển thị ở thẻ sản phẩm trên trang chủ và danh sách."
             >
               <textarea
-                className="ad-textarea"
+                className="lac-textarea"
                 value={str(lf('shortDesc', lang))}
                 onChange={(e) => set(lf('shortDesc', lang), e.target.value)}
               />
@@ -250,7 +250,7 @@ export function ProductForm({
           >
             <Field label={`Mô tả chi tiết (${L})`}>
               <textarea
-                className="ad-textarea"
+                className="lac-textarea"
                 style={{ minHeight: 160 }}
                 value={str(lf('longDesc', lang))}
                 onChange={(e) => set(lf('longDesc', lang), e.target.value)}
@@ -267,7 +267,7 @@ export function ProductForm({
           >
             <Field label="Ảnh đại diện (cover)" help="Để trống → dùng ảnh đầu tiên trong thư viện.">
               <input
-                className="ad-input"
+                className="lac-input"
                 value={v.coverImageUrl}
                 onChange={(e) => set('coverImageUrl', e.target.value)}
                 placeholder="/assets/bot-caco3-sieu-min.webp"
@@ -294,13 +294,13 @@ export function ProductForm({
                 ))}
               </div>
             ) : (
-              <div className="ad-empty" style={{ padding: 24 }}>
+              <div className="lac-empty" style={{ padding: 24 }}>
                 Chưa có ảnh nào trong thư viện sản phẩm.
               </div>
             )}
             <div style={{ display: 'flex', gap: 8 }}>
               <input
-                className="ad-input"
+                className="lac-input"
                 value={galleryInput}
                 onChange={(e) => setGalleryInput(e.target.value)}
                 placeholder="Dán đường dẫn ảnh rồi bấm Thêm…"
@@ -311,7 +311,7 @@ export function ProductForm({
                   }
                 }}
               />
-              <button type="button" className="ad-btn" onClick={addGalleryImage}>
+              <button type="button" className="lac-btn" onClick={addGalleryImage}>
                 <AdminIcon name="plus" size={14} /> Thêm ảnh
               </button>
             </div>
@@ -326,7 +326,7 @@ export function ProductForm({
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {variants.length === 0 ? (
-                <div className="ad-empty" style={{ padding: 24 }}>
+                <div className="lac-empty" style={{ padding: 24 }}>
                   Chưa có quy cách nào.
                 </div>
               ) : (
@@ -341,32 +341,32 @@ export function ProductForm({
                     }}
                   >
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       placeholder="mã (3um)"
                       value={row.variantCode}
                       onChange={(e) => updateVariant(i, { variantCode: e.target.value })}
                     />
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       placeholder="nhãn (3 µm)"
                       value={row.label}
                       onChange={(e) => updateVariant(i, { label: e.target.value })}
                     />
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       type="number"
                       placeholder="giá VND"
                       value={row.price}
                       onChange={(e) => updateVariant(i, { price: Number(e.target.value) })}
                     />
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       placeholder="đơn vị"
                       value={row.unit}
                       onChange={(e) => updateVariant(i, { unit: e.target.value })}
                     />
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       type="number"
                       placeholder="kho"
                       value={row.stock}
@@ -390,7 +390,7 @@ export function ProductForm({
                       </label>
                       <button
                         type="button"
-                        className="ad-btn sm ghost danger"
+                        className="lac-btn sm ghost danger"
                         onClick={() => removeVariant(i)}
                       >
                         <AdminIcon name="trash" size={13} />
@@ -401,7 +401,7 @@ export function ProductForm({
               )}
               <button
                 type="button"
-                className="ad-btn sm"
+                className="lac-btn sm"
                 style={{ width: 'fit-content' }}
                 onClick={addVariant}
               >
@@ -413,8 +413,8 @@ export function ProductForm({
 
         {/* SIDE */}
         <aside className="pe-side">
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Trạng thái</h3>
             </div>
             <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -433,7 +433,7 @@ export function ProductForm({
               />
               <Field label="Thứ tự sắp xếp">
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   type="number"
                   value={v.sortOrder}
                   onChange={(e) => set('sortOrder', Number(e.target.value))}
@@ -442,14 +442,14 @@ export function ProductForm({
             </div>
           </div>
 
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Phân loại</h3>
             </div>
             <div style={{ padding: 14 }}>
               <Field label="Danh mục" required>
                 <select
-                  className="ad-select"
+                  className="lac-select"
                   value={v.categoryId}
                   onChange={(e) => set('categoryId', e.target.value)}
                   required
@@ -465,14 +465,14 @@ export function ProductForm({
             </div>
           </div>
 
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Thông số đơn hàng</h3>
             </div>
             <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 12 }}>
               <Field label={`Đơn vị (${L})`}>
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={str(lf('unit', lang))}
                   onChange={(e) => set(lf('unit', lang), e.target.value)}
                   placeholder="tấn"
@@ -480,7 +480,7 @@ export function ProductForm({
               </Field>
               <Field label={`MOQ (${L})`}>
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={str(lf('moq', lang, true))}
                   onChange={(e) => set(lf('moq', lang, true), e.target.value)}
                   placeholder="25 tấn"
@@ -488,7 +488,7 @@ export function ProductForm({
               </Field>
               <Field label={`Lead time (${L})`}>
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={str(lf('productionTime', lang, true))}
                   onChange={(e) => set(lf('productionTime', lang, true), e.target.value)}
                   placeholder="7–14 ngày"
@@ -500,11 +500,11 @@ export function ProductForm({
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
-        <button type="submit" className="ad-btn primary" disabled={busy}>
+        <button type="submit" className="lac-btn primary" disabled={busy}>
           <AdminIcon name="check" size={15} />
           {busy ? 'Đang lưu…' : 'Lưu sản phẩm'}
         </button>
-        <button type="button" className="ad-btn" onClick={() => router.push('/admin/products')}>
+        <button type="button" className="lac-btn" onClick={() => router.push('/admin/products')}>
           Huỷ
         </button>
       </div>

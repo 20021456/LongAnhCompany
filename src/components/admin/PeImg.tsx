@@ -66,7 +66,7 @@ export function PeImg({
       <div className="imgover" onClick={(e) => e.stopPropagation()}>
         <button
           type="button"
-          className="ad-btn sm"
+          className="lac-btn sm"
           onClick={(e) => {
             e.stopPropagation();
             openPicker();
@@ -74,7 +74,7 @@ export function PeImg({
         >
           <AdminIcon name="refresh" size={12} /> Đổi
         </button>
-        <button type="button" className="ad-btn sm" onClick={(e) => e.stopPropagation()} disabled>
+        <button type="button" className="lac-btn sm" onClick={(e) => e.stopPropagation()} disabled>
           <AdminIcon name="edit" size={12} /> Crop
         </button>
       </div>

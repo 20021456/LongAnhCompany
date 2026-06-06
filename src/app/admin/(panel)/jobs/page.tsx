@@ -38,7 +38,7 @@ export default async function AdminJobsPage() {
         title="Tuyển dụng"
         sub={`${rows.length} vị trí · ${openCount} đang tuyển · ${rows.length - openCount} đã đóng`}
         actions={
-          <Link href="/admin/jobs/new" className="ad-btn primary">
+          <Link href="/admin/jobs/new" className="lac-btn primary">
             <AdminIcon name="plus" size={15} /> Thêm vị trí
           </Link>
         }

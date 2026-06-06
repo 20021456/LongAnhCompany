@@ -35,7 +35,7 @@ export function AdminTopbar({ name, email, role }: Props) {
   useEffect(() => {
     if (!menuOpen) return;
     const close = (e: MouseEvent) => {
-      if (!(e.target as HTMLElement).closest('.ad-user-wrap')) setMenuOpen(false);
+      if (!(e.target as HTMLElement).closest('.lac-user-wrap')) setMenuOpen(false);
     };
     document.addEventListener('mousedown', close);
     return () => document.removeEventListener('mousedown', close);
@@ -45,31 +45,31 @@ export function AdminTopbar({ name, email, role }: Props) {
   const roleLabel = ROLE_LABEL[role] ?? role;
 
   return (
-    <header className="ad-top">
-      <div className="ad-search">
+    <header className="lac-top">
+      <div className="lac-search">
         <AdminIcon name="search" size={15} />
         <input placeholder="Tìm kiếm sản phẩm, tin tức, trang…" />
         <kbd>⌘K</kbd>
       </div>
-      <div className="ad-top-r">
-        <button className="ad-top-btn" title="Thông báo" type="button">
+      <div className="lac-top-r">
+        <button className="lac-top-btn" title="Thông báo" type="button">
           <AdminIcon name="bell" size={17} />
           <span className="dot" />
         </button>
-        <button className="ad-top-btn" title="Trợ giúp" type="button">
+        <button className="lac-top-btn" title="Trợ giúp" type="button">
           <AdminIcon name="help" size={17} />
         </button>
-        <div className="ad-user-wrap">
+        <div className="lac-user-wrap">
           <button
             type="button"
-            className="ad-top-avatar"
+            className="lac-top-avatar"
             title={name}
             onClick={() => setMenuOpen((m) => !m)}
           >
             {ini}
           </button>
           {menuOpen ? (
-            <div className="ad-user-menu">
+            <div className="lac-user-menu">
               <div className="head">
                 <div className="avatar">{ini}</div>
                 <div>

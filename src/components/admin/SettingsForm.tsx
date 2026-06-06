@@ -52,7 +52,7 @@ export function SettingsForm({ rows }: { rows: SettingRow[] }) {
         </div>
       ) : null}
       {state?.ok ? (
-        <div className="ad-badge pub" style={{ marginBottom: 16, padding: '8px 12px' }}>
+        <div className="lac-badge pub" style={{ marginBottom: 16, padding: '8px 12px' }}>
           <span className="dot" />
           Đã lưu cài đặt.
         </div>
@@ -60,33 +60,33 @@ export function SettingsForm({ rows }: { rows: SettingRow[] }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {groups.map((g) => (
-          <div key={g} className="ad-card">
-            <div className="ad-card-head">
+          <div key={g} className="lac-card">
+            <div className="lac-card-head">
               <h3>{GROUP_LABEL[g] ?? g}</h3>
             </div>
-            <div className="ad-card-body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div className="lac-card-body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {rows
                 .filter((r) => r.group === g)
                 .map((r) => (
-                  <div key={r.key} className="ad-field">
+                  <div key={r.key} className="lac-field">
                     <label>
                       {r.key}
                     </label>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
                       <input
-                        className="ad-input"
+                        className="lac-input"
                         placeholder="VI"
                         value={values[r.key]?.vi ?? ''}
                         onChange={(e) => setVal(r.key, 'vi', e.target.value)}
                       />
                       <input
-                        className="ad-input"
+                        className="lac-input"
                         placeholder="EN"
                         value={values[r.key]?.en ?? ''}
                         onChange={(e) => setVal(r.key, 'en', e.target.value)}
                       />
                       <input
-                        className="ad-input"
+                        className="lac-input"
                         placeholder="ZH"
                         value={values[r.key]?.zh ?? ''}
                         onChange={(e) => setVal(r.key, 'zh', e.target.value)}
@@ -100,7 +100,7 @@ export function SettingsForm({ rows }: { rows: SettingRow[] }) {
       </div>
 
       <div style={{ marginTop: 20 }}>
-        <button type="submit" className="ad-btn primary" disabled={busy}>
+        <button type="submit" className="lac-btn primary" disabled={busy}>
           <AdminIcon name="check" size={15} />
           {busy ? 'Đang lưu…' : 'Lưu cài đặt'}
         </button>

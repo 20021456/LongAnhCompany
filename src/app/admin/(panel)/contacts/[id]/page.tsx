@@ -81,11 +81,11 @@ export default async function ContactDetailPage({ params }: { params: { id: stri
         style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20, alignItems: 'start' }}
       >
         {/* Lead detail */}
-        <div className="ad-card">
-          <div className="ad-card-head">
+        <div className="lac-card">
+          <div className="lac-card-head">
             <h3>Thông tin liên hệ</h3>
           </div>
-          <div className="ad-card-body">
+          <div className="lac-card-body">
             <Row label="Họ tên" value={contact.fullName} />
             <Row label="Email" value={<a href={`mailto:${contact.email}`}>{contact.email}</a>} />
             <Row label="Điện thoại" value={contact.phone} />
@@ -119,14 +119,14 @@ export default async function ContactDetailPage({ params }: { params: { id: stri
         </div>
 
         {/* Internal notes */}
-        <div className="ad-card">
-          <div className="ad-card-head">
+        <div className="lac-card">
+          <div className="lac-card-head">
             <div>
               <h3>Ghi chú nội bộ</h3>
               <p>{contact.notes.length} ghi chú</p>
             </div>
           </div>
-          <div className="ad-card-body">
+          <div className="lac-card-body">
             <ContactNoteForm contactId={contact.id} />
             <div style={{ marginTop: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
               {contact.notes.length === 0 ? (
