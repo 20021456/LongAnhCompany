@@ -8,6 +8,20 @@ const GROUP_ORDER = ['brand', 'contact', 'social', 'general'];
 export default async function AdminSettingsPage() {
   await requirePermission('settings.update');
 
+  // Đảm bảo các kênh mạng xã hội mới luôn có row để chỉnh sửa, kể cả với DB
+  // đã seed từ trước (idempotent — không ghi đè giá trị đang có).
+  await db.setting.upsert({
+    where: { key: 'social.whatsapp' },
+    update: {},
+    create: {
+      key: 'social.whatsapp',
+      group: 'social',
+      valueVi: 'https://wa.me/84942224499',
+      valueEn: 'https://wa.me/84942224499',
+      valueZh: 'https://wa.me/84942224499',
+    },
+  });
+
   const settings = await db.setting.findMany();
   const rows: SettingRow[] = settings
     .map((s) => ({
