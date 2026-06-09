@@ -43,7 +43,7 @@ export async function SiteHeader({ locale, active }: Props) {
       <div className="va-strip">
         <div className="va-wrap va-strip-in">
           <span>
-            {locale === 'zh' ? '销售热线:' : locale === 'en' ? 'Sales hotline:' : 'Hotline kinh doanh:'}{' '}
+            {locale === 'zh' ? '销售热线:' : locale === 'en' ? 'Hotline:' : 'Hotline kinh doanh:'}{' '}
             <b style={{ color: '#fff' }}>{phone}</b>
           </span>
           <div className="va-strip-r">
