@@ -41,9 +41,9 @@ const CAT_HEAD: Record<number, { title: Record<Locale, string>; desc: Record<Loc
       zh: '从原始石灰岩 — 到工业用细粉',
     },
     desc: {
-      vi: 'Sản phẩm bột đá CaCO₃ được nghiền từ đá vôi trắng nguyên sinh tại Quỳ Hợp – Nghệ An, độ trắng > 98% và CaCO₃ > 98.5%. Cỡ hạt 3–20 µm, dùng làm phụ gia cho nhiều ngành công nghiệp.',
-      en: 'Our CaCO₃ powder is milled from pristine white limestone at our Quy Hop quarry in Nghe An — whiteness above 98% and CaCO₃ content above 98.5%. Particle sizes range from 3 to 20 µm, used as an additive across many industries.',
-      zh: '我们的碳酸钙粉是从义安省归合矿场的原始白石灰岩研磨加工而成 — 白度超过98%,碳酸钙含量超过98.5%。粒径范围3至20微米,用作多个行业的添加剂。',
+      vi: 'Sản phẩm bột đá CaCO₃ được nghiền từ đá vôi trắng nguyên sinh tại Quỳ Hợp – Nghệ An, độ trắng > 98% và CaCO₃ > 98.5%. Cỡ hạt 4–20 µm, dùng làm phụ gia cho nhiều ngành công nghiệp.',
+      en: 'Our CaCO₃ powder is milled from pristine white limestone at our Quy Hop quarry in Nghe An — whiteness above 98% and CaCO₃ content above 98.5%. Particle sizes range from 4 to 20 µm, used as an additive across many industries.',
+      zh: '我们的碳酸钙粉是从义安省归合矿场的原始白石灰岩研磨加工而成 — 白度超过98%,碳酸钙含量超过98.5%。粒径范围4至20微米,用作多个行业的添加剂。',
     },
   },
   1: {

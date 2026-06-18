@@ -432,10 +432,10 @@ async function main() {
       nameEn: 'CaCO₃ powder',
       nameZh: '碳酸钙粉',
       descriptionVi:
-        'Coated · Uncoated · 3–20 µm — phụ gia cho nhựa, sơn, giấy, thức ăn chăn nuôi.',
+        'Coated · Uncoated · 4–20 µm — phụ gia cho nhựa, sơn, giấy, thức ăn chăn nuôi.',
       descriptionEn:
-        'Coated · Uncoated · 3–20 µm — additive for plastics, paint, paper, animal feed.',
-      descriptionZh: '涂层 · 未涂层 · 3–20 µm — 用于塑料、涂料、纸张、动物饲料的添加剂。',
+        'Coated · Uncoated · 4–20 µm — additive for plastics, paint, paper, animal feed.',
+      descriptionZh: '涂层 · 未涂层 · 4–20 µm — 用于塑料、涂料、纸张、动物饲料的添加剂。',
       coverImageUrl: '/assets/bot-caco3-sieu-min.webp',
       sortOrder: 1,
     },

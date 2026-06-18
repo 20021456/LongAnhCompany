@@ -43,16 +43,16 @@ export const PRODUCTS: Record<string, ProductDetail> = {
     code: 'P-01',
     cat: 0,
     name: { vi: 'Bột đá CaCO₃ không phủ', en: 'Uncoated CaCO₃ powder', zh: '未涂层碳酸钙粉' },
-    meta: { vi: 'Uncoated · 3–20 µm', en: 'Uncoated · 3–20 µm', zh: '未涂层 · 3–20 µm' },
+    meta: { vi: 'Uncoated · 4–20 µm', en: 'Uncoated · 4–20 µm', zh: '未涂层 · 4–20 µm' },
     desc: {
       vi: 'Bột đá nghiền khô độ trắng cao, đa dạng cỡ hạt — dùng cho sơn, bột bả, keo dán, phụ gia thức ăn chăn nuôi và masterbatch.',
       en: 'Dry-ground GCC with high whiteness in multiple particle sizes — for paint, putty, adhesives, animal-feed additives and masterbatch.',
       zh: '高白度干法研磨碳酸钙粉,多种粒径 — 用于涂料、腻子、胶粘剂、动物饲料添加剂和母粒。',
     },
     longDesc: {
-      vi: 'Sản phẩm bột đá CaCO₃ không phủ được nghiền khô từ nguồn đá vôi trắng nguyên sinh tại mỏ Quỳ Hợp – Nghệ An. Với hàm lượng CaCO₃ vượt 98.5% và độ trắng trên 98%, sản phẩm đáp ứng các tiêu chuẩn khắt khe nhất cho ngành công nghiệp sơn nước, bột bả, keo dán, sản xuất nhựa và phụ gia thức ăn chăn nuôi. Cỡ hạt từ 3 đến 20 µm được kiểm soát chặt chẽ qua hệ thống nghiền và phân loại hiện đại theo công nghệ Châu Âu.',
-      en: 'Our uncoated CaCO₃ powder is dry-ground from pristine white limestone at Quy Hop quarry in Nghe An. With CaCO₃ content above 98.5% and whiteness above 98%, the product meets the toughest standards for water-based paints, putty, adhesives, plastics manufacturing and animal feed additives. Particle sizes from 3 to 20 µm are tightly controlled through European-spec milling and classification systems.',
-      zh: '我们的未涂层碳酸钙粉是从义安省归合矿场的原始白石灰岩干法研磨而成。碳酸钙含量超过98.5%,白度超过98%,符合水性涂料、腻子、胶粘剂、塑料制造和动物饲料添加剂的最严格标准。粒径范围3至20微米,通过欧洲标准的研磨和分类系统严格控制。',
+      vi: 'Sản phẩm bột đá CaCO₃ không phủ được nghiền khô từ nguồn đá vôi trắng nguyên sinh tại mỏ Quỳ Hợp – Nghệ An. Với hàm lượng CaCO₃ vượt 98.5% và độ trắng trên 98%, sản phẩm đáp ứng các tiêu chuẩn khắt khe nhất cho ngành công nghiệp sơn nước, bột bả, keo dán, sản xuất nhựa và phụ gia thức ăn chăn nuôi. Cỡ hạt từ 4 đến 20 µm được kiểm soát chặt chẽ qua hệ thống nghiền và phân loại hiện đại theo công nghệ Châu Âu.',
+      en: 'Our uncoated CaCO₃ powder is dry-ground from pristine white limestone at Quy Hop quarry in Nghe An. With CaCO₃ content above 98.5% and whiteness above 98%, the product meets the toughest standards for water-based paints, putty, adhesives, plastics manufacturing and animal feed additives. Particle sizes from 4 to 20 µm are tightly controlled through European-spec milling and classification systems.',
+      zh: '我们的未涂层碳酸钙粉是从义安省归合矿场的原始白石灰岩干法研磨而成。碳酸钙含量超过98.5%,白度超过98%,符合水性涂料、腻子、胶粘剂、塑料制造和动物饲料添加剂的最严格标准。粒径范围4至20微米,通过欧洲标准的研磨和分类系统严格控制。',
     },
     images: [
       '/assets/bot-caco3-sieu-min.webp',
@@ -136,7 +136,7 @@ export const PRODUCTS: Record<string, ProductDetail> = {
       en: 'Stearic-acid coated CaCO₃',
       zh: '硬脂酸涂层碳酸钙',
     },
-    meta: { vi: 'Coated · 3–20 µm', en: 'Coated · 3–20 µm', zh: '涂层 · 3–20 µm' },
+    meta: { vi: 'Coated · 4–20 µm', en: 'Coated · 4–20 µm', zh: '涂层 · 4–20 µm' },
     desc: {
       vi: 'Phủ acid stearic cải thiện độ phân tán, giảm hút ẩm — lý tưởng cho compound nhựa PVC, PE, PP và masterbatch cao cấp.',
       en: 'Stearic-acid coating improves dispersion and reduces moisture pickup — ideal for PVC, PE, PP compounds and premium masterbatch.',

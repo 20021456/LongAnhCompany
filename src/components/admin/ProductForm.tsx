@@ -222,7 +222,7 @@ export function ProductForm({
                 required={lang === 'vi'}
               />
             </Field>
-            <Field label={`Tóm tắt / spec line (${L})`} help="VD: Uncoated · 3–20 µm">
+            <Field label={`Tóm tắt / spec line (${L})`} help="VD: Uncoated · 4–20 µm">
               <input
                 className="lac-input"
                 value={str(lf('summary', lang))}

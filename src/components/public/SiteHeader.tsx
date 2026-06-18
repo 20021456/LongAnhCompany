@@ -91,7 +91,7 @@ export async function SiteHeader({ locale, active }: Props) {
                               ? 'CaCO₃ Powder'
                               : 'Bột đá CaCO₃'}
                         </b>
-                        <span>Coated · Uncoated · 3–20 µm</span>
+                        <span>Coated · Uncoated · 4–20 µm</span>
                       </Link>
                       <Link href={`/${locale}/products#stone`}>
                         <b>

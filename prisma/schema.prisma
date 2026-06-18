@@ -150,7 +150,7 @@ model Product {
   nameVi         String
   nameEn         String?
   nameZh         String?
-  summaryVi      String?                     // "Uncoated · 3–20 µm" — short spec line under name
+  summaryVi      String?                     // "Uncoated · 4–20 µm" — short spec line under name
   summaryEn      String?
   summaryZh      String?
   shortDescVi    String?
