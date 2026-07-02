@@ -27,9 +27,15 @@ export function PageHeader({ eyebrow, title, sub, breadcrumb }: Props) {
             ))}
           </div>
         ) : null}
-        <div className="va-eyebrow">{eyebrow}</div>
-        <h1>{title}</h1>
-        {sub ? <p>{sub}</p> : null}
+        <div className="va-eyebrow" data-reveal>
+          {eyebrow}
+        </div>
+        <h1 data-reveal data-reveal-delay="1">{title}</h1>
+        {sub ? (
+          <p data-reveal data-reveal-delay="2">
+            {sub}
+          </p>
+        ) : null}
       </div>
     </section>
   );

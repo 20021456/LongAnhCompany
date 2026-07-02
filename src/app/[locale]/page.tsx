@@ -60,35 +60,51 @@ export default async function HomePage({ params: { locale } }: { params: { local
       />
       <JsonLd data={webSiteSchema({ name: 'KS Long Anh' })} />
       {/* HERO */}
-      <section id="home" className="va-hero split">
-        <div className="va-wrap va-hero-l">
-          <div className="va-eyebrow va-hero-eb">{S.hero.eyebrow}</div>
-          <h1>
-            {S.hero.titleLine1}
-            <br />
-            <b style={{ color: 'var(--brand-accent, #F08023)' }}>{S.hero.titleLine2}</b>
-          </h1>
-          <p className="va-hero-sub">{S.hero.sub}</p>
-          <div className="va-hero-cta">
-            <Link className="va-btn va-btn-p" href={`/${loc}/products`}>
-              {S.hero.ctaPrimary} <Icon name="arrow" size={15} />
-            </Link>
-            <Link className="va-btn va-btn-g" href={`/${loc}/contact`}>
-              {S.hero.ctaSecondary}
-            </Link>
+      <section id="home" className="va-hero2">
+        <div className="va-wrap">
+          <div className="va-hero2-head">
+            <div>
+              <div className="va-eyebrow" data-reveal>
+                {S.hero.eyebrow}
+              </div>
+              <h1 data-reveal data-reveal-delay="1">
+                {S.hero.titleLine1}
+                <br />
+                <b>{S.hero.titleLine2}</b>
+              </h1>
+            </div>
+            <div className="va-hero2-side" data-reveal data-reveal-delay="2">
+              <p className="va-hero-sub">{S.hero.sub}</p>
+              <div className="va-hero-cta">
+                <Link className="va-btn va-btn-p" href={`/${loc}/products`}>
+                  {S.hero.ctaPrimary} <Icon name="arrow" size={15} />
+                </Link>
+                <Link className="va-btn va-btn-g" href={`/${loc}/contact`}>
+                  {S.hero.ctaSecondary}
+                </Link>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="va-hero-r">
-          <div className="va-hero-art" />
-          <div className="va-hero-grid" />
-          <SmartImage
-            className="va-hero-img"
-            src={S.hero.imageUrl}
-            alt={S.hero.imageAlt}
-            width={1600}
-            height={1100}
-            priority
-          />
+          <div className="va-hero2-stage" data-reveal="scale" data-reveal-delay="3">
+            <div className="va-hero2-bg" />
+            <div className="va-hero2-imgwrap" data-parallax="0.06">
+              <SmartImage
+                className="va-hero2-img"
+                src={S.hero.imageUrl}
+                alt={S.hero.imageAlt}
+                width={1600}
+                height={1100}
+                priority
+              />
+            </div>
+            <div className="va-hero2-caption">
+              <div className="cap-line" />
+              <b>{S.hero.imageAlt}</b>
+              <span>
+                {S.stats.items[0] ? `${S.stats.items[0].value} ${S.stats.items[0].label}` : ''}
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -97,8 +113,8 @@ export default async function HomePage({ params: { locale } }: { params: { local
         <div className="va-wrap">
           <div className="va-stats-in">
             {S.stats.items.map((s, i) => (
-              <div key={i} className="va-stat">
-                <b>{s.value}</b>
+              <div key={i} className="va-stat" data-reveal data-reveal-delay={String(i + 1)}>
+                <b data-countup>{s.value}</b>
                 <span>{s.label}</span>
               </div>
             ))}
@@ -110,13 +126,17 @@ export default async function HomePage({ params: { locale } }: { params: { local
       <section id="products" className="va-section" style={{ background: 'var(--va-bg-alt)' }}>
         <div className="va-wrap">
           <div className="va-shead">
-            <div>
+            <div data-reveal>
               <div className="va-eyebrow">{S.products.eyebrow}</div>
               <h2>{S.products.title}</h2>
             </div>
-            <p>{S.products.sub}</p>
+            <p data-reveal data-reveal-delay="1">
+              {S.products.sub}
+            </p>
           </div>
-          <ProductCarousel products={carouselProducts} locale={loc} sideArrows />
+          <div data-reveal data-reveal-delay="2">
+            <ProductCarousel products={carouselProducts} locale={loc} sideArrows />
+          </div>
         </div>
       </section>
 
@@ -124,17 +144,21 @@ export default async function HomePage({ params: { locale } }: { params: { local
       <section id="about" className="va-section">
         <div className="va-wrap">
           <div className="va-shead">
-            <div>
+            <div data-reveal>
               <div className="va-eyebrow">{S.about.eyebrow}</div>
               <h2>{S.about.title}</h2>
             </div>
-            <p>{S.about.intro}</p>
+            <p data-reveal data-reveal-delay="1">
+              {S.about.intro}
+            </p>
           </div>
           <div className="va-caps4">
             {S.about.cards.map((it, i) => (
               <div
                 key={i}
                 className="va-cap4"
+                data-reveal
+                data-reveal-delay={String(i % 3)}
                 style={{
                   backgroundImage: `linear-gradient(180deg,rgba(15,30,50,.45) 0%,rgba(8,16,30,.95) 85%),url('${it.imageUrl}')`,
                 }}
@@ -153,16 +177,18 @@ export default async function HomePage({ params: { locale } }: { params: { local
       <section id="certs" className="va-section">
         <div className="va-wrap">
           <div className="va-shead">
-            <div>
+            <div data-reveal>
               <div className="va-eyebrow">{S.certs.eyebrow}</div>
               <h2>{S.certs.title}</h2>
             </div>
-            <p>{S.certs.sub}</p>
+            <p data-reveal data-reveal-delay="1">
+              {S.certs.sub}
+            </p>
           </div>
 
           <div className="va-certs-grid">
             {S.certs.items.map((c, i) => (
-              <div key={i} className="va-cert-card">
+              <div key={i} className="va-cert-card" data-reveal data-reveal-delay={String(i % 4)}>
                 <div className="va-cert-img">
                   <SmartImage src={c.logoUrl} alt={c.name} width={400} height={400} sizes="200px" />
                 </div>
@@ -190,7 +216,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
 
       {/* EXPORT MAP */}
       <section className="va-section tight">
-        <div className="va-wrap">
+        <div className="va-wrap" data-reveal="scale">
           <ExportMap locale={loc} content={S.exportCap} />
         </div>
       </section>
@@ -198,7 +224,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
       {/* CONTACT */}
       <section id="contact" className="va-wrap">
         <div className="va-contact">
-          <div>
+          <div data-reveal>
             <div className="va-eyebrow">{S.contact.eyebrow}</div>
             <h2>{S.contact.title}</h2>
             <p style={{ opacity: 0.7, fontSize: 15, lineHeight: 1.65 }}>{S.contact.sub}</p>
@@ -244,7 +270,9 @@ export default async function HomePage({ params: { locale } }: { params: { local
               </div>
             </div>
           </div>
-          <ContactForm locale={loc} source="home_form" />
+          <div data-reveal data-reveal-delay="2">
+            <ContactForm locale={loc} source="home_form" />
+          </div>
         </div>
       </section>
     </>
