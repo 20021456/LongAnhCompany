@@ -67,10 +67,15 @@ export default async function HomePage({ params: { locale } }: { params: { local
               <div className="va-eyebrow" data-reveal>
                 {S.hero.eyebrow}
               </div>
-              <h1 data-reveal data-reveal-delay="1">
-                {S.hero.titleLine1}
-                <br />
-                <b>{S.hero.titleLine2}</b>
+              <h1>
+                <span className="ln">
+                  <span>{S.hero.titleLine1}</span>
+                </span>
+                <span className="ln">
+                  <span>
+                    <b>{S.hero.titleLine2}</b>
+                  </span>
+                </span>
               </h1>
             </div>
             <div className="va-hero2-side" data-reveal data-reveal-delay="2">
@@ -85,7 +90,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
               </div>
             </div>
           </div>
-          <div className="va-hero2-stage" data-reveal="scale" data-reveal-delay="3">
+          <div className="va-hero2-stage va-bleed" data-reveal="clip">
             <div className="va-hero2-bg" />
             <div className="va-hero2-imgwrap" data-parallax="0.06">
               <SmartImage
@@ -134,7 +139,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
               {S.products.sub}
             </p>
           </div>
-          <div data-reveal data-reveal-delay="2">
+          <div className="va-bleed" data-reveal="clip">
             <ProductShowcase products={carouselProducts} locale={loc} />
           </div>
         </div>
@@ -216,7 +221,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
 
       {/* EXPORT MAP */}
       <section className="va-section tight">
-        <div className="va-wrap" data-reveal="scale">
+        <div data-reveal="clip">
           <ExportMap locale={loc} content={S.exportCap} />
         </div>
       </section>

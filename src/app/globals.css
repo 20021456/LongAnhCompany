@@ -4953,6 +4953,127 @@ html.fx [data-reveal-delay='6'] {
   color: var(--brand-accent, #f08023);
   opacity: 1;
 }
+/* =============================================================
+   V3 — SQUARE & FULL-BLEED (myhealthprac-inspired)
+   Sharp corners everywhere except pill CTAs, white canvas with
+   hairlines, edge-to-edge feature blocks, line-mask headline and
+   clip-path image reveals.
+   ============================================================= */
+
+.va {
+  --va-bg: #ffffff;
+  --va-bg-alt: #f5f6f8;
+  --va-line: rgba(14, 23, 38, 0.14);
+}
+
+/* Kill rounding site-wide; pills survive on CTA buttons and a few
+   semantically-round bits (particle-size dots, timeline dots). */
+.va
+  *:not(.va-btn):not(.ab-btn):not(.pr-btn):not(.cr-btn-w):not(.cr-btn-ghost):not(
+    .pr-size-circle-dot
+  ):not(.ab-tdot):not(.ab-sig-img):not(.cr-step-num) {
+  border-radius: 0 !important;
+}
+
+/* Full-bleed helper: cancels the .va-wrap side padding. */
+.va-bleed {
+  margin-inline: calc(-1 * clamp(24px, 4vw, 80px));
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.va-hd {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+/* Hairline-first cards instead of soft shadows */
+.va-cert-card {
+  border: 1px solid var(--va-line);
+  box-shadow: none;
+}
+.va-cert-card:hover {
+  border-color: var(--va-line);
+  box-shadow: 0 18px 40px -24px rgba(14, 23, 38, 0.25);
+}
+.la-cc {
+  box-shadow: none;
+}
+
+/* Hero: taller, edge-to-edge stage */
+.va-hero2-stage {
+  height: clamp(460px, 74vh, 780px);
+}
+
+/* Line-mask headline reveal (pure CSS, runs on load) */
+.va-hero2 h1 .ln {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.va-hero2 h1 .ln > span {
+  display: inline-block;
+  transform: translateY(112%);
+  animation: va3-line-up 0.9s cubic-bezier(0.2, 0.65, 0.25, 1) 0.05s forwards;
+}
+.va-hero2 h1 .ln:nth-child(2) > span {
+  animation-delay: 0.17s;
+}
+@keyframes va3-line-up {
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Clip-path image reveal variant */
+html.fx [data-reveal='clip'] {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(10% 4% 10% 4%);
+  transition: clip-path 1.1s cubic-bezier(0.2, 0.65, 0.25, 1);
+}
+html.fx [data-reveal='clip'].in {
+  clip-path: inset(0 0 0 0);
+}
+
+/* Export map as a full-width band: restore page gutters inside */
+.va-export-map {
+  min-height: 620px;
+}
+.va-export-overlay {
+  padding: 48px clamp(24px, 4vw, 80px);
+  min-height: 620px;
+}
+.va-map-caption {
+  left: clamp(24px, 4vw, 80px);
+}
+
+/* Showcase as a full-width band: align panel to page gutter */
+.la-sc {
+  min-height: 620px;
+}
+.la-sc-panel {
+  padding-right: clamp(28px, 4vw, 80px);
+}
+
+@media (max-width: 980px) {
+  .va-export-overlay {
+    padding: 32px clamp(24px, 4vw, 80px);
+    min-height: auto;
+  }
+  .va-export-map {
+    min-height: auto;
+  }
+  .la-sc {
+    min-height: 0;
+  }
+  .la-sc-panel {
+    padding-right: clamp(24px, 4vw, 80px);
+  }
+}
+
 .la-sc-dots {
   display: none;
   gap: 8px;
