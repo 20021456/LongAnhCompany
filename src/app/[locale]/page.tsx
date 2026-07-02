@@ -4,7 +4,7 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { Icon } from '@/components/ui/Icon';
 import { SmartImage } from '@/components/ui/SmartImage';
-import { ProductCarousel } from '@/components/public/ProductCarousel';
+import { ProductShowcase } from '@/components/public/ProductShowcase';
 import { ExportMap } from '@/components/public/ExportMap';
 import { ContactForm } from '@/components/public/ContactForm';
 import { getProducts, getHomeSections } from '@/lib/queries';
@@ -135,7 +135,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
             </p>
           </div>
           <div data-reveal data-reveal-delay="2">
-            <ProductCarousel products={carouselProducts} locale={loc} sideArrows />
+            <ProductShowcase products={carouselProducts} locale={loc} />
           </div>
         </div>
       </section>
