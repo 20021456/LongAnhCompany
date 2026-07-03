@@ -4,7 +4,7 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { Icon } from '@/components/ui/Icon';
 import { SmartImage } from '@/components/ui/SmartImage';
-import { ProductShowcase } from '@/components/public/ProductShowcase';
+import { AboutRotator } from '@/components/public/AboutRotator';
 import { ExportMap } from '@/components/public/ExportMap';
 import { ContactForm } from '@/components/public/ContactForm';
 import { getProducts, getHomeSections } from '@/lib/queries';
@@ -27,15 +27,18 @@ export async function generateMetadata({
   });
 }
 
+/** Marquee rails need >1 viewport of content: render N copies, shift by 1/N. */
+const RAIL_COPIES = 3;
+
 export default async function HomePage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
   const loc = locale as Locale;
 
-  // Products carousel comes from the product catalogue; all section copy
+  // Products rail comes from the product catalogue; all section copy
   // (hero, stats, about, certs, export, contact) comes from page_sections,
   // editable at /admin/pages/home, with COPY-derived defaults.
   const productMap = await getProducts();
-  const carouselProducts = Object.values(productMap).map((p) => ({
+  const products = Object.values(productMap).map((p) => ({
     code: p.code,
     cat: p.cat,
     img: p.images[0] ?? '',
@@ -45,6 +48,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
     tags: p.tags[loc] ?? [],
   }));
   const S = await getHomeSections(loc);
+  const nn = (i: number) => String(i + 1).padStart(2, '0');
 
   return (
     <>
@@ -59,76 +63,62 @@ export default async function HomePage({ params: { locale } }: { params: { local
         })}
       />
       <JsonLd data={webSiteSchema({ name: 'KS Long Anh' })} />
-      {/* HERO */}
-      <section id="home" className="va-hero2">
-        <div className="va-wrap">
-          <div className="va-hero2-head">
-            <div>
-              <div className="va-eyebrow" data-reveal>
-                {S.hero.eyebrow}
-              </div>
-              <h1>
-                <span className="ln">
-                  <span>{S.hero.titleLine1}</span>
-                </span>
-                <span className="ln">
-                  <span>
-                    <b>{S.hero.titleLine2}</b>
-                  </span>
-                </span>
-              </h1>
+
+      {/* HERO — full-screen photo, headline top-left, stats bottom-left,
+          sub + CTAs bottom-right */}
+      <section id="home" className="va-hero4">
+        <div className="va-hero4-bg">
+          <SmartImage
+            src="/assets/nha-may-bot-sieu-min.webp"
+            alt={S.hero.imageAlt}
+            width={2000}
+            height={1250}
+            priority
+          />
+        </div>
+        <div className="va-wrap va-hero4-in">
+          <div className="va-hero4-top">
+            <div className="va-eyebrow">{S.hero.eyebrow}</div>
+            <h1>
+              <span className="ln">
+                <span>{S.hero.titleLine1}</span>
+              </span>
+              <span className="ln">
+                <span>{S.hero.titleLine2}</span>
+              </span>
+            </h1>
+          </div>
+          <div className="va-hero4-bottom">
+            <div className="va-hero4-stats">
+              {S.stats.items.map((s, i) => (
+                <div
+                  key={i}
+                  className="va-hero4-stat"
+                  data-reveal
+                  data-reveal-delay={String(i + 1)}
+                >
+                  <b data-countup>{s.value}</b>
+                  <span>{s.label}</span>
+                </div>
+              ))}
             </div>
-            <div className="va-hero2-side" data-reveal data-reveal-delay="2">
-              <p className="va-hero-sub">{S.hero.sub}</p>
+            <div className="va-hero4-side" data-reveal data-reveal-delay="2">
+              <p>{S.hero.sub}</p>
               <div className="va-hero-cta">
                 <Link className="va-btn va-btn-p" href={`/${loc}/products`}>
                   {S.hero.ctaPrimary} <Icon name="arrow" size={15} />
                 </Link>
-                <Link className="va-btn va-btn-g" href={`/${loc}/contact`}>
+                <Link className="va-btn va-btn-w" href={`/${loc}/contact`}>
                   {S.hero.ctaSecondary}
                 </Link>
               </div>
             </div>
           </div>
-          <div className="va-hero2-stage va-bleed" data-reveal="clip">
-            <div className="va-hero2-bg" />
-            <div className="va-hero2-imgwrap" data-parallax="0.06">
-              <SmartImage
-                className="va-hero2-img"
-                src={S.hero.imageUrl}
-                alt={S.hero.imageAlt}
-                width={1600}
-                height={1100}
-                priority
-              />
-            </div>
-            <div className="va-hero2-caption">
-              <div className="cap-line" />
-              <b>{S.hero.imageAlt}</b>
-              <span>
-                {S.stats.items[0] ? `${S.stats.items[0].value} ${S.stats.items[0].label}` : ''}
-              </span>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* STATS */}
-      <section className="va-stats">
-        <div className="va-wrap">
-          <div className="va-stats-in">
-            {S.stats.items.map((s, i) => (
-              <div key={i} className="va-stat" data-reveal data-reveal-delay={String(i + 1)}>
-                <b data-countup>{s.value}</b>
-                <span>{s.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PRODUCTS */}
-      <section id="products" className="va-section" style={{ background: 'var(--va-bg-alt)' }}>
+      {/* PRODUCTS — continuous full-image rail, captions over the photo */}
+      <section id="products" className="va-section va-rail-section">
         <div className="va-wrap">
           <div className="va-shead">
             <div data-reveal>
@@ -139,14 +129,43 @@ export default async function HomePage({ params: { locale } }: { params: { local
               {S.products.sub}
             </p>
           </div>
-          <div className="va-bleed" data-reveal="clip">
-            <ProductShowcase products={carouselProducts} locale={loc} />
+        </div>
+        <div className="va-rail" data-reveal="fade">
+          <div className="va-rail-track">
+            {Array.from({ length: RAIL_COPIES }).flatMap((_, copy) =>
+              products.map((p, i) => (
+                <Link
+                  key={`${copy}-${p.code}`}
+                  href={`/${loc}/products/${p.code.toLowerCase()}`}
+                  className="va-rail-card"
+                  aria-hidden={copy > 0 || undefined}
+                  tabIndex={copy > 0 ? -1 : undefined}
+                >
+                  <SmartImage src={p.img} alt={p.name} width={900} height={1200} sizes="420px" />
+                  <div className="va-rail-shade" />
+                  <div className="va-rail-top">
+                    <b className="num">{nn(i)}</b>
+                    <span className="rule" />
+                    <span className="lbl">
+                      <b>{p.name}</b>
+                      <i>{p.meta}</i>
+                    </span>
+                  </div>
+                  <div className="va-rail-foot">
+                    <p>{p.desc}</p>
+                    <span className="go">
+                      {loc === 'vi' ? 'Xem chi tiết' : loc === 'en' ? 'See details' : '查看详情'} →
+                    </span>
+                  </div>
+                </Link>
+              )),
+            )}
           </div>
         </div>
       </section>
 
-      {/* ABOUT */}
-      <section id="about" className="va-section">
+      {/* ABOUT — full-screen split, capability cards rotate every 8s */}
+      <section id="about" className="va-section va-about4">
         <div className="va-wrap">
           <div className="va-shead">
             <div data-reveal>
@@ -157,29 +176,14 @@ export default async function HomePage({ params: { locale } }: { params: { local
               {S.about.intro}
             </p>
           </div>
-          <div className="va-caps4">
-            {S.about.cards.map((it, i) => (
-              <div
-                key={i}
-                className="va-cap4"
-                data-reveal
-                data-reveal-delay={String(i % 3)}
-                style={{
-                  backgroundImage: `linear-gradient(180deg,rgba(15,30,50,.45) 0%,rgba(8,16,30,.95) 85%),url('${it.imageUrl}')`,
-                }}
-              >
-                <div className="va-cap4-body">
-                  <h3>{it.name}</h3>
-                  <p>{it.body}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+        </div>
+        <div data-reveal="fade">
+          <AboutRotator cards={S.about.cards} />
         </div>
       </section>
 
-      {/* CERTS */}
-      <section id="certs" className="va-section">
+      {/* CERTS — same rail treatment as products */}
+      <section id="certs" className="va-section va-rail-section">
         <div className="va-wrap">
           <div className="va-shead">
             <div data-reveal>
@@ -190,32 +194,50 @@ export default async function HomePage({ params: { locale } }: { params: { local
               {S.certs.sub}
             </p>
           </div>
-
-          <div className="va-certs-grid">
-            {S.certs.items.map((c, i) => (
-              <div key={i} className="va-cert-card" data-reveal data-reveal-delay={String(i % 4)}>
-                <div className="va-cert-img">
-                  <SmartImage src={c.logoUrl} alt={c.name} width={400} height={400} sizes="200px" />
+        </div>
+        <div className="va-rail" data-reveal="fade">
+          <div className="va-rail-track slow">
+            {Array.from({ length: RAIL_COPIES }).flatMap((_, copy) =>
+              S.certs.items.map((c, i) => (
+                <div
+                  key={`${copy}-${i}`}
+                  className="va-rail-card light"
+                  aria-hidden={copy > 0 || undefined}
+                >
+                  <div className="va-rail-logo">
+                    <SmartImage
+                      src={c.logoUrl}
+                      alt={c.name}
+                      width={400}
+                      height={400}
+                      sizes="240px"
+                    />
+                  </div>
+                  <div className="va-rail-top">
+                    <b className="num">{nn(i)}</b>
+                    <span className="rule" />
+                    <span className="lbl">
+                      <b>{c.name}</b>
+                      <i>{c.issuer}</i>
+                    </span>
+                  </div>
+                  <div className="va-rail-foot">
+                    <p>{c.desc}</p>
+                  </div>
                 </div>
-                <div className="va-cert-body">
-                  <div className="va-cert-meta">{c.issuer}</div>
-                  <h3>{c.name}</h3>
-                  <p>{c.desc}</p>
-                </div>
-              </div>
-            ))}
+              )),
+            )}
           </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <Link className="va-btn va-btn-p" href={`/${loc}/about#certs`}>
-              {loc === 'zh'
-                ? '查看所有认证'
-                : loc === 'en'
-                  ? 'View all certifications'
-                  : 'Xem tất cả chứng chỉ'}{' '}
-              <Icon name="arrow" size={15} />
-            </Link>
-          </div>
+        </div>
+        <div className="va-wrap" style={{ textAlign: 'center', marginTop: 48 }}>
+          <Link className="va-btn va-btn-p" href={`/${loc}/about#certs`}>
+            {loc === 'zh'
+              ? '查看所有认证'
+              : loc === 'en'
+                ? 'View all certifications'
+                : 'Xem tất cả chứng chỉ'}{' '}
+            <Icon name="arrow" size={15} />
+          </Link>
         </div>
       </section>
 

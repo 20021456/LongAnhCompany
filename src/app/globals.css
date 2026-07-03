@@ -5111,3 +5111,501 @@ html.fx [data-reveal='clip'].in {
     display: flex;
   }
 }
+
+/* =============================================================
+   V4 — MYHEALTHPRAC LAYOUT SYSTEM
+   Full-screen photo hero (headline top-left, stats bottom-left,
+   copy + CTAs bottom-right), transparent header over the hero,
+   continuous full-image marquee rails with on-photo captions,
+   and a full-screen rotating about split.
+   ============================================================= */
+
+/* ----- Transparent header over the hero ----------------------- */
+.va:has(.va-hero4) .va-hd:not(.is-scrolled) {
+  background: transparent;
+  border-bottom-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.va:has(.va-hero4) .va-hd:not(.is-scrolled) .va-brand-name b {
+  color: #fff;
+}
+.va:has(.va-hero4) .va-hd:not(.is-scrolled) .va-brand-name span {
+  color: #fff;
+  opacity: 0.65;
+}
+.va:has(.va-hero4) .va-hd:not(.is-scrolled) .va-nav > a,
+.va:has(.va-hero4) .va-hd:not(.is-scrolled) .va-nav-item > a {
+  color: #fff;
+}
+.va:has(.va-hero4) .va-hd:not(.is-scrolled) .va-lang {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.va:has(.va-hero4) .va-hd:not(.is-scrolled) .va-lang button {
+  color: #fff;
+}
+.va:has(.va-hero4) .va-hd:not(.is-scrolled) .va-lang button.on {
+  background: #fff;
+  color: #0f3d7a;
+}
+
+/* ----- Full-screen hero ---------------------------------------- */
+.va-hero4 {
+  position: relative;
+  margin-top: -74px; /* slides under the sticky header */
+  min-height: 100svh;
+  display: flex;
+  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
+  background: #0a1424;
+}
+.va-hero4-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.va-hero4-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: va2-hero-zoom 2.6s cubic-bezier(0.2, 0.65, 0.25, 1) both;
+}
+.va-hero4-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(6, 14, 28, 0.62) 0%,
+    rgba(6, 14, 28, 0.3) 42%,
+    rgba(6, 14, 28, 0.78) 100%
+  );
+}
+.va-hero4-in {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: clamp(120px, 16vh, 170px);
+  padding-bottom: clamp(30px, 5vh, 56px);
+  gap: 48px;
+}
+.va-hero4 .va-eyebrow {
+  margin-bottom: 22px;
+  animation: va-abrot-fade 0.9s 0.1s both;
+}
+.va-hero4 h1 {
+  color: #fff;
+  font-size: clamp(44px, 6.6vw, 104px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  max-width: 16ch;
+}
+.va-hero4 h1 .ln {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.09em;
+  margin-bottom: -0.09em;
+}
+.va-hero4 h1 .ln > span {
+  display: inline-block;
+  transform: translateY(112%);
+  animation: va3-line-up 0.9s cubic-bezier(0.2, 0.65, 0.25, 1) 0.12s forwards;
+}
+.va-hero4 h1 .ln:nth-child(2) > span {
+  animation-delay: 0.24s;
+}
+.va-hero4-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 48px;
+}
+.va-hero4-stats {
+  display: flex;
+  flex-direction: column;
+  min-width: 280px;
+}
+.va-hero4-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 11px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+.va-hero4-stat:first-child {
+  border-top: 0;
+}
+.va-hero4-stat b {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  min-width: 116px;
+  font-variant-numeric: tabular-nums;
+}
+.va-hero4-stat span {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.68;
+}
+.va-hero4-side {
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  align-items: flex-start;
+}
+.va-hero4-side p {
+  font-size: clamp(17px, 1.6vw, 21px);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+.va-btn-w {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+}
+.va-btn-w:hover {
+  background: #fff;
+  color: #0e1726;
+  transform: translateY(-2px);
+}
+
+/* ----- Marquee rails ------------------------------------------- */
+.va-rail-section {
+  overflow: hidden;
+}
+.va-rail {
+  overflow: hidden;
+}
+.va-rail-track {
+  display: flex;
+  width: max-content;
+  animation: va-rail-x 55s linear infinite;
+}
+.va-rail-track.slow {
+  animation-duration: 70s;
+}
+.va-rail:hover .va-rail-track {
+  animation-play-state: paused;
+}
+@keyframes va-rail-x {
+  to {
+    transform: translateX(calc(-100% / 3));
+  }
+}
+.va-rail-card {
+  position: relative;
+  width: clamp(300px, 30vw, 430px);
+  height: clamp(460px, 64vh, 640px);
+  margin-right: clamp(14px, 1.6vw, 24px);
+  overflow: hidden;
+  background: #0e1a2e;
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.va-rail-card > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1s cubic-bezier(0.2, 0.65, 0.25, 1);
+}
+.va-rail-card:hover > img {
+  transform: scale(1.05);
+}
+.va-rail-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 14, 26, 0.68) 0%,
+    rgba(8, 14, 26, 0.1) 36%,
+    rgba(8, 14, 26, 0) 55%,
+    rgba(8, 14, 26, 0.74) 100%
+  );
+}
+.va-rail-top {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  padding: 22px 22px 0;
+  z-index: 1;
+}
+.va-rail-top .num {
+  font-size: clamp(40px, 4vw, 56px);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.va-rail-top .rule {
+  flex: 0 0 1px;
+  background: currentColor;
+  opacity: 0.35;
+}
+.va-rail-top .lbl {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 3px;
+  min-width: 0;
+}
+.va-rail-top .lbl b {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.va-rail-top .lbl i {
+  font-style: normal;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  opacity: 0.75;
+  text-transform: uppercase;
+}
+.va-rail-foot {
+  position: relative;
+  z-index: 1;
+  padding: 0 22px 22px;
+}
+.va-rail-foot p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 42ch;
+  margin: 0 0 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.va-rail-foot .go {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--brand-accent, #f08023);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: 0.35s;
+  display: inline-block;
+}
+.va-rail-card:hover .va-rail-foot .go {
+  opacity: 1;
+  transform: none;
+}
+.va-rail-card.light {
+  background: #f2eee7;
+  color: #14100b;
+}
+.va-rail-card.light .va-rail-foot p {
+  color: rgba(20, 16, 11, 0.72);
+}
+.va-rail-card.light .va-rail-top .rule {
+  opacity: 0.2;
+}
+.va-rail-logo {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 52px 104px;
+}
+.va-rail-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 24px rgba(20, 16, 11, 0.12));
+}
+
+/* ----- About rotator (full-screen split) ----------------------- */
+.va-about4 {
+  padding-bottom: 0;
+}
+.va-abrot {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  min-height: calc(100svh - 74px);
+}
+.va-abrot-media {
+  position: relative;
+  overflow: hidden;
+  min-height: 420px;
+}
+.va-abrot-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.05);
+  transition:
+    opacity 1s cubic-bezier(0.2, 0.65, 0.25, 1),
+    transform 1.6s cubic-bezier(0.2, 0.65, 0.25, 1);
+}
+.va-abrot-slide.on {
+  opacity: 1;
+  transform: scale(1);
+}
+.va-abrot-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.va-abrot-panel {
+  background: #c9b8a2;
+  color: #191510;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 44px;
+  padding: clamp(36px, 5vw, 76px) clamp(24px, 4vw, 80px) clamp(26px, 3.5vw, 44px)
+    clamp(32px, 4.5vw, 72px);
+}
+.va-abrot-num {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+.va-abrot-story h3 {
+  font-size: clamp(36px, 4.4vw, 68px);
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  color: #191510;
+  margin: 0 0 26px;
+  max-width: 14ch;
+}
+.va-abrot-story h3 .ln {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.09em;
+  margin-bottom: -0.09em;
+}
+.va-abrot-story h3 .ln > span {
+  display: inline-block;
+  transform: translateY(112%);
+  animation: va3-line-up 0.8s cubic-bezier(0.2, 0.65, 0.25, 1) 0.05s forwards;
+}
+.va-abrot-story p {
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.7;
+  color: rgba(25, 21, 16, 0.82);
+  max-width: 46ch;
+  margin: 0;
+  animation: va-abrot-fade 0.8s 0.3s both;
+}
+@keyframes va-abrot-fade {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.va-abrot-nav {
+  display: flex;
+  gap: 12px;
+}
+.va-abrot-nav button {
+  flex: 1;
+  background: none;
+  border: 0;
+  padding: 8px 0 0;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  min-width: 0;
+  font: inherit;
+}
+.va-abrot-nav .seg {
+  display: block;
+  height: 2px;
+  background: rgba(25, 21, 16, 0.22);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.va-abrot-nav .fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: #191510;
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: la-sc-progress linear both;
+}
+.va-abrot-nav .tag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.25s;
+}
+.va-abrot-nav button.on .tag,
+.va-abrot-nav button:hover .tag {
+  opacity: 0.9;
+}
+
+@media (max-width: 980px) {
+  .va-hero4-in {
+    padding-top: 130px;
+  }
+  .va-hero4 h1 {
+    font-size: clamp(38px, 10vw, 60px);
+  }
+  .va-hero4-bottom {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 36px;
+  }
+  .va-hero4-stats {
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 28px;
+    min-width: 0;
+  }
+  .va-hero4-stat {
+    flex: 1 1 40%;
+  }
+  .va-hero4-stat:first-child {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .va-hero4-side {
+    max-width: none;
+  }
+  .va-rail-card {
+    width: min(78vw, 360px);
+    height: clamp(430px, 56vh, 540px);
+  }
+  .va-abrot {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .va-abrot-media {
+    aspect-ratio: 16 / 11;
+    min-height: 0;
+  }
+  .va-abrot-nav .tag {
+    display: none;
+  }
+}
