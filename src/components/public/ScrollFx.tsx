@@ -130,49 +130,96 @@ export function ScrollFx() {
         }
       });
     };
-    // ── Frame snapping: when scrolling settles near a [data-snap]
-    //    section top, glide the page onto it so each wheel flick lands
-    //    on a clean frame ─────────────────────────────────────────────
+    // ── Wheel-driven paging (frame pages) ──────────────────────────
+    //   Each wheel flick glides to the next [data-snap] frame with a
+    //   custom ease; momentum is swallowed so one gesture = one frame.
+    //   Only enabled on pages built out of full-height frames (home has
+    //   6; content pages have none → native scroll). Tall frames get an
+    //   extra mid-stop so their lower half stays reachable. Mouse only.
     const snapEls = Array.from(document.querySelectorAll<HTMLElement>('[data-snap]'));
-    let settleTimer = 0;
-    let snapLock = 0;
-    const settle = () => {
-      if (snapEls.length === 0 || Date.now() < snapLock) return;
-      // Leave the very top (utility strip) and the page bottom alone
-      if (window.scrollY < 60) return;
-      if (window.scrollY + window.innerHeight > document.documentElement.scrollHeight - 60) return;
+    const paged = window.matchMedia('(pointer: fine)').matches && snapEls.length >= 3;
+
+    let animating = false;
+    let cooldownUntil = 0;
+    const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+    const glide = (toY: number) => {
+      animating = true;
+      const fromY = window.scrollY;
+      const dist = toY - fromY;
+      const dur = Math.min(820, Math.max(380, Math.abs(dist) * 0.55));
+      const t0 = performance.now();
+      const step = (t: number) => {
+        const p = Math.min(1, (t - t0) / dur);
+        window.scrollTo({ top: fromY + dist * easeInOut(p), behavior: 'auto' });
+        if (p < 1) {
+          requestAnimationFrame(step);
+        } else {
+          animating = false;
+          cooldownUntil = performance.now() + 90;
+        }
+      };
+      requestAnimationFrame(step);
+    };
+    const buildStops = () => {
       const vh = window.innerHeight;
-      let best: HTMLElement | null = null;
-      let bestD = Infinity;
+      const set = new Set<number>();
       for (const el of snapEls) {
-        const d = el.getBoundingClientRect().top;
-        if (Math.abs(d) < Math.abs(bestD)) {
-          bestD = d;
-          best = el;
+        const r = el.getBoundingClientRect();
+        const top = Math.max(0, Math.round(r.top + window.scrollY));
+        set.add(top);
+        if (r.height > vh + 40) set.add(Math.round(top + r.height - vh));
+      }
+      return Array.from(set).sort((a, b) => a - b);
+    };
+    const onWheel = (e: WheelEvent) => {
+      if (!paged || e.ctrlKey) return;
+      const dir = e.deltaY > 0 ? 1 : e.deltaY < 0 ? -1 : 0;
+      if (dir === 0) return;
+      // Swallow the momentum tail of the gesture that's mid-flight
+      if (animating || performance.now() < cooldownUntil) {
+        e.preventDefault();
+        cooldownUntil = Math.max(cooldownUntil, performance.now() + 90);
+        return;
+      }
+      const y = window.scrollY;
+      const vh = window.innerHeight;
+      const stops = buildStops();
+      let nearest = stops[0];
+      let nd = Infinity;
+      for (const s of stops) {
+        if (Math.abs(s - y) < Math.abs(nd)) {
+          nd = s - y;
+          nearest = s;
         }
       }
-      // Snap only when the boundary is close (idle mid-section scrolls stay put)
-      if (best && Math.abs(bestD) > 6 && Math.abs(bestD) < vh * 0.38) {
-        snapLock = Date.now() + 900;
-        window.scrollTo({ top: window.scrollY + bestD, behavior: 'smooth' });
+      // Far from any frame boundary (e.g. footer) → let native scroll run
+      if (nearest == null || Math.abs(nd) > vh * 0.5) return;
+      // Not settled on the frame yet → glide onto it first
+      if (Math.abs(nd) > 4) {
+        e.preventDefault();
+        glide(nearest);
+        return;
       }
-    };
-    const onScrollSettle = () => {
-      onScroll();
-      window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(settle, 160);
+      const idx = stops.indexOf(nearest);
+      const nextIdx = idx + dir;
+      if (nextIdx >= 0 && nextIdx < stops.length) {
+        e.preventDefault();
+        glide(stops[nextIdx]);
+      }
+      // else: edge frame → allow native scroll to footer / top
     };
 
     onScroll();
-    window.addEventListener('scroll', onScrollSettle, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
+    if (paged) window.addEventListener('wheel', onWheel, { passive: false });
 
     return () => {
       io.disconnect();
       ioCu.disconnect();
-      window.removeEventListener('scroll', onScrollSettle);
+      window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
-      window.clearTimeout(settleTimer);
+      window.removeEventListener('wheel', onWheel);
       if (raf) cancelAnimationFrame(raf);
     };
   }, [pathname]);

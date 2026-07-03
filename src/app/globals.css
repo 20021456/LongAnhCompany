@@ -5727,10 +5727,22 @@ html.fx [data-reveal='words'].dim.in .wd {
    V6 — TIMELINE WHEEL (dark arc, reference style)
    ============================================================= */
 .va-tl {
+  position: relative;
   background: linear-gradient(172deg, #0a2b57 0%, #081f3f 45%, #06192f 100%);
   color: #fff;
-  padding: clamp(72px, 9vw, 120px) 0 0;
+}
+.va-tl-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.va-tl-head {
+  padding-top: clamp(84px, 10vw, 130px);
+  flex-shrink: 0;
 }
 .va-tl-head h2 {
   color: #fff;
@@ -5744,20 +5756,25 @@ html.fx [data-reveal='words'].dim.in .wd {
 }
 .va-tl-stage {
   position: relative;
-  margin-top: clamp(-40px, -2vw, -16px);
+  flex: 1;
+  min-height: 0;
 }
 .va-tl-svg {
-  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 100%;
   height: auto;
+  display: block;
 }
 .va-tl-center {
   position: absolute;
   left: 50%;
-  top: 52%;
+  top: 54%;
   transform: translateX(-50%);
   width: min(480px, 84%);
   text-align: center;
+  z-index: 1;
 }
 .va-tl-center h3 {
   color: #fff;
@@ -5781,8 +5798,9 @@ html.fx [data-reveal='words'].dim.in .wd {
   padding: 18px 0 26px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
-  z-index: 1;
-  background: #06192f;
+  z-index: 2;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, rgba(6, 25, 47, 0) 0%, #06192f 40%);
 }
 .va-tl-years button {
   background: none;
