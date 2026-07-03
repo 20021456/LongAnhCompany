@@ -88,9 +88,10 @@ export function ScrollFx() {
     );
     cuEls.forEach((el) => ioCu.observe(el));
 
-    // ── Header shadow + parallax ───────────────────────────────────
+    // ── Header shadow + parallax + scroll-linked grow ──────────────
     const header = document.querySelector<HTMLElement>('.va-hd');
     const parallaxEls = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'));
+    const growEls = Array.from(document.querySelectorAll<HTMLElement>('[data-grow]'));
     let raf = 0;
     const onScroll = () => {
       if (raf) return;
@@ -103,6 +104,13 @@ export function ScrollFx() {
           const r = el.getBoundingClientRect();
           const delta = (r.top + r.height / 2 - vh / 2) * -f;
           el.style.transform = `translate3d(0, ${delta.toFixed(1)}px, 0)`;
+        }
+        for (const el of growEls) {
+          // 0 → framed inside the page gutter; 1 → full-bleed. Progress runs
+          // while the element travels from 92% to ~37% of the viewport.
+          const r = el.getBoundingClientRect();
+          const p = Math.min(1, Math.max(0, (vh * 0.92 - r.top) / (vh * 0.55)));
+          el.style.setProperty('--grow', p.toFixed(3));
         }
       });
     };

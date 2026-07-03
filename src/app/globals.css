@@ -5609,3 +5609,111 @@ html.fx [data-reveal='clip'].in {
     display: none;
   }
 }
+
+/* =============================================================
+   V5 — UNIFIED TYPE + WORD REVEALS + SCROLL-GROW
+   One typographic voice (medium-weight grotesque display, like the
+   reference): word-by-word text reveals (top-to-bottom lines,
+   left-to-right within a line), centered section intros, and framed
+   blocks that grow to full-bleed as you scroll.
+   ============================================================= */
+
+/* ----- Typographic unification --------------------------------- */
+.va h1,
+.va h2 {
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.va h3,
+.va h4 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.va-hero4 h1 {
+  font-weight: 500;
+}
+.va-hero4 h1 .hl {
+  display: block;
+}
+.va-hero4-stat b {
+  font-weight: 600;
+}
+.va-stat b {
+  font-weight: 600;
+}
+.va-abrot-story h3 {
+  font-weight: 500;
+}
+.va-rail-top .num {
+  font-weight: 500;
+}
+.va-pageheader h1 {
+  font-weight: 500;
+}
+
+/* ----- Centered section intro (reference style) ---------------- */
+.va-shead2 {
+  text-align: center;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 44px) 0 clamp(56px, 7vw, 100px);
+}
+.va-shead2 .va-eyebrow {
+  margin-bottom: 4px;
+}
+.va-shead2 h2 {
+  font-size: clamp(38px, 5.2vw, 76px);
+  margin: 18px 0 28px;
+}
+.va-shead2 p {
+  font-size: 15.5px;
+  line-height: 1.8;
+  opacity: 0.8;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* ----- Word-by-word reveal -------------------------------------- */
+html.fx [data-reveal='words'] {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+html.fx [data-reveal='words'] .wd {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.35em);
+  transition:
+    opacity 0.55s cubic-bezier(0.2, 0.65, 0.25, 1),
+    transform 0.55s cubic-bezier(0.2, 0.65, 0.25, 1);
+}
+html.fx [data-reveal='words'].in .wd {
+  opacity: 1;
+  transform: none;
+}
+/* paragraph flavour: words sit dim in place and brighten */
+html.fx [data-reveal='words'].dim .wd {
+  transform: none;
+  opacity: 0.12;
+}
+html.fx [data-reveal='words'].dim.in .wd {
+  opacity: 1;
+  transform: none;
+}
+
+/* ----- Scroll-linked grow to full bleed ------------------------- */
+[data-grow] {
+  margin-inline: calc(var(--grow, 0) * -1 * clamp(24px, 4vw, 80px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.fx [data-reveal='words'] .wd {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  [data-grow] {
+    margin-inline: 0 !important;
+  }
+}

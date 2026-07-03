@@ -5,6 +5,7 @@ import type { Locale } from '@/lib/i18n/config';
 import { Icon } from '@/components/ui/Icon';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { AboutRotator } from '@/components/public/AboutRotator';
+import { Words } from '@/components/public/Words';
 import { ExportMap } from '@/components/public/ExportMap';
 import { ContactForm } from '@/components/public/ContactForm';
 import { getProducts, getHomeSections } from '@/lib/queries';
@@ -79,12 +80,12 @@ export default async function HomePage({ params: { locale } }: { params: { local
         <div className="va-wrap va-hero4-in">
           <div className="va-hero4-top">
             <div className="va-eyebrow">{S.hero.eyebrow}</div>
-            <h1>
-              <span className="ln">
-                <span>{S.hero.titleLine1}</span>
+            <h1 data-reveal="words">
+              <span className="hl">
+                <Words text={S.hero.titleLine1} step={90} />
               </span>
-              <span className="ln">
-                <span>{S.hero.titleLine2}</span>
+              <span className="hl">
+                <Words text={S.hero.titleLine2} step={90} from={320} />
               </span>
             </h1>
           </div>
@@ -120,13 +121,15 @@ export default async function HomePage({ params: { locale } }: { params: { local
       {/* PRODUCTS — continuous full-image rail, captions over the photo */}
       <section id="products" className="va-section va-rail-section">
         <div className="va-wrap">
-          <div className="va-shead">
-            <div data-reveal>
-              <div className="va-eyebrow">{S.products.eyebrow}</div>
-              <h2>{S.products.title}</h2>
+          <div className="va-shead2">
+            <div className="va-eyebrow" data-reveal>
+              {S.products.eyebrow}
             </div>
-            <p data-reveal data-reveal-delay="1">
-              {S.products.sub}
+            <h2 data-reveal="words">
+              <Words text={S.products.title} step={60} />
+            </h2>
+            <p className="dim" data-reveal="words">
+              <Words text={S.products.sub} step={28} from={250} />
             </p>
           </div>
         </div>
@@ -167,31 +170,35 @@ export default async function HomePage({ params: { locale } }: { params: { local
       {/* ABOUT — full-screen split, capability cards rotate every 8s */}
       <section id="about" className="va-section va-about4">
         <div className="va-wrap">
-          <div className="va-shead">
-            <div data-reveal>
-              <div className="va-eyebrow">{S.about.eyebrow}</div>
-              <h2>{S.about.title}</h2>
+          <div className="va-shead2">
+            <div className="va-eyebrow" data-reveal>
+              {S.about.eyebrow}
             </div>
-            <p data-reveal data-reveal-delay="1">
-              {S.about.intro}
+            <h2 data-reveal="words">
+              <Words text={S.about.title} step={60} />
+            </h2>
+            <p className="dim" data-reveal="words">
+              <Words text={S.about.intro} step={22} from={250} />
             </p>
           </div>
-        </div>
-        <div data-reveal="fade">
-          <AboutRotator cards={S.about.cards} />
+          <div data-grow>
+            <AboutRotator cards={S.about.cards} />
+          </div>
         </div>
       </section>
 
       {/* CERTS — same rail treatment as products */}
       <section id="certs" className="va-section va-rail-section">
         <div className="va-wrap">
-          <div className="va-shead">
-            <div data-reveal>
-              <div className="va-eyebrow">{S.certs.eyebrow}</div>
-              <h2>{S.certs.title}</h2>
+          <div className="va-shead2">
+            <div className="va-eyebrow" data-reveal>
+              {S.certs.eyebrow}
             </div>
-            <p data-reveal data-reveal-delay="1">
-              {S.certs.sub}
+            <h2 data-reveal="words">
+              <Words text={S.certs.title} step={60} />
+            </h2>
+            <p className="dim" data-reveal="words">
+              <Words text={S.certs.sub} step={28} from={250} />
             </p>
           </div>
         </div>
@@ -243,8 +250,10 @@ export default async function HomePage({ params: { locale } }: { params: { local
 
       {/* EXPORT MAP */}
       <section className="va-section tight">
-        <div data-reveal="clip">
-          <ExportMap locale={loc} content={S.exportCap} />
+        <div className="va-wrap">
+          <div data-grow>
+            <ExportMap locale={loc} content={S.exportCap} />
+          </div>
         </div>
       </section>
 
