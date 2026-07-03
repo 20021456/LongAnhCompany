@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Icon } from '@/components/ui/Icon';
+import { Words } from './Words';
 
 interface Crumb {
   label: string;
@@ -30,10 +31,12 @@ export function PageHeader({ eyebrow, title, sub, breadcrumb }: Props) {
         <div className="va-eyebrow" data-reveal>
           {eyebrow}
         </div>
-        <h1 data-reveal data-reveal-delay="1">{title}</h1>
+        <h1 data-reveal="words">
+          <Words text={title} step={120} />
+        </h1>
         {sub ? (
-          <p data-reveal data-reveal-delay="2">
-            {sub}
+          <p className="dim" data-reveal="words">
+            <Words text={sub} step={40} from={500} />
           </p>
         ) : null}
       </div>

@@ -6,7 +6,7 @@
  */
 export function Words({
   text,
-  step = 45,
+  step = 80,
   from = 0,
 }: {
   text: string;

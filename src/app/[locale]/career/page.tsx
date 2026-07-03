@@ -4,6 +4,7 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { Icon, type IconName } from '@/components/ui/Icon';
+import { Words } from '@/components/public/Words';
 import { getJobs, getCareersPageSections } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
@@ -57,11 +58,15 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
             <Icon name="chevron" size={11} />
             <span>{C.nav[3]}</span>
           </div>
-          <div className="va-eyebrow" style={{ color: '#F08023' }}>
+          <div className="va-eyebrow" style={{ color: '#F08023' }} data-reveal>
             {S.hero.eyebrow}
           </div>
-          <h1>{S.hero.title}</h1>
-          <p>{S.hero.sub}</p>
+          <h1 data-reveal="words">
+            <Words text={S.hero.title} step={120} />
+          </h1>
+          <p className="dim" data-reveal="words">
+            <Words text={S.hero.sub} step={40} from={500} />
+          </p>
           <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
             <a className="va-btn va-btn-p" href="#jobs">
               {S.hero.ctaLabel} <Icon name="arrow" size={15} />
@@ -100,13 +105,17 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
       <section className="cr-section" id="jobs">
         <div className="va-wrap">
           <div className="cr-shead">
-            <div>
+            <div data-reveal>
               <div className="va-eyebrow">
                 {loc === 'zh' ? '招聘职位' : loc === 'en' ? 'Open positions' : 'Vị trí đang tuyển'}
               </div>
-              <h2>{S.jobs.title}</h2>
+              <h2 data-reveal="words">
+                <Words text={S.jobs.title} step={100} />
+              </h2>
             </div>
-            <p>{S.jobs.sub}</p>
+            <p data-reveal data-reveal-delay="1">
+              {S.jobs.sub}
+            </p>
           </div>
           <div className="cr-jobs-grid">
             {jobs.map((j) => (
@@ -145,15 +154,19 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
       <section className="cr-section tight" style={{ background: 'var(--va-bg-alt)' }}>
         <div className="va-wrap">
           <div className="cr-shead">
-            <div>
+            <div data-reveal>
               <div className="va-eyebrow">{S.values.eyebrow}</div>
-              <h2>{S.values.title}</h2>
+              <h2 data-reveal="words">
+                <Words text={S.values.title} step={100} />
+              </h2>
             </div>
-            <p>{S.values.sub}</p>
+            <p data-reveal data-reveal-delay="1">
+              {S.values.sub}
+            </p>
           </div>
           <div className="cr-values-grid">
             {S.values.items.map((v, i) => (
-              <div key={i} className="cr-value-card">
+              <div key={i} className="cr-value-card" data-reveal data-reveal-delay={String(i % 3)}>
                 <div className="cr-value-icon">
                   <Icon name={(v.icon || 'check') as IconName} size={22} />
                 </div>
@@ -169,14 +182,16 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
       <section className="cr-section">
         <div className="va-wrap">
           <div className="cr-shead">
-            <div>
+            <div data-reveal>
               <div className="va-eyebrow">{S.benefits.eyebrow}</div>
-              <h2>{S.benefits.title}</h2>
+              <h2 data-reveal="words">
+                <Words text={S.benefits.title} step={100} />
+              </h2>
             </div>
           </div>
           <div className="cr-benefits-grid">
             {S.benefits.items.map((b, i) => (
-              <div key={i} className="cr-benefit">
+              <div key={i} className="cr-benefit" data-reveal data-reveal-delay={String(i % 2)}>
                 <div className="cr-benefit-num">{String(i + 1).padStart(2, '0')}</div>
                 <h4>{b.label}</h4>
                 <p>{b.body}</p>
@@ -190,12 +205,16 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
       <section className="cr-section tight" style={{ background: 'var(--va-bg-alt)' }}>
         <div className="va-wrap">
           <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto 56px' }}>
-            <div className="va-eyebrow">{S.process.eyebrow}</div>
-            <h2 style={{ fontSize: 'clamp(26px,3vw,38px)', marginTop: 12 }}>{S.process.title}</h2>
+            <div className="va-eyebrow" data-reveal>
+              {S.process.eyebrow}
+            </div>
+            <h2 style={{ fontSize: 'clamp(26px,3vw,38px)', marginTop: 12 }} data-reveal="words">
+              <Words text={S.process.title} step={100} />
+            </h2>
           </div>
           <div className="cr-process-steps">
             {S.process.items.map((s, i) => (
-              <div key={i} className="cr-process-step">
+              <div key={i} className="cr-process-step" data-reveal data-reveal-delay={String(i)}>
                 <div className="cr-step-num">{String(i + 1).padStart(2, '0')}</div>
                 <h4>{s.title}</h4>
                 <p>{s.body}</p>
@@ -208,7 +227,7 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
       {/* CTA */}
       <section className="cr-section tight">
         <div className="va-wrap">
-          <div className="cr-cta-banner">
+          <div className="cr-cta-banner" data-reveal="scale">
             <div>
               <div className="va-eyebrow">
                 {loc === 'zh'

@@ -18,6 +18,8 @@ import { usePathname } from 'next/navigation';
  */
 
 function animateCount(el: HTMLElement) {
+  if (el.dataset.counting) return;
+  el.dataset.counting = '1';
   const original = el.textContent ?? '';
   const m = original.match(/^([^\d]*)([\d.,]*\d)(.*)$/);
   if (!m) return;
@@ -41,8 +43,12 @@ function animateCount(el: HTMLElement) {
     const p = Math.min(1, (t - t0) / dur);
     const eased = 1 - Math.pow(1 - p, 3);
     el.textContent = fmt(target * eased);
-    if (p < 1) requestAnimationFrame(tick);
-    else el.textContent = original;
+    if (p < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      el.textContent = original;
+      delete el.dataset.counting;
+    }
   };
   requestAnimationFrame(tick);
 }
@@ -55,20 +61,23 @@ export function ScrollFx() {
     document.documentElement.classList.add('fx');
     if (reduced) return;
 
-    // ── Scroll reveal ──────────────────────────────────────────────
-    const revealEls = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]:not(.in)'));
+    // ── Scroll reveal (replays: .in toggles off once fully out of view,
+    //    so the animation runs again on every re-entry from either side) ──
+    const revealEls = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
-          if (!e.isIntersecting) continue;
           const el = e.target as HTMLElement;
-          el.classList.add('in');
-          if (el.hasAttribute('data-countup')) animateCount(el);
-          el.querySelectorAll<HTMLElement>('[data-countup]').forEach(animateCount);
-          io.unobserve(el);
+          if (e.isIntersecting) {
+            el.classList.add('in');
+            if (el.hasAttribute('data-countup')) animateCount(el);
+            el.querySelectorAll<HTMLElement>('[data-countup]').forEach(animateCount);
+          } else {
+            el.classList.remove('in');
+          }
         }
       },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+      { rootMargin: '0px 0px -8% 0px', threshold: 0 }
     );
     revealEls.forEach((el) => io.observe(el));
 
@@ -81,7 +90,6 @@ export function ScrollFx() {
         for (const e of entries) {
           if (!e.isIntersecting) continue;
           animateCount(e.target as HTMLElement);
-          ioCu.unobserve(e.target);
         }
       },
       { threshold: 0.4 }

@@ -82,10 +82,10 @@ export default async function HomePage({ params: { locale } }: { params: { local
             <div className="va-eyebrow">{S.hero.eyebrow}</div>
             <h1 data-reveal="words">
               <span className="hl">
-                <Words text={S.hero.titleLine1} step={90} />
+                <Words text={S.hero.titleLine1} step={150} />
               </span>
               <span className="hl">
-                <Words text={S.hero.titleLine2} step={90} from={320} />
+                <Words text={S.hero.titleLine2} step={150} from={550} />
               </span>
             </h1>
           </div>
@@ -126,10 +126,10 @@ export default async function HomePage({ params: { locale } }: { params: { local
               {S.products.eyebrow}
             </div>
             <h2 data-reveal="words">
-              <Words text={S.products.title} step={60} />
+              <Words text={S.products.title} step={120} />
             </h2>
             <p className="dim" data-reveal="words">
-              <Words text={S.products.sub} step={28} from={250} />
+              <Words text={S.products.sub} step={45} from={550} />
             </p>
           </div>
         </div>
@@ -175,10 +175,10 @@ export default async function HomePage({ params: { locale } }: { params: { local
               {S.about.eyebrow}
             </div>
             <h2 data-reveal="words">
-              <Words text={S.about.title} step={60} />
+              <Words text={S.about.title} step={120} />
             </h2>
             <p className="dim" data-reveal="words">
-              <Words text={S.about.intro} step={22} from={250} />
+              <Words text={S.about.intro} step={38} from={550} />
             </p>
           </div>
           <div data-grow>
@@ -195,10 +195,10 @@ export default async function HomePage({ params: { locale } }: { params: { local
               {S.certs.eyebrow}
             </div>
             <h2 data-reveal="words">
-              <Words text={S.certs.title} step={60} />
+              <Words text={S.certs.title} step={120} />
             </h2>
             <p className="dim" data-reveal="words">
-              <Words text={S.certs.sub} step={28} from={250} />
+              <Words text={S.certs.sub} step={45} from={550} />
             </p>
           </div>
         </div>

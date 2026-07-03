@@ -3,6 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { ContactForm } from '@/components/public/ContactForm';
+import { Words } from '@/components/public/Words';
 import { getContactPageSections } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
@@ -41,19 +42,28 @@ export default async function ContactPage({ params: { locale } }: { params: { lo
           className="va-wrap"
           style={{ padding: '90px 0', textAlign: 'center', maxWidth: 920, margin: '0 auto' }}
         >
-          <div className="va-eyebrow">{S.header.eyebrow}</div>
-          <h1 style={{ fontSize: 'clamp(36px,4.4vw,58px)', margin: '16px 0 22px' }}>
-            {S.header.title}
+          <div className="va-eyebrow" data-reveal>
+            {S.header.eyebrow}
+          </div>
+          <h1
+            style={{ fontSize: 'clamp(36px,4.4vw,58px)', margin: '16px 0 22px' }}
+            data-reveal="words"
+          >
+            <Words text={S.header.title} step={120} />
           </h1>
-          <p className="va-hero-sub" style={{ margin: '0 auto', maxWidth: 680 }}>
-            {S.header.sub}
+          <p
+            className="va-hero-sub dim"
+            style={{ margin: '0 auto', maxWidth: 680 }}
+            data-reveal="words"
+          >
+            <Words text={S.header.sub} step={40} from={500} />
           </p>
         </div>
       </section>
 
       <section id="contact" className="va-wrap">
         <div className="va-contact" style={{ borderTop: 0 }}>
-          <div>
+          <div data-reveal>
             <div className="va-eyebrow">
               {loc === 'vi' ? 'Kênh liên lạc' : loc === 'en' ? 'Channels' : '联系渠道'}
             </div>

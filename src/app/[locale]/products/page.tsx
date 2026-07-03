@@ -6,6 +6,7 @@ import { COPY } from '@/data/copy';
 import { Icon } from '@/components/ui/Icon';
 import { PageHeader } from '@/components/public/PageHeader';
 import { ProductsBrowser } from '@/components/public/ProductsBrowser';
+import { Words } from '@/components/public/Words';
 import { getProducts, getProductsPageSections } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
@@ -91,16 +92,18 @@ export default async function ProductsPage({ params: { locale } }: { params: { l
       <section className="pr-spec-section">
         <div className="va-wrap">
           <div className="pr-spec-head">
-            <div className="pr-eyebrow">
+            <div className="pr-eyebrow" data-reveal>
               {loc === 'zh'
                 ? '技术规格'
                 : loc === 'en'
                   ? 'Technical specifications'
                   : 'Thông số kỹ thuật'}
             </div>
-            <h2>{S.specTable.title}</h2>
+            <h2 data-reveal="words">
+              <Words text={S.specTable.title} step={100} />
+            </h2>
           </div>
-          <div className="pr-spec-card">
+          <div className="pr-spec-card" data-reveal>
             <div className="pr-spec-table">
               <div className="pr-spec-cell h">
                 {loc === 'zh' ? '指标' : loc === 'en' ? 'Property' : 'Chỉ tiêu'}
@@ -141,7 +144,7 @@ export default async function ProductsPage({ params: { locale } }: { params: { l
       {/* QUOTE CTA */}
       <section className="pr-quote-section">
         <div className="va-wrap">
-          <div className="pr-quote">
+          <div className="pr-quote" data-reveal="scale">
             <div>
               <div className="pr-eyebrow">
                 {loc === 'zh' ? '快速报价' : loc === 'en' ? 'Quick quote' : 'Báo giá nhanh'}

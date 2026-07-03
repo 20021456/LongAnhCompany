@@ -6,6 +6,8 @@ import { COPY } from '@/data/copy';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { PageHeader } from '@/components/public/PageHeader';
+import { TimelineArc } from '@/components/public/TimelineArc';
+import { Words } from '@/components/public/Words';
 import { getAboutSections, getCertifications } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
@@ -54,7 +56,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         </div>
         <div className="va-wrap">
           <div className="ab-intro">
-            <div className="ab-intro-img">
+            <div className="ab-intro-img" data-reveal="clip">
               <SmartImage
                 src={S.story.imageUrl}
                 alt={S.story.imageAlt}
@@ -63,11 +65,23 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
               />
             </div>
             <div>
-              <div className="ab-eyebrow">{S.story.eyebrow}</div>
-              <h2>{S.story.title}</h2>
-              {S.story.paragraph1 ? <p>{S.story.paragraph1}</p> : null}
-              {S.story.paragraph2 ? <p>{S.story.paragraph2}</p> : null}
-              {S.story.paragraph3 ? <p>{S.story.paragraph3}</p> : null}
+              <div className="ab-eyebrow" data-reveal>
+                {S.story.eyebrow}
+              </div>
+              <h2 data-reveal="words">
+                <Words text={S.story.title} step={100} />
+              </h2>
+              {S.story.paragraph1 ? <p data-reveal>{S.story.paragraph1}</p> : null}
+              {S.story.paragraph2 ? (
+                <p data-reveal data-reveal-delay="1">
+                  {S.story.paragraph2}
+                </p>
+              ) : null}
+              {S.story.paragraph3 ? (
+                <p data-reveal data-reveal-delay="2">
+                  {S.story.paragraph3}
+                </p>
+              ) : null}
               <div className="ab-sig">
                 <div className="ab-sig-img" />
                 <div>
@@ -80,25 +94,8 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         </div>
       </section>
 
-      {/* TIMELINE */}
-      <section className="ab-time">
-        <div className="va-wrap">
-          <div className="ab-time-head">
-            <div className="ab-eyebrow">{S.timeline.eyebrow}</div>
-            <h2>{S.timeline.title}</h2>
-          </div>
-          <div className="ab-time-grid">
-            {S.timeline.items.map((ev, i) => (
-              <div key={i} className="ab-tnode">
-                <div className="ab-tdot" />
-                <b>{ev.year}</b>
-                <h4>{ev.title}</h4>
-                <p>{ev.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* TIMELINE — rotating wheel */}
+      <TimelineArc eyebrow={S.timeline.eyebrow} title={S.timeline.title} items={S.timeline.items} />
 
       {/* VALUES */}
       <section className="ab-section">
@@ -106,12 +103,16 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
           <div
             style={{ textAlign: 'center', marginBottom: 48, maxWidth: 680, marginInline: 'auto' }}
           >
-            <div className="ab-eyebrow">{S.values.eyebrow}</div>
-            <h2 style={{ fontSize: 'clamp(30px,3.6vw,44px)' }}>{S.values.title}</h2>
+            <div className="ab-eyebrow" data-reveal>
+              {S.values.eyebrow}
+            </div>
+            <h2 style={{ fontSize: 'clamp(30px,3.6vw,44px)' }} data-reveal="words">
+              <Words text={S.values.title} step={100} />
+            </h2>
           </div>
           <div className="ab-vals">
             {S.values.items.map((it, i) => (
-              <div key={i} className="ab-val">
+              <div key={i} className="ab-val" data-reveal data-reveal-delay={String(i % 3)}>
                 <div className="ab-val-i">
                   <Icon name={(it.icon || 'check') as IconName} size={24} />
                 </div>
@@ -127,13 +128,17 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
       <section className="ab-section" style={{ background: 'var(--va-bg-alt)' }}>
         <div className="va-wrap">
           <div className="ab-caps">
-            <div className="ab-caps-img">
+            <div className="ab-caps-img" data-reveal="clip">
               <SmartImage src={S.caps.imageUrl} alt={S.caps.imageAlt} width={1000} height={1100} />
             </div>
             <div>
-              <div className="ab-eyebrow">{S.caps.eyebrow}</div>
-              <h2>{S.caps.title}</h2>
-              {S.caps.sub ? <p>{S.caps.sub}</p> : null}
+              <div className="ab-eyebrow" data-reveal>
+                {S.caps.eyebrow}
+              </div>
+              <h2 data-reveal="words">
+                <Words text={S.caps.title} step={100} />
+              </h2>
+              {S.caps.sub ? <p data-reveal>{S.caps.sub}</p> : null}
               <div className="ab-caps-list">
                 {S.caps.metrics.map((m, i) => (
                   <div key={i} className="ab-cap-row">
@@ -153,13 +158,18 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         <div className="va-wrap">
           <div className="ab-shead-row">
             <div>
-              <div className="ab-eyebrow">{S.warehouse.eyebrow}</div>
-              <h2 style={{ fontSize: 'clamp(28px,3.4vw,42px)', marginBottom: 0 }}>
-                {S.warehouse.title}
+              <div className="ab-eyebrow" data-reveal>
+                {S.warehouse.eyebrow}
+              </div>
+              <h2
+                style={{ fontSize: 'clamp(28px,3.4vw,42px)', marginBottom: 0 }}
+                data-reveal="words"
+              >
+                <Words text={S.warehouse.title} step={100} />
               </h2>
             </div>
           </div>
-          <div className="ab-warehouse-grid">
+          <div className="ab-warehouse-grid" data-reveal="clip">
             {S.warehouse.images[0] ? (
               <div className="ab-wh-img">
                 <SmartImage src={S.warehouse.images[0]} alt="" width={1000} height={1200} />
@@ -191,12 +201,16 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         <div className="va-wrap">
           <div className="ab-certs-head">
             <div>
-              <div className="ab-eyebrow">
+              <div className="ab-eyebrow" data-reveal>
                 {loc === 'zh' ? '认证' : loc === 'en' ? 'Certifications' : 'Chứng nhận'}
               </div>
-              <h2>{S.certs.title}</h2>
+              <h2 data-reveal="words">
+                <Words text={S.certs.title} step={100} />
+              </h2>
             </div>
-            <p>{S.certs.sub}</p>
+            <p data-reveal data-reveal-delay="1">
+              {S.certs.sub}
+            </p>
           </div>
           <div className="ab-certs-grid">
             {S.certs.items
@@ -204,7 +218,12 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
               .map((c, i) => {
                 const cat = certByName.get(c.name.trim().toLowerCase());
                 return (
-                  <div key={i} className="ab-cert-card">
+                  <div
+                    key={i}
+                    className="ab-cert-card"
+                    data-reveal
+                    data-reveal-delay={String(i % 4)}
+                  >
                     <div className="ab-cert-img">
                       {cat?.badge ? (
                         <SmartImage
@@ -232,7 +251,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
 
       {/* CTA */}
       <div className="va-wrap">
-        <div className="ab-cta">
+        <div className="ab-cta" data-reveal="scale">
           <div>
             <div
               style={{
