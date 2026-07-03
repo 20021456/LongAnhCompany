@@ -130,43 +130,49 @@ export function ScrollFx() {
         }
       });
     };
-    // ── Flick-to-page (frame pages) ────────────────────────────────
-    //   Gentle wheeling scrolls normally. Only a fast "flick" — several
-    //   notches spun in quick succession — pages to the next [data-snap]
-    //   frame with a custom ease. Detected by accumulating deltaY within
-    //   a short window (reset on a pause or direction change) and gated
-    //   by a mouse-like peak delta so trackpad drifting stays native.
-    //   Only on frame pages (home: 6 frames; content pages: none).
+    // ── Smooth inertia scroll + flick-to-page ──────────────────────
+    //   Lenis-style smoothing: the wheel feeds a `target` scroll position
+    //   and each frame the real scroll eases toward it (lerp), giving the
+    //   weighty, gliding feel of premium sites. On frame pages a fast
+    //   flick (several notches spun quickly) retargets to the next
+    //   [data-snap] frame instead. Mouse only; native for touch/keyboard/
+    //   scrollbar (target re-syncs whenever the engine is idle).
+    const fine = window.matchMedia('(pointer: fine)').matches;
     const snapEls = Array.from(document.querySelectorAll<HTMLElement>('[data-snap]'));
-    const paged = window.matchMedia('(pointer: fine)').matches && snapEls.length >= 3;
+    const paged = fine && snapEls.length >= 3;
 
+    const LERP = 0.11; // 0..1 — lower = heavier glide
     const FLICK = 200; // accumulated |deltaY| that counts as a flick
     const PEAK = 60; // a single event must reach this (mouse notch, not trackpad drift)
     const GAP = 200; // ms of quiet that resets the accumulator
 
-    let animating = false;
-    let cooldownUntil = 0;
+    let target = window.scrollY;
+    let current = window.scrollY;
+    let smoothing = false;
     let accum = 0;
     let peak = 0;
     let lastT = 0;
-    const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
-    const glide = (toY: number) => {
-      animating = true;
-      const fromY = window.scrollY;
-      const dist = toY - fromY;
-      const dur = Math.min(760, Math.max(360, Math.abs(dist) * 0.5));
-      const t0 = performance.now();
-      const step = (t: number) => {
-        const p = Math.min(1, (t - t0) / dur);
-        window.scrollTo({ top: fromY + dist * easeInOut(p), behavior: 'auto' });
-        if (p < 1) {
-          requestAnimationFrame(step);
-        } else {
-          animating = false;
-          cooldownUntil = performance.now() + 140;
-        }
-      };
-      requestAnimationFrame(step);
+    let flickLock = 0;
+
+    const maxScroll = () =>
+      Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const loop = () => {
+      const diff = target - current;
+      if (Math.abs(diff) < 0.4) {
+        current = target;
+        window.scrollTo({ top: current, behavior: 'instant' as ScrollBehavior });
+        smoothing = false;
+        return;
+      }
+      current += diff * LERP;
+      window.scrollTo({ top: current, behavior: 'instant' as ScrollBehavior });
+      requestAnimationFrame(loop);
+    };
+    const startLoop = () => {
+      if (!smoothing) {
+        smoothing = true;
+        requestAnimationFrame(loop);
+      }
     };
     const adjacentStop = (dir: number, y: number): number | null => {
       const vh = window.innerHeight;
@@ -183,45 +189,59 @@ export function ScrollFx() {
       return null;
     };
     const onWheel = (e: WheelEvent) => {
-      if (!paged || e.ctrlKey || e.deltaY === 0) return;
+      if (!fine || e.ctrlKey || e.deltaY === 0) return;
+      e.preventDefault();
       const now = performance.now();
-      // Mid-glide (and its brief cooldown): swallow the flick's tail so it
-      // doesn't stack, but let ordinary scrolling through otherwise.
-      if (animating || now < cooldownUntil) {
-        e.preventDefault();
-        return;
+      // Swallow the tail of a flick while it settles onto the frame
+      if (now < flickLock) return;
+      // Re-sync to the real position if the engine was idle (scrollbar/keys)
+      if (!smoothing) {
+        current = window.scrollY;
+        target = window.scrollY;
       }
-      // Accumulate within the burst; reset on a pause or a reversal
-      if (now - lastT > GAP || (accum !== 0 && Math.sign(e.deltaY) !== Math.sign(accum))) {
-        accum = 0;
-        peak = 0;
-      }
-      lastT = now;
-      accum += e.deltaY;
-      peak = Math.max(peak, Math.abs(e.deltaY));
-      if (Math.abs(accum) >= FLICK && peak >= PEAK) {
-        const dir = accum > 0 ? 1 : -1;
-        const target = adjacentStop(dir, window.scrollY);
-        accum = 0;
-        peak = 0;
-        if (target != null) {
-          e.preventDefault();
-          glide(target);
+      // Flick detection (frame pages only)
+      if (paged) {
+        if (now - lastT > GAP || (accum !== 0 && Math.sign(e.deltaY) !== Math.sign(accum))) {
+          accum = 0;
+          peak = 0;
         }
-        // no frame that way → let the native scroll of this flick stand
+        lastT = now;
+        accum += e.deltaY;
+        peak = Math.max(peak, Math.abs(e.deltaY));
+        if (Math.abs(accum) >= FLICK && peak >= PEAK) {
+          const dir = accum > 0 ? 1 : -1;
+          const stop = adjacentStop(dir, target);
+          accum = 0;
+          peak = 0;
+          if (stop != null) {
+            target = stop;
+            flickLock = now + 600;
+            startLoop();
+            return;
+          }
+        }
       }
-      // below threshold → do nothing, gentle native scrolling continues
+      // Ordinary smooth scroll
+      target = Math.max(0, Math.min(maxScroll(), target + e.deltaY));
+      startLoop();
+    };
+    const onScrollSync = () => {
+      onScroll();
+      if (!smoothing) {
+        current = window.scrollY;
+        target = window.scrollY;
+      }
     };
 
     onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scroll', onScrollSync, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
-    if (paged) window.addEventListener('wheel', onWheel, { passive: false });
+    if (fine) window.addEventListener('wheel', onWheel, { passive: false });
 
     return () => {
       io.disconnect();
       ioCu.disconnect();
-      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('scroll', onScrollSync);
       window.removeEventListener('resize', onScroll);
       window.removeEventListener('wheel', onWheel);
       if (raf) cancelAnimationFrame(raf);
