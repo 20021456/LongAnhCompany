@@ -130,23 +130,31 @@ export function ScrollFx() {
         }
       });
     };
-    // ── Wheel-driven paging (frame pages) ──────────────────────────
-    //   Each wheel flick glides to the next [data-snap] frame with a
-    //   custom ease; momentum is swallowed so one gesture = one frame.
-    //   Only enabled on pages built out of full-height frames (home has
-    //   6; content pages have none → native scroll). Tall frames get an
-    //   extra mid-stop so their lower half stays reachable. Mouse only.
+    // ── Flick-to-page (frame pages) ────────────────────────────────
+    //   Gentle wheeling scrolls normally. Only a fast "flick" — several
+    //   notches spun in quick succession — pages to the next [data-snap]
+    //   frame with a custom ease. Detected by accumulating deltaY within
+    //   a short window (reset on a pause or direction change) and gated
+    //   by a mouse-like peak delta so trackpad drifting stays native.
+    //   Only on frame pages (home: 6 frames; content pages: none).
     const snapEls = Array.from(document.querySelectorAll<HTMLElement>('[data-snap]'));
     const paged = window.matchMedia('(pointer: fine)').matches && snapEls.length >= 3;
 
+    const FLICK = 200; // accumulated |deltaY| that counts as a flick
+    const PEAK = 60; // a single event must reach this (mouse notch, not trackpad drift)
+    const GAP = 200; // ms of quiet that resets the accumulator
+
     let animating = false;
     let cooldownUntil = 0;
+    let accum = 0;
+    let peak = 0;
+    let lastT = 0;
     const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
     const glide = (toY: number) => {
       animating = true;
       const fromY = window.scrollY;
       const dist = toY - fromY;
-      const dur = Math.min(820, Math.max(380, Math.abs(dist) * 0.55));
+      const dur = Math.min(760, Math.max(360, Math.abs(dist) * 0.5));
       const t0 = performance.now();
       const step = (t: number) => {
         const p = Math.min(1, (t - t0) / dur);
@@ -155,12 +163,12 @@ export function ScrollFx() {
           requestAnimationFrame(step);
         } else {
           animating = false;
-          cooldownUntil = performance.now() + 90;
+          cooldownUntil = performance.now() + 140;
         }
       };
       requestAnimationFrame(step);
     };
-    const buildStops = () => {
+    const adjacentStop = (dir: number, y: number): number | null => {
       const vh = window.innerHeight;
       const set = new Set<number>();
       for (const el of snapEls) {
@@ -169,44 +177,40 @@ export function ScrollFx() {
         set.add(top);
         if (r.height > vh + 40) set.add(Math.round(top + r.height - vh));
       }
-      return Array.from(set).sort((a, b) => a - b);
+      const stops = Array.from(set).sort((a, b) => a - b);
+      if (dir > 0) return stops.find((s) => s > y + 8) ?? null;
+      for (let i = stops.length - 1; i >= 0; i--) if (stops[i] < y - 8) return stops[i];
+      return null;
     };
     const onWheel = (e: WheelEvent) => {
-      if (!paged || e.ctrlKey) return;
-      const dir = e.deltaY > 0 ? 1 : e.deltaY < 0 ? -1 : 0;
-      if (dir === 0) return;
-      // Swallow the momentum tail of the gesture that's mid-flight
-      if (animating || performance.now() < cooldownUntil) {
+      if (!paged || e.ctrlKey || e.deltaY === 0) return;
+      const now = performance.now();
+      // Mid-glide (and its brief cooldown): swallow the flick's tail so it
+      // doesn't stack, but let ordinary scrolling through otherwise.
+      if (animating || now < cooldownUntil) {
         e.preventDefault();
-        cooldownUntil = Math.max(cooldownUntil, performance.now() + 90);
         return;
       }
-      const y = window.scrollY;
-      const vh = window.innerHeight;
-      const stops = buildStops();
-      let nearest = stops[0];
-      let nd = Infinity;
-      for (const s of stops) {
-        if (Math.abs(s - y) < Math.abs(nd)) {
-          nd = s - y;
-          nearest = s;
+      // Accumulate within the burst; reset on a pause or a reversal
+      if (now - lastT > GAP || (accum !== 0 && Math.sign(e.deltaY) !== Math.sign(accum))) {
+        accum = 0;
+        peak = 0;
+      }
+      lastT = now;
+      accum += e.deltaY;
+      peak = Math.max(peak, Math.abs(e.deltaY));
+      if (Math.abs(accum) >= FLICK && peak >= PEAK) {
+        const dir = accum > 0 ? 1 : -1;
+        const target = adjacentStop(dir, window.scrollY);
+        accum = 0;
+        peak = 0;
+        if (target != null) {
+          e.preventDefault();
+          glide(target);
         }
+        // no frame that way → let the native scroll of this flick stand
       }
-      // Far from any frame boundary (e.g. footer) → let native scroll run
-      if (nearest == null || Math.abs(nd) > vh * 0.5) return;
-      // Not settled on the frame yet → glide onto it first
-      if (Math.abs(nd) > 4) {
-        e.preventDefault();
-        glide(nearest);
-        return;
-      }
-      const idx = stops.indexOf(nearest);
-      const nextIdx = idx + dir;
-      if (nextIdx >= 0 && nextIdx < stops.length) {
-        e.preventDefault();
-        glide(stops[nextIdx]);
-      }
-      // else: edge frame → allow native scroll to footer / top
+      // below threshold → do nothing, gentle native scrolling continues
     };
 
     onScroll();
