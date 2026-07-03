@@ -67,7 +67,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
 
       {/* HERO — full-screen photo, headline top-left, stats bottom-left,
           sub + CTAs bottom-right */}
-      <section id="home" className="va-hero4">
+      <section id="home" className="va-hero4" data-snap>
         <div className="va-hero4-bg">
           <SmartImage
             src="/assets/nha-may-bot-sieu-min.webp"
@@ -119,7 +119,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
       </section>
 
       {/* PRODUCTS — continuous full-image rail, captions over the photo */}
-      <section id="products" className="va-section va-rail-section">
+      <section id="products" className="va-section va-rail-section" data-snap>
         <div className="va-wrap">
           <div className="va-shead2">
             <div className="va-eyebrow" data-reveal>
@@ -168,7 +168,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
       </section>
 
       {/* ABOUT — full-screen split, capability cards rotate every 8s */}
-      <section id="about" className="va-section va-about4">
+      <section id="about" className="va-section va-about4" data-snap>
         <div className="va-wrap">
           <div className="va-shead2">
             <div className="va-eyebrow" data-reveal>
@@ -188,7 +188,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
       </section>
 
       {/* CERTS — same rail treatment as products */}
-      <section id="certs" className="va-section va-rail-section">
+      <section id="certs" className="va-section va-rail-section" data-snap>
         <div className="va-wrap">
           <div className="va-shead2">
             <div className="va-eyebrow" data-reveal>
@@ -249,7 +249,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
       </section>
 
       {/* EXPORT MAP */}
-      <section className="va-section tight">
+      <section className="va-section tight" data-snap>
         <div className="va-wrap">
           <div data-grow>
             <ExportMap locale={loc} content={S.exportCap} />
@@ -258,7 +258,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
       </section>
 
       {/* CONTACT */}
-      <section id="contact" className="va-wrap">
+      <section id="contact" className="va-wrap" data-snap>
         <div className="va-contact">
           <div data-reveal>
             <div className="va-eyebrow">{S.contact.eyebrow}</div>

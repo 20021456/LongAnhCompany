@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Item {
   year: string;
@@ -32,6 +32,7 @@ const R = 1400;
 export function TimelineArc({ eyebrow, title, items }: Props) {
   const [active, setActive] = useState(0);
   const [hovering, setHovering] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const n = items.length;
 
   useEffect(() => {
@@ -40,6 +41,31 @@ export function TimelineArc({ eyebrow, title, items }: Props) {
     return () => clearTimeout(id);
   }, [active, hovering, n]);
 
+  // Scroll-linked spin: the wheel turns a few degrees with the page scroll
+  // (the 1.1s transform transition turns it into a smooth trailing ease).
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const sec = sectionRef.current;
+        if (!sec) return;
+        const r = sec.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
+        sec.style.setProperty('--tl-scroll', `${((p - 0.5) * 26).toFixed(2)}deg`);
+      });
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   if (n === 0) return null;
   const it = items[active];
   const apexY = CY - R; // 240
@@ -47,6 +73,8 @@ export function TimelineArc({ eyebrow, title, items }: Props) {
   return (
     <section
       className="va-tl"
+      ref={sectionRef}
+      data-snap
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
@@ -60,7 +88,7 @@ export function TimelineArc({ eyebrow, title, items }: Props) {
           {/* rotating wheel */}
           <g
             style={{
-              transform: `rotate(${-active * SPREAD}deg)`,
+              transform: `rotate(calc(${-active * SPREAD}deg + var(--tl-scroll, 0deg)))`,
               transformOrigin: `${CX}px ${CY}px`,
               transition: 'transform 1.1s cubic-bezier(0.2, 0.65, 0.25, 1)',
             }}

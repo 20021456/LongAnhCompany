@@ -96,16 +96,24 @@ export function ScrollFx() {
     );
     cuEls.forEach((el) => ioCu.observe(el));
 
-    // ── Header shadow + parallax + scroll-linked grow ──────────────
+    // ── Header shadow/hide + parallax + scroll-linked grow ─────────
     const header = document.querySelector<HTMLElement>('.va-hd');
     const parallaxEls = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'));
     const growEls = Array.from(document.querySelectorAll<HTMLElement>('[data-grow]'));
     let raf = 0;
+    let lastY = window.scrollY;
     const onScroll = () => {
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
-        header?.classList.toggle('is-scrolled', window.scrollY > 8);
+        const y = window.scrollY;
+        if (header) {
+          header.classList.toggle('is-scrolled', y > 8);
+          // Hide on scroll down, reveal on scroll up
+          if (y > 180 && y > lastY + 2) header.classList.add('is-hidden');
+          else if (y < lastY - 2 || y <= 180) header.classList.remove('is-hidden');
+        }
+        lastY = y;
         const vh = window.innerHeight;
         for (const el of parallaxEls) {
           const f = parseFloat(el.dataset.parallax || '0.1');
@@ -122,15 +130,49 @@ export function ScrollFx() {
         }
       });
     };
+    // ── Frame snapping: when scrolling settles near a [data-snap]
+    //    section top, glide the page onto it so each wheel flick lands
+    //    on a clean frame ─────────────────────────────────────────────
+    const snapEls = Array.from(document.querySelectorAll<HTMLElement>('[data-snap]'));
+    let settleTimer = 0;
+    let snapLock = 0;
+    const settle = () => {
+      if (snapEls.length === 0 || Date.now() < snapLock) return;
+      // Leave the very top (utility strip) and the page bottom alone
+      if (window.scrollY < 60) return;
+      if (window.scrollY + window.innerHeight > document.documentElement.scrollHeight - 60) return;
+      const vh = window.innerHeight;
+      let best: HTMLElement | null = null;
+      let bestD = Infinity;
+      for (const el of snapEls) {
+        const d = el.getBoundingClientRect().top;
+        if (Math.abs(d) < Math.abs(bestD)) {
+          bestD = d;
+          best = el;
+        }
+      }
+      // Snap only when the boundary is close (idle mid-section scrolls stay put)
+      if (best && Math.abs(bestD) > 6 && Math.abs(bestD) < vh * 0.38) {
+        snapLock = Date.now() + 900;
+        window.scrollTo({ top: window.scrollY + bestD, behavior: 'smooth' });
+      }
+    };
+    const onScrollSettle = () => {
+      onScroll();
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(settle, 160);
+    };
+
     onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scroll', onScrollSettle, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
 
     return () => {
       io.disconnect();
       ioCu.disconnect();
-      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('scroll', onScrollSettle);
       window.removeEventListener('resize', onScroll);
+      window.clearTimeout(settleTimer);
       if (raf) cancelAnimationFrame(raf);
     };
   }, [pathname]);

@@ -128,11 +128,16 @@ body {
   transition:
     border-color 0.3s,
     box-shadow 0.3s,
-    background 0.3s;
+    background 0.3s,
+    transform 0.4s cubic-bezier(0.2, 0.65, 0.25, 1);
 }
 .va-hd.is-scrolled {
   border-bottom-color: var(--va-line);
   box-shadow: 0 8px 30px -18px rgba(14, 23, 38, 0.18);
+}
+.va-hd.is-hidden {
+  transform: translateY(-100%);
+  box-shadow: none;
 }
 .va-hd-in {
   display: flex;
@@ -5722,7 +5727,7 @@ html.fx [data-reveal='words'].dim.in .wd {
    V6 — TIMELINE WHEEL (dark arc, reference style)
    ============================================================= */
 .va-tl {
-  background: #060708;
+  background: linear-gradient(172deg, #0a2b57 0%, #081f3f 45%, #06192f 100%);
   color: #fff;
   padding: clamp(72px, 9vw, 120px) 0 0;
   overflow: hidden;
@@ -5777,7 +5782,7 @@ html.fx [data-reveal='words'].dim.in .wd {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   z-index: 1;
-  background: #060708;
+  background: #06192f;
 }
 .va-tl-years button {
   background: none;
