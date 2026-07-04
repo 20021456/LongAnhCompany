@@ -400,6 +400,20 @@ async function main() {
       valueZh: 'https://zalo.me/longanhcorp',
       group: 'social',
     },
+    {
+      key: 'social.whatsapp',
+      valueVi: 'https://wa.me/84942224499',
+      valueEn: 'https://wa.me/84942224499',
+      valueZh: 'https://wa.me/84942224499',
+      group: 'social',
+    },
+    {
+      key: 'social.youtube',
+      valueVi: 'https://www.youtube.com/@longanhcorp',
+      valueEn: 'https://www.youtube.com/@longanhcorp',
+      valueZh: 'https://www.youtube.com/@longanhcorp',
+      group: 'social',
+    },
   ];
   for (const s of settings) {
     await db.setting.upsert({

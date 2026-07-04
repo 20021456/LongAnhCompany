@@ -4976,8 +4976,12 @@ html.fx [data-reveal-delay='6'] {
 .va
   *:not(.va-btn):not(.ab-btn):not(.pr-btn):not(.cr-btn-w):not(.cr-btn-ghost):not(
     .pr-size-circle-dot
-  ):not(.ab-tdot):not(.ab-sig-img):not(.cr-step-num) {
+  ):not(.ab-tdot):not(.ab-sig-img):not(.cr-step-num):not(.va-ft-social a) {
   border-radius: 0 !important;
+}
+/* Footer social icons stay round (excluded from the reset above) */
+.va-ft-social a {
+  border-radius: 50%;
 }
 
 /* Full-bleed helper: cancels the .va-wrap side padding. */
