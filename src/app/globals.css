@@ -5311,8 +5311,8 @@ html.fx [data-reveal='clip'].in {
 }
 .va-rail-card {
   position: relative;
-  width: clamp(300px, 30vw, 430px);
-  height: clamp(460px, 64vh, 640px);
+  width: clamp(380px, 42vw, 640px);
+  height: clamp(400px, 52vh, 540px);
   margin-right: clamp(14px, 1.6vw, 24px);
   overflow: hidden;
   background: #0e1a2e;
