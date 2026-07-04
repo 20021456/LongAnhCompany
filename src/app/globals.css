@@ -6062,3 +6062,36 @@ html.fx [data-reveal='words'].dim.in .wd {
     height: auto;
   }
 }
+
+/* =============================================================
+   V14 — UNIFIED SECTION INTROS (match the home style everywhere)
+   ============================================================= */
+
+/* Centered intros: labels get rules on BOTH sides, whatever the class */
+.va-shead2 .ab-eyebrow::before,
+.va-shead2 .ab-eyebrow::after,
+.va-shead2 .pr-eyebrow::before,
+.va-shead2 .pr-eyebrow::after {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--brand-accent, #f08023);
+  opacity: 0.7;
+}
+
+/* Timeline head joins the same centered intro system */
+.va-tl-head {
+  text-align: center;
+}
+.va-tl-head h2 {
+  font-size: clamp(38px, 5.2vw, 76px);
+  max-width: none;
+  margin: 18px auto 0;
+}
+.va-tl-head .va-eyebrow::after {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--brand-accent, #f08023);
+  opacity: 0.7;
+}

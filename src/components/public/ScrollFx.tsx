@@ -142,10 +142,10 @@ export function ScrollFx() {
     const paged = fine && snapEls.length >= 3;
 
     const LERP = 0.11; // 0..1 — lower = heavier glide
-    const FLICK = 200; // accumulated |deltaY| that counts as a flick
-    const PEAK = 60; // a single event must reach this (mouse notch, not trackpad drift)
+    const FLICK = 380; // accumulated |deltaY| that counts as a flick (a real hard spin)
+    const PEAK = 90; // a single event must reach this (mouse notch, not trackpad drift)
     const GAP = 180; // ms of wheel silence that ends a gesture
-    const BURST = 320; // a flick's events all land within this window
+    const BURST = 280; // a flick's events all land within this window
 
     let target = window.scrollY;
     let current = window.scrollY;
@@ -226,8 +226,10 @@ export function ScrollFx() {
         flickTimer = window.setTimeout(() => {
           const quickBurst = lastT - burstStart <= BURST;
           if (quickBurst && Math.abs(accum) >= FLICK && peak >= PEAK) {
-            const stop = adjacentStop(accum > 0 ? 1 : -1, burstFromY);
-            if (stop != null) {
+            const dir = accum > 0 ? 1 : -1;
+            const stop = adjacentStop(dir, burstFromY);
+            // Never pull noticeably backwards against the flick direction
+            if (stop != null && (stop - target) * dir > -window.innerHeight * 0.2) {
               target = stop;
               startLoop();
             }

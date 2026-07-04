@@ -116,13 +116,11 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
       {/* VALUES */}
       <section className="ab-section">
         <div className="va-wrap">
-          <div
-            style={{ textAlign: 'center', marginBottom: 48, maxWidth: 680, marginInline: 'auto' }}
-          >
+          <div className="va-shead2">
             <div className="ab-eyebrow" data-reveal>
               {S.values.eyebrow}
             </div>
-            <h2 style={{ fontSize: 'clamp(30px,3.6vw,44px)' }} data-reveal="words">
+            <h2 data-reveal="words">
               <Words text={S.values.title} step={100} />
             </h2>
           </div>
@@ -182,18 +180,13 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
       {/* WAREHOUSE */}
       <section className="ab-section">
         <div className="va-wrap">
-          <div className="ab-shead-row">
-            <div>
-              <div className="ab-eyebrow" data-reveal>
-                {S.warehouse.eyebrow}
-              </div>
-              <h2
-                style={{ fontSize: 'clamp(28px,3.4vw,42px)', marginBottom: 0 }}
-                data-reveal="words"
-              >
-                <Words text={S.warehouse.title} step={100} />
-              </h2>
+          <div className="va-shead2">
+            <div className="ab-eyebrow" data-reveal>
+              {S.warehouse.eyebrow}
             </div>
+            <h2 data-reveal="words">
+              <Words text={S.warehouse.title} step={100} />
+            </h2>
           </div>
           <div className="ab-warehouse-grid" data-grow>
             {S.warehouse.images[0] ? (
@@ -225,17 +218,15 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
       {/* CERTS */}
       <section className="ab-certs">
         <div className="va-wrap">
-          <div className="ab-certs-head">
-            <div>
-              <div className="ab-eyebrow" data-reveal>
-                {loc === 'zh' ? '认证' : loc === 'en' ? 'Certifications' : 'Chứng nhận'}
-              </div>
-              <h2 data-reveal="words">
-                <Words text={S.certs.title} step={100} />
-              </h2>
+          <div className="va-shead2">
+            <div className="ab-eyebrow" data-reveal>
+              {loc === 'zh' ? '认证' : loc === 'en' ? 'Certifications' : 'Chứng nhận'}
             </div>
-            <p data-reveal data-reveal-delay="1">
-              {S.certs.sub}
+            <h2 data-reveal="words">
+              <Words text={S.certs.title} step={100} />
+            </h2>
+            <p className="dim" data-reveal="words">
+              <Words text={S.certs.sub} step={40} from={500} />
             </p>
           </div>
           <div className="ab-certs-grid">
