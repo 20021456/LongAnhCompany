@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Icon } from '@/components/ui/Icon';
+import { SmartImage } from '@/components/ui/SmartImage';
 import { Words } from './Words';
 
 interface Crumb {
@@ -12,11 +13,18 @@ interface Props {
   title: string;
   sub?: string;
   breadcrumb?: Crumb[];
+  /** Full-photo variant: dark-graded background image, white type. */
+  bgImage?: string;
 }
 
-export function PageHeader({ eyebrow, title, sub, breadcrumb }: Props) {
+export function PageHeader({ eyebrow, title, sub, breadcrumb, bgImage }: Props) {
   return (
-    <section className="va-pageheader">
+    <section className={'va-pageheader' + (bgImage ? ' va-pageheader--photo' : '')}>
+      {bgImage ? (
+        <div className="va-pageheader-bg">
+          <SmartImage src={bgImage} alt="" width={2000} height={1200} priority />
+        </div>
+      ) : null}
       <div className="va-wrap">
         {breadcrumb ? (
           <div className="va-bcrumb">

@@ -6095,3 +6095,172 @@ html.fx [data-reveal='words'].dim.in .wd {
   background: var(--brand-accent, #f08023);
   opacity: 0.7;
 }
+
+/* =============================================================
+   V15 — SCROLL-PULLED IMAGE DECK + PHOTO PAGE HEADER
+   ============================================================= */
+
+/* Warehouse deck: pinned stage, next photo pulled down over the last */
+.va-whdeck {
+  position: relative;
+}
+.va-whdeck-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: #0a1424;
+}
+.va-whdeck-slide {
+  position: absolute;
+  inset: 0;
+  will-change: clip-path;
+  isolation: isolate;
+}
+.va-whdeck-media {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.va-whdeck-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.va-whdeck-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 14, 26, 0.22) 0%,
+    rgba(8, 14, 26, 0) 40%,
+    rgba(8, 14, 26, 0) 55%,
+    rgba(8, 14, 26, 0.78) 100%
+  );
+  z-index: 1;
+}
+.va-whdeck-cap {
+  position: absolute;
+  left: clamp(24px, 4vw, 80px);
+  bottom: clamp(28px, 5vh, 56px);
+  z-index: 2;
+  color: #fff;
+  max-width: min(560px, 80%);
+}
+.va-whdeck-cap .num {
+  display: block;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--brand-accent, #f08023);
+  margin-bottom: 10px;
+}
+.va-whdeck-cap b {
+  display: block;
+  font-size: clamp(24px, 2.8vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+.va-whdeck-cap .sub {
+  display: block;
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 48ch;
+}
+.va-whdeck-count {
+  position: absolute;
+  right: clamp(24px, 4vw, 80px);
+  bottom: clamp(28px, 5vh, 56px);
+  z-index: 2;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+}
+.va-whdeck-count span {
+  color: #fff;
+}
+
+/* Photo page header (About): full image, dark grade, white type */
+.va-pageheader--photo {
+  position: relative;
+  isolation: isolate;
+  margin-top: -74px;
+  padding-top: calc(clamp(90px, 10vw, 150px) + 74px);
+  min-height: 64svh;
+  display: flex;
+  align-items: flex-end;
+  border-bottom: 0;
+  color: #fff;
+  overflow: hidden;
+}
+.va-pageheader--photo .va-pageheader-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.va-pageheader--photo .va-pageheader-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: va2-hero-zoom 2.6s cubic-bezier(0.2, 0.65, 0.25, 1) both;
+}
+.va-pageheader--photo .va-pageheader-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(6, 14, 28, 0.6) 0%,
+    rgba(6, 14, 28, 0.28) 45%,
+    rgba(6, 14, 28, 0.78) 100%
+  );
+}
+.va-pageheader--photo .va-wrap {
+  width: 100%;
+  padding-bottom: clamp(48px, 6vh, 72px);
+}
+.va-pageheader--photo h1 {
+  color: #fff;
+}
+.va-pageheader--photo p {
+  color: rgba(255, 255, 255, 0.88);
+  opacity: 1;
+}
+.va-pageheader--photo .va-bcrumb {
+  opacity: 0.75;
+}
+
+/* Transparent header over the photo page header (same as the home hero) */
+.va:has(.va-pageheader--photo) .va-hd:not(.is-scrolled) {
+  background: transparent;
+  border-bottom-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.va:has(.va-pageheader--photo) .va-hd:not(.is-scrolled) .va-brand-name b {
+  color: #fff;
+}
+.va:has(.va-pageheader--photo) .va-hd:not(.is-scrolled) .va-brand-name span {
+  color: #fff;
+  opacity: 0.65;
+}
+.va:has(.va-pageheader--photo) .va-hd:not(.is-scrolled) .va-nav > a,
+.va:has(.va-pageheader--photo) .va-hd:not(.is-scrolled) .va-nav-item > a {
+  color: #fff;
+}
+.va:has(.va-pageheader--photo) .va-hd:not(.is-scrolled) .va-lang {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.va:has(.va-pageheader--photo) .va-hd:not(.is-scrolled) .va-lang button {
+  color: #fff;
+}
+.va:has(.va-pageheader--photo) .va-hd:not(.is-scrolled) .va-lang button.on {
+  background: #fff;
+  color: #0f3d7a;
+}

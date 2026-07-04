@@ -7,6 +7,7 @@ import { Icon, type IconName } from '@/components/ui/Icon';
 import { SmartImage } from '@/components/ui/SmartImage';
 import { PageHeader } from '@/components/public/PageHeader';
 import { TimelineArc } from '@/components/public/TimelineArc';
+import { WarehouseDeck } from '@/components/public/WarehouseDeck';
 import { Words } from '@/components/public/Words';
 import { getAboutSections, getCertifications } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
@@ -26,6 +27,49 @@ export async function generateMetadata({
     fallbackOgImage: '/assets/da-nguyen-lieu-cao-cap.webp',
   });
 }
+
+/** Captions for the warehouse image deck (images carry no CMS captions). */
+const WAREHOUSE_CAPTIONS: Record<Locale, { title: string; sub: string }[]> = {
+  vi: [
+    {
+      title: 'Kho thành phẩm',
+      sub: 'Thành phẩm đóng pallet, phân lô theo mã sản phẩm trước khi xuất.',
+    },
+    {
+      title: 'Bãi nguyên liệu',
+      sub: 'Đá nguyên khai tập kết theo phân vùng, sẵn sàng cho dây chuyền.',
+    },
+    {
+      title: 'Bốc xếp & vận chuyển',
+      sub: 'Thiết bị nâng hạ và đội xe vận hành liên tục trong ngày.',
+    },
+    {
+      title: 'Sẵn sàng xuất khẩu',
+      sub: 'Container niêm phong cùng chứng từ đầy đủ trước khi rời nhà máy.',
+    },
+  ],
+  en: [
+    {
+      title: 'Finished-goods warehouse',
+      sub: 'Palletised lots staged by product code before dispatch.',
+    },
+    { title: 'Raw-material yard', sub: 'Quarried stone staged by zone, ready for the lines.' },
+    {
+      title: 'Loading & transport',
+      sub: 'Lifting equipment and trucks running throughout the day.',
+    },
+    {
+      title: 'Export-ready',
+      sub: 'Sealed containers with full documentation before leaving the plant.',
+    },
+  ],
+  zh: [
+    { title: '成品仓库', sub: '成品按产品编码分批打托,待发货。' },
+    { title: '原料堆场', sub: '原石分区堆放,随时供应生产线。' },
+    { title: '装卸与运输', sub: '装卸设备与车队全天候运转。' },
+    { title: '出口就绪', sub: '集装箱封箱,单证齐备后出厂。' },
+  ],
+};
 
 /** Photo backdrops for the core-values cards (values have no CMS image). */
 const VALUE_IMAGES = [
@@ -56,6 +100,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         title={S.header.title}
         sub={S.header.sub}
         breadcrumb={[{ label: homeLabel, href: `/${loc}` }, { label: C.nav[1] }]}
+        bgImage="/assets/da-nguyen-lieu-cao-cap.webp"
       />
 
       {/* STORY */}
@@ -188,31 +233,14 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
               <Words text={S.warehouse.title} step={100} />
             </h2>
           </div>
-          <div className="ab-warehouse-grid" data-grow>
-            {S.warehouse.images[0] ? (
-              <div className="ab-wh-img">
-                <SmartImage src={S.warehouse.images[0]} alt="" width={1000} height={1200} />
-              </div>
-            ) : null}
-            <div className="ab-wh-col">
-              {S.warehouse.images[1] ? (
-                <div className="ab-wh-img">
-                  <SmartImage src={S.warehouse.images[1]} alt="" width={900} height={700} />
-                </div>
-              ) : null}
-              {S.warehouse.images[2] ? (
-                <div className="ab-wh-img">
-                  <SmartImage src={S.warehouse.images[2]} alt="" width={900} height={700} />
-                </div>
-              ) : null}
-            </div>
-            {S.warehouse.images[3] ? (
-              <div className="ab-wh-img">
-                <SmartImage src={S.warehouse.images[3]} alt="" width={1000} height={1200} />
-              </div>
-            ) : null}
-          </div>
         </div>
+        <WarehouseDeck
+          slides={S.warehouse.images.filter(Boolean).map((src, i) => ({
+            src,
+            title: WAREHOUSE_CAPTIONS[loc][i % WAREHOUSE_CAPTIONS[loc].length].title,
+            sub: WAREHOUSE_CAPTIONS[loc][i % WAREHOUSE_CAPTIONS[loc].length].sub,
+          }))}
+        />
       </section>
 
       {/* CERTS */}
