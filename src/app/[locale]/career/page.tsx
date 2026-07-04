@@ -5,6 +5,7 @@ import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Words } from '@/components/public/Words';
+import { PageHero } from '@/components/public/PageHero';
 import { getJobs, getCareersPageSections } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
@@ -49,57 +50,29 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
   return (
     <div className="cr">
       {/* HERO */}
-      <section className="cr-hero">
-        <div className="va-wrap">
-          <div className="cr-bcrumb">
-            <Link href={`/${loc}`}>
-              {loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ'}
-            </Link>
-            <Icon name="chevron" size={11} />
-            <span>{C.nav[3]}</span>
-          </div>
-          <div className="va-eyebrow" style={{ color: '#F08023' }} data-reveal>
-            {S.hero.eyebrow}
-          </div>
-          <h1 data-reveal="words">
-            <Words text={S.hero.title} step={120} />
-          </h1>
-          <p className="dim" data-reveal="words">
-            <Words text={S.hero.sub} step={40} from={500} />
-          </p>
-          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-            <a className="va-btn va-btn-p" href="#jobs">
-              {S.hero.ctaLabel} <Icon name="arrow" size={15} />
-            </a>
-            <Link className="cr-btn-w" href={`/${loc}/contact`}>
-              {loc === 'zh'
+      <PageHero
+        eyebrow={S.hero.eyebrow}
+        title={S.hero.title}
+        sub={S.hero.sub}
+        breadcrumb={[
+          { label: loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ', href: `/${loc}` },
+          { label: C.nav[3] },
+        ]}
+        bgImage="/assets/nha-may-bot-sieu-min-3.webp"
+        stats={S.hero.stats}
+        ctas={[
+          { label: S.hero.ctaLabel, href: '#jobs', primary: true },
+          {
+            label:
+              loc === 'zh'
                 ? '直接联系'
                 : loc === 'en'
                   ? 'Contact us directly'
-                  : 'Liên hệ trực tiếp'}
-            </Link>
-          </div>
-          {S.hero.stats.length > 0 ? (
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: `repeat(${S.hero.stats.length}, 1fr)`,
-                gap: 32,
-                marginTop: 36,
-              }}
-            >
-              {S.hero.stats.map((s, i) => (
-                <div key={i}>
-                  <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em' }}>
-                    {s.value}
-                  </div>
-                  <div style={{ fontSize: 13, opacity: 0.7 }}>{s.label}</div>
-                </div>
-              ))}
-            </div>
-          ) : null}
-        </div>
-      </section>
+                  : 'Liên hệ trực tiếp',
+            href: `/${loc}/contact`,
+          },
+        ]}
+      />
 
       {/* JOBS */}
       <section className="cr-section" id="jobs">

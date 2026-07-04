@@ -6268,3 +6268,31 @@ html.fx [data-reveal='words'].dim.in .wd {
   background: #fff;
   color: #0f3d7a;
 }
+
+/* =============================================================
+   V17 — SHARED PAGE HERO (home-hero layout on every sub-page)
+   ============================================================= */
+.va-pagehero {
+  min-height: 84svh;
+}
+.va-pagehero .va-hero4-in {
+  padding-top: clamp(130px, 18vh, 190px);
+}
+.va-pagehero-crumb {
+  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 1;
+}
+.va-pagehero-crumb a {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.85;
+}
+.va-pagehero-crumb a:hover {
+  color: #fff;
+  opacity: 1;
+}
+/* News: hero replaces the old compact head; keep the sticky sub-nav below */
+.nw .va-pagehero {
+  min-height: 78svh;
+}

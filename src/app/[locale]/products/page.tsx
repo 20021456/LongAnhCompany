@@ -4,7 +4,7 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { Icon } from '@/components/ui/Icon';
-import { PageHeader } from '@/components/public/PageHeader';
+import { PageHero } from '@/components/public/PageHero';
 import { ProductsBrowser } from '@/components/public/ProductsBrowser';
 import { Words } from '@/components/public/Words';
 import { getProducts, getProductsPageSections } from '@/lib/queries';
@@ -58,7 +58,7 @@ export default async function ProductsPage({ params: { locale } }: { params: { l
 
   return (
     <div className="pr">
-      <PageHeader
+      <PageHero
         eyebrow={S.header.eyebrow}
         title={S.header.title}
         sub={S.header.sub}
@@ -66,17 +66,9 @@ export default async function ProductsPage({ params: { locale } }: { params: { l
           { label: loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ', href: `/${loc}` },
           { label: C.nav[2] },
         ]}
+        bgImage="/assets/nha-may-bot-sieu-min-1.webp"
+        stats={S.stats.items}
       />
-
-      {/* STATS STRIP */}
-      <section className="pr-stats">
-        {S.stats.items.map((s, i) => (
-          <div key={i} className="pr-stat">
-            <b>{s.value}</b>
-            <span>{s.label}</span>
-          </div>
-        ))}
-      </section>
 
       {/* CATEGORY TILES + FILTERED PRODUCT BLOCKS + PARTICLE SIZE (client) */}
       <ProductsBrowser

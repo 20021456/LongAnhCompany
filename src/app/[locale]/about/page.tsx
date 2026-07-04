@@ -5,7 +5,7 @@ import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { SmartImage } from '@/components/ui/SmartImage';
-import { PageHeader } from '@/components/public/PageHeader';
+import { PageHero } from '@/components/public/PageHero';
 import { TimelineArc } from '@/components/public/TimelineArc';
 import { WarehouseDeck } from '@/components/public/WarehouseDeck';
 import { Words } from '@/components/public/Words';
@@ -95,7 +95,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
 
   return (
     <div className="ab">
-      <PageHeader
+      <PageHero
         eyebrow={S.header.eyebrow}
         title={S.header.title}
         sub={S.header.sub}
