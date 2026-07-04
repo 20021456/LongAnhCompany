@@ -27,6 +27,15 @@ export async function generateMetadata({
   });
 }
 
+/** Photo backdrops for the core-values cards (values have no CMS image). */
+const VALUE_IMAGES = [
+  '/assets/da-nguyen-lieu-cao-cap2.webp',
+  '/assets/nha-may-bot-sieu-min-3.webp',
+  '/assets/bao-bi-sieu-trang.jpg',
+  '/assets/kiem-dinh.jpg',
+  '/assets/co-so-ha-tang.jpg',
+];
+
 export default async function AboutPage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
   const loc = locale as Locale;
@@ -110,14 +119,24 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
               <Words text={S.values.title} step={100} />
             </h2>
           </div>
-          <div className="ab-vals">
+          <div className="ab-vals2">
             {S.values.items.map((it, i) => (
-              <div key={i} className="ab-val" data-reveal data-reveal-delay={String(i % 3)}>
-                <div className="ab-val-i">
-                  <Icon name={(it.icon || 'check') as IconName} size={24} />
+              <div key={i} className="ab-val2" data-reveal="clip" data-reveal-delay={String(i % 3)}>
+                <SmartImage
+                  src={VALUE_IMAGES[i % VALUE_IMAGES.length]}
+                  alt={it.name}
+                  width={800}
+                  height={1000}
+                  sizes="33vw"
+                />
+                <div className="ab-val2-shade" />
+                <div className="ab-val2-chip">
+                  <Icon name={(it.icon || 'check') as IconName} size={18} />
                 </div>
-                <h3>{it.name}</h3>
-                <p>{it.body}</p>
+                <div className="ab-val2-body">
+                  <h3>{it.name}</h3>
+                  <p>{it.body}</p>
+                </div>
               </div>
             ))}
           </div>
