@@ -5940,3 +5940,125 @@ html.fx [data-reveal='words'].dim.in .wd {
     height: clamp(320px, 46vh, 420px);
   }
 }
+
+/* =============================================================
+   V13 — SECTION LABELS UP + KETTAL-STYLE ABOUT EDITORIAL
+   ============================================================= */
+
+/* Section labels were smaller than their descriptions — give them
+   real presence with a leading rule, kettal-style. */
+.va-eyebrow,
+.ab-eyebrow,
+.pr-eyebrow {
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.va-shead2 .va-eyebrow::before,
+.va-shead2 .va-eyebrow::after {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--brand-accent, #f08023);
+  opacity: 0.7;
+}
+.ab-eyebrow::before,
+.pr-eyebrow::before,
+.va-shead .va-eyebrow::before,
+.va-tl-head .va-eyebrow::before,
+.cr-shead .va-eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--brand-accent, #f08023);
+  opacity: 0.7;
+}
+
+/* Story: offset duo images (large portrait + small overlapping shot) */
+.ab-intro-media {
+  position: relative;
+  padding-bottom: clamp(48px, 6vw, 90px);
+}
+.ab-intro-media .ab-intro-img {
+  aspect-ratio: 4 / 5;
+}
+.ab-intro-img2 {
+  position: absolute;
+  right: clamp(-24px, -2vw, -12px);
+  bottom: 0;
+  width: min(52%, 300px);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -30px rgba(14, 23, 38, 0.45);
+  border: 6px solid var(--va-bg, #fff);
+  z-index: 2;
+}
+.ab-intro-img2 > div,
+.ab-intro-img2 img {
+  width: 100%;
+  height: 100%;
+}
+.ab-intro-img2 img {
+  object-fit: cover;
+  display: block;
+}
+
+/* Capability metric values read as data — keep them steady while counting */
+.ab-cap-row span {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Warehouse collage: taller, grows to full-bleed while scrolling */
+.ab-warehouse-grid {
+  height: clamp(420px, 62vh, 600px);
+}
+
+/* CTA: full-photo closing band */
+.ab-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #0a2b57;
+  padding: clamp(64px, 9vw, 130px) clamp(28px, 5vw, 80px);
+}
+.ab-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(
+      100deg,
+      rgba(6, 20, 40, 0.9) 15%,
+      rgba(6, 20, 40, 0.55) 60%,
+      rgba(6, 20, 40, 0.75) 100%
+    ),
+    url('/assets/nha-may-bot-sieu-min.webp');
+  background-size: cover;
+  background-position: center;
+}
+.ab-cta h2 {
+  font-size: clamp(30px, 4.2vw, 56px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  max-width: 18ch;
+}
+.ab-cta p {
+  font-size: 16px;
+  opacity: 0.85;
+  max-width: 52ch;
+}
+@media (max-width: 980px) {
+  .ab-intro-media {
+    padding-bottom: 40px;
+  }
+  .ab-intro-img2 {
+    right: 0;
+  }
+  .ab-warehouse-grid {
+    height: auto;
+  }
+}

@@ -65,13 +65,20 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         </div>
         <div className="va-wrap">
           <div className="ab-intro">
-            <div className="ab-intro-img" data-reveal="clip">
-              <SmartImage
-                src={S.story.imageUrl}
-                alt={S.story.imageAlt}
-                width={1000}
-                height={1200}
-              />
+            <div className="ab-intro-media">
+              <div className="ab-intro-img" data-reveal="clip">
+                <SmartImage
+                  src={S.story.imageUrl}
+                  alt={S.story.imageAlt}
+                  width={1000}
+                  height={1200}
+                />
+              </div>
+              <div className="ab-intro-img2" data-reveal data-reveal-delay="2">
+                <div data-parallax="0.05">
+                  <SmartImage src={S.story.bgImageUrl} alt="" width={700} height={500} />
+                </div>
+              </div>
             </div>
             <div>
               <div className="ab-eyebrow" data-reveal>
@@ -160,10 +167,10 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
               {S.caps.sub ? <p data-reveal>{S.caps.sub}</p> : null}
               <div className="ab-caps-list">
                 {S.caps.metrics.map((m, i) => (
-                  <div key={i} className="ab-cap-row">
+                  <div key={i} className="ab-cap-row" data-reveal data-reveal-delay={String(i % 4)}>
                     <div className="ab-cap-n">— {String(i + 1).padStart(2, '0')}</div>
                     <h4>{m.label}</h4>
-                    <span>{m.value}</span>
+                    <span data-countup>{m.value}</span>
                   </div>
                 ))}
               </div>
@@ -188,7 +195,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
               </h2>
             </div>
           </div>
-          <div className="ab-warehouse-grid" data-reveal="clip">
+          <div className="ab-warehouse-grid" data-grow>
             {S.warehouse.images[0] ? (
               <div className="ab-wh-img">
                 <SmartImage src={S.warehouse.images[0]} alt="" width={1000} height={1200} />
@@ -270,7 +277,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
 
       {/* CTA */}
       <div className="va-wrap">
-        <div className="ab-cta" data-reveal="scale">
+        <div className="ab-cta" data-grow>
           <div>
             <div
               style={{
