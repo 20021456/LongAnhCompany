@@ -5444,36 +5444,48 @@ html.fx [data-reveal='clip'].in {
 .va-about4 {
   padding-bottom: 0;
 }
+/* Scroll-driven capability deck: tall outer track pins the split inside.
+   Height scales with the card count (~80vh of scroll per extra card). */
+.va-abrot-deck {
+  position: relative;
+  height: calc((var(--deck-n, 1) - 1) * 80svh + 100svh);
+}
 .va-abrot {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
   display: grid;
   grid-template-columns: 1.05fr 1fr;
-  min-height: calc(100svh - 74px);
 }
 .va-abrot-media {
   position: relative;
   overflow: hidden;
-  min-height: 420px;
+  min-height: 0;
 }
 .va-abrot-slide {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transform: scale(1.05);
-  transition:
-    opacity 1s cubic-bezier(0.2, 0.65, 0.25, 1),
-    transform 1.6s cubic-bezier(0.2, 0.65, 0.25, 1);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.65, 0.25, 1);
 }
 .va-abrot-slide.on {
   opacity: 1;
-  transform: scale(1);
 }
 .va-abrot-slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transform: scale(1.06);
+  transition: transform 1.4s cubic-bezier(0.2, 0.65, 0.25, 1);
+  will-change: transform;
+}
+.va-abrot-slide.on img {
+  transform: scale(1);
 }
 .va-abrot-panel {
+  position: relative;
   background: #c9b8a2;
   color: #191510;
   display: flex;
@@ -5482,6 +5494,29 @@ html.fx [data-reveal='clip'].in {
   gap: 44px;
   padding: clamp(36px, 5vw, 76px) clamp(24px, 4vw, 80px) clamp(26px, 3.5vw, 44px)
     clamp(32px, 4.5vw, 72px);
+}
+/* Stories are stacked and clipped; the stack owns the panel's free height. */
+.va-abrot-stack {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+/* Stories are stacked; only the active one is shown. Text crossfades
+   between cards so the title + body are always fully in view at rest. */
+.va-abrot-story {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.55s cubic-bezier(0.2, 0.65, 0.25, 1),
+    transform 0.55s cubic-bezier(0.2, 0.65, 0.25, 1);
+  pointer-events: none;
+}
+.va-abrot-story.on {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
 }
 .va-abrot-num {
   font-family: ui-monospace, Menlo, monospace;
@@ -5548,15 +5583,10 @@ html.fx [data-reveal='clip'].in {
   background: rgba(25, 21, 16, 0.22);
   overflow: hidden;
   margin-bottom: 10px;
+  transition: background 0.3s;
 }
-.va-abrot-nav .fill {
-  display: block;
-  height: 100%;
-  width: 100%;
+.va-abrot-nav button.on .seg {
   background: #191510;
-  transform-origin: left;
-  transform: scaleX(0);
-  animation: la-sc-progress linear both;
 }
 .va-abrot-nav .tag {
   font-size: 11px;
@@ -5606,15 +5636,53 @@ html.fx [data-reveal='clip'].in {
     width: min(78vw, 360px);
     height: clamp(430px, 56vh, 540px);
   }
+  /* No pin on small screens: a plain stacked list (banner photo + cards). */
+  .va-abrot-deck {
+    height: auto;
+  }
   .va-abrot {
-    grid-template-columns: 1fr;
-    min-height: 0;
+    position: static;
+    display: block;
+    height: auto;
+    overflow: visible;
   }
   .va-abrot-media {
-    aspect-ratio: 16 / 11;
+    position: relative;
+    aspect-ratio: 16 / 10;
     min-height: 0;
   }
-  .va-abrot-nav .tag {
+  .va-abrot-media .va-abrot-slide {
+    display: none;
+    clip-path: none !important;
+  }
+  .va-abrot-media .va-abrot-slide:first-child {
+    display: block;
+  }
+  .va-abrot-panel {
+    height: auto;
+    padding: clamp(28px, 8vw, 44px) clamp(20px, 6vw, 32px) clamp(24px, 6vw, 40px);
+    gap: 0;
+  }
+  .va-abrot-stack {
+    position: static;
+  }
+  .va-abrot-story {
+    position: static;
+    inset: auto;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    padding: 26px 0;
+    border-top: 1px solid rgba(25, 21, 16, 0.16);
+  }
+  .va-abrot-story:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .va-abrot-story h3 {
+    margin-bottom: 12px;
+  }
+  .va-abrot-nav {
     display: none;
   }
 }
@@ -5724,6 +5792,48 @@ html.fx [data-reveal='words'].dim.in .wd {
   }
   [data-grow] {
     margin-inline: 0 !important;
+  }
+  /* Reduced motion: no pin/scrub — the capability deck becomes a static
+     stacked list (banner photo + all cards visible). */
+  .va-abrot-deck {
+    height: auto !important;
+  }
+  .va-abrot {
+    position: static !important;
+    display: block;
+    height: auto;
+    overflow: visible;
+  }
+  .va-abrot-media {
+    aspect-ratio: 16 / 9;
+  }
+  .va-abrot-media .va-abrot-slide {
+    display: none;
+    clip-path: none !important;
+  }
+  .va-abrot-media .va-abrot-slide:first-child {
+    display: block;
+  }
+  .va-abrot-panel {
+    height: auto;
+  }
+  .va-abrot-stack {
+    position: static;
+  }
+  .va-abrot-story {
+    position: static;
+    inset: auto;
+    opacity: 1;
+    transform: none;
+    padding: 26px 0;
+    border-top: 1px solid rgba(25, 21, 16, 0.16);
+  }
+  .va-abrot-story:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .va-abrot-nav {
+    display: none;
   }
 }
 
@@ -5843,24 +5953,10 @@ html.fx [data-reveal='words'].dim.in .wd {
    V11 — PHOTO VALUE CARDS + HOVER-REVEALED ROTATOR NAV
    ============================================================= */
 
-/* About rotator: nav hidden until the block is hovered */
+/* Scroll-driven deck: nav is the scroll position indicator, always visible. */
 .va-abrot-nav {
-  opacity: 0;
-  transform: translateY(10px);
-  transition:
-    opacity 0.45s cubic-bezier(0.2, 0.65, 0.25, 1),
-    transform 0.45s cubic-bezier(0.2, 0.65, 0.25, 1);
-}
-.va-abrot:hover .va-abrot-nav,
-.va-abrot:focus-within .va-abrot-nav {
   opacity: 1;
   transform: none;
-}
-@media (hover: none) {
-  .va-abrot-nav {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 /* Core values as full-photo editorial cards */
@@ -6108,6 +6204,15 @@ html.fx [data-reveal='words'].dim.in .wd {
 .va-whdeck {
   position: relative;
 }
+@media (min-width: 981px) {
+  .va-whdeck {
+    height: calc((var(--deck-n, 4) - 1) * 78vh + 100vh);
+  }
+  /* Before JS runs, keep every photo but the first pulled up out of view */
+  .va-whdeck-slide:not(:first-child) .va-whdeck-media {
+    clip-path: inset(0 0 100% 0);
+  }
+}
 .va-whdeck-sticky {
   position: sticky;
   top: 0;
@@ -6119,13 +6224,12 @@ html.fx [data-reveal='words'].dim.in .wd {
 .va-whdeck-slide {
   position: absolute;
   inset: 0;
-  will-change: clip-path;
   isolation: isolate;
 }
 .va-whdeck-media {
   position: absolute;
   inset: 0;
-  will-change: transform;
+  will-change: clip-path;
 }
 .va-whdeck-media img {
   width: 100%;
@@ -6145,13 +6249,23 @@ html.fx [data-reveal='words'].dim.in .wd {
   );
   z-index: 1;
 }
+/* Caption never clips — it crossfades to the active slide */
 .va-whdeck-cap {
   position: absolute;
   left: clamp(24px, 4vw, 80px);
   bottom: clamp(28px, 5vh, 56px);
-  z-index: 2;
+  z-index: 3;
   color: #fff;
   max-width: min(560px, 80%);
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.6s cubic-bezier(0.2, 0.65, 0.25, 1),
+    transform 0.6s cubic-bezier(0.2, 0.65, 0.25, 1);
+}
+.va-whdeck-slide.on .va-whdeck-cap {
+  opacity: 1;
+  transform: none;
 }
 .va-whdeck-cap .num {
   display: block;
@@ -6180,7 +6294,7 @@ html.fx [data-reveal='words'].dim.in .wd {
   position: absolute;
   right: clamp(24px, 4vw, 80px);
   bottom: clamp(28px, 5vh, 56px);
-  z-index: 2;
+  z-index: 3;
   color: rgba(255, 255, 255, 0.75);
   font-family: ui-monospace, Menlo, monospace;
   font-size: 13px;
@@ -6188,6 +6302,28 @@ html.fx [data-reveal='words'].dim.in .wd {
 }
 .va-whdeck-count span {
   color: #fff;
+}
+/* Mobile / reduced-motion: plain stacked list, nothing pinned or clipped */
+@media (max-width: 980px) {
+  .va-whdeck-sticky {
+    position: static;
+    height: auto;
+  }
+  .va-whdeck-slide {
+    position: relative;
+    inset: auto;
+    height: 62svh;
+  }
+  .va-whdeck-media {
+    clip-path: none !important;
+  }
+  .va-whdeck-cap {
+    opacity: 1;
+    transform: none;
+  }
+  .va-whdeck-count {
+    display: none;
+  }
 }
 
 /* Photo page header (About): full image, dark grade, white type */
@@ -6295,4 +6431,28 @@ html.fx [data-reveal='words'].dim.in .wd {
 /* News: hero replaces the old compact head; keep the sticky sub-nav below */
 .nw .va-pagehero {
   min-height: 78svh;
+}
+
+/* =============================================================
+   V19 — ANCHOR OFFSET + MOBILE TOP-BAR
+   ============================================================= */
+
+/* Sticky header (74px) must not cover anchored sections */
+.va section[id],
+.va [id].va-section,
+.va .va-wrap[id] {
+  scroll-margin-top: 90px;
+}
+
+/* Mobile utility strip: keep only the hotline so it never overflows */
+@media (max-width: 640px) {
+  .va-strip-in {
+    justify-content: center;
+  }
+  .va-strip-r {
+    display: none;
+  }
+  .va-strip {
+    font-size: 11.5px;
+  }
 }

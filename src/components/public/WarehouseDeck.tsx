@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SmartImage } from '@/components/ui/SmartImage';
 
 interface Slide {
@@ -13,50 +13,47 @@ interface Props {
   slides: Slide[];
 }
 
-/** Scroll length allotted to each pull, in viewport heights. */
-const PER_VH = 85;
-
 /**
- * Kettal-style scroll-driven image deck. The section pins to a full-screen
- * stage; as you scroll, the next photo is pulled down from the top over the
- * previous one (scrubbed clip-path + a slight settle of the image), each
- * slide carrying its own caption. Pure scroll-position work — no hijacking —
- * so it rides on the site's smooth-scroll engine and works on touch.
+ * Kettal-style scroll-driven image deck. On desktop the section pins to a
+ * full-screen stage and, as you scroll, the next PHOTO is pulled down over the
+ * previous one (scrubbed clip-path — decoration only). The caption (number +
+ * title + sub) never moves or clips: it simply crossfades to the active slide,
+ * so text always sits fully in view when you stop. On mobile / reduced-motion
+ * the effect drops to a plain stacked list (no pinning, nothing cut).
  */
 export function WarehouseDeck({ slides }: Props) {
   const secRef = useRef<HTMLDivElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
-  const countRef = useRef<HTMLSpanElement>(null);
+  const [active, setActive] = useState(0);
   const n = slides.length;
 
   useEffect(() => {
     if (n < 2) return;
     const sec = secRef.current;
-    const sticky = stickyRef.current;
-    if (!sec || !sticky) return;
-    const slideEls = Array.from(sticky.querySelectorAll<HTMLElement>('.va-whdeck-slide'));
-    const mediaEls = slideEls.map((el) => el.querySelector<HTMLElement>('.va-whdeck-media'));
+    if (!sec) return;
+    const mqDesktop = window.matchMedia('(min-width: 981px)');
+    const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const imgs = () => Array.from(sec.querySelectorAll<HTMLElement>('.va-whdeck-media'));
 
     let raf = 0;
     const onScroll = () => {
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
+        if (!mqDesktop.matches || mqReduce.matches) {
+          imgs().forEach((m) => (m.style.clipPath = ''));
+          return;
+        }
         const vh = window.innerHeight;
         const total = sec.offsetHeight - vh || 1;
         const p = Math.min(1, Math.max(0, -sec.getBoundingClientRect().top / total));
         const f = p * (n - 1);
+        const ms = imgs();
         for (let i = 1; i < n; i++) {
-          const el = slideEls[i];
-          if (!el) continue;
           const local = Math.min(1, Math.max(0, f - (i - 1)));
-          el.style.clipPath = `inset(0 0 ${((1 - local) * 100).toFixed(2)}% 0)`;
-          const media = mediaEls[i];
-          if (media) media.style.transform = `translate3d(0, ${((1 - local) * -8).toFixed(2)}%, 0)`;
+          if (ms[i]) ms[i].style.clipPath = `inset(0 0 ${((1 - local) * 100).toFixed(2)}% 0)`;
         }
-        if (countRef.current) {
-          countRef.current.textContent = String(Math.round(f) + 1).padStart(2, '0');
-        }
+        if (ms[0]) ms[0].style.clipPath = 'inset(0 0 0 0)';
+        setActive(Math.round(f));
       });
     };
     onScroll();
@@ -72,22 +69,18 @@ export function WarehouseDeck({ slides }: Props) {
   if (n === 0) return null;
 
   return (
-    <div
-      className="va-whdeck"
-      ref={secRef}
-      style={{ height: n > 1 ? `${(n - 1) * PER_VH + 100}vh` : '100vh' }}
-    >
-      <div className="va-whdeck-sticky" ref={stickyRef}>
+    <div className="va-whdeck" ref={secRef} style={{ ['--deck-n' as string]: n }}>
+      <div className="va-whdeck-sticky">
         {slides.map((s, i) => (
           <div
             key={i}
-            className="va-whdeck-slide"
-            style={i > 0 ? { clipPath: 'inset(0 0 100% 0)' } : undefined}
+            className={'va-whdeck-slide' + (i === active ? ' on' : '')}
+            style={{ zIndex: i + 1 }}
           >
             <div className="va-whdeck-media">
               <SmartImage src={s.src} alt={s.title} width={2000} height={1300} sizes="100vw" />
+              <div className="va-whdeck-shade" />
             </div>
-            <div className="va-whdeck-shade" />
             <div className="va-whdeck-cap">
               <span className="num">{String(i + 1).padStart(2, '0')}</span>
               <b>{s.title}</b>
@@ -96,7 +89,7 @@ export function WarehouseDeck({ slides }: Props) {
           </div>
         ))}
         <div className="va-whdeck-count">
-          <span ref={countRef}>01</span> / {String(n).padStart(2, '0')}
+          <span>{String(active + 1).padStart(2, '0')}</span> / {String(n).padStart(2, '0')}
         </div>
       </div>
     </div>
