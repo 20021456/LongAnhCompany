@@ -144,7 +144,8 @@ export function ScrollFx() {
     const LERP = 0.11; // 0..1 — lower = heavier glide
     const FLICK = 200; // accumulated |deltaY| that counts as a flick
     const PEAK = 60; // a single event must reach this (mouse notch, not trackpad drift)
-    const GAP = 200; // ms of quiet that resets the accumulator
+    const GAP = 180; // ms of wheel silence that ends a gesture
+    const BURST = 320; // a flick's events all land within this window
 
     let target = window.scrollY;
     let current = window.scrollY;
@@ -152,7 +153,9 @@ export function ScrollFx() {
     let accum = 0;
     let peak = 0;
     let lastT = 0;
-    let flickLock = 0;
+    let burstStart = 0;
+    let burstFromY = 0;
+    let flickTimer = 0;
 
     const maxScroll = () =>
       Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
@@ -192,38 +195,47 @@ export function ScrollFx() {
       if (!fine || e.ctrlKey || e.deltaY === 0) return;
       e.preventDefault();
       const now = performance.now();
-      // Swallow the tail of a flick while it settles onto the frame
-      if (now < flickLock) return;
       // Re-sync to the real position if the engine was idle (scrollbar/keys)
       if (!smoothing) {
         current = window.scrollY;
         target = window.scrollY;
       }
-      // Flick detection (frame pages only)
-      if (paged) {
-        if (now - lastT > GAP || (accum !== 0 && Math.sign(e.deltaY) !== Math.sign(accum))) {
-          accum = 0;
-          peak = 0;
-        }
-        lastT = now;
-        accum += e.deltaY;
-        peak = Math.max(peak, Math.abs(e.deltaY));
-        if (Math.abs(accum) >= FLICK && peak >= PEAK) {
-          const dir = accum > 0 ? 1 : -1;
-          const stop = adjacentStop(dir, target);
-          accum = 0;
-          peak = 0;
-          if (stop != null) {
-            target = stop;
-            flickLock = now + 600;
-            startLoop();
-            return;
-          }
-        }
+      // Gesture bookkeeping (reset on a pause or a reversal)
+      if (now - lastT > GAP || (accum !== 0 && Math.sign(e.deltaY) !== Math.sign(accum))) {
+        accum = 0;
+        peak = 0;
       }
-      // Ordinary smooth scroll
+      if (accum === 0) {
+        burstStart = now;
+        burstFromY = target;
+      }
+      lastT = now;
+      accum += e.deltaY;
+      peak = Math.max(peak, Math.abs(e.deltaY));
+
+      // Every event scrolls smoothly — input is never frozen, so continuous
+      // rolling stays perfectly fluid.
       target = Math.max(0, Math.min(maxScroll(), target + e.deltaY));
       startLoop();
+
+      // Frame pages: decide about paging only once the wheel goes quiet.
+      // A short, strong burst (a flick) glides on to the next frame; a
+      // sustained roll never pages.
+      if (paged) {
+        window.clearTimeout(flickTimer);
+        flickTimer = window.setTimeout(() => {
+          const quickBurst = lastT - burstStart <= BURST;
+          if (quickBurst && Math.abs(accum) >= FLICK && peak >= PEAK) {
+            const stop = adjacentStop(accum > 0 ? 1 : -1, burstFromY);
+            if (stop != null) {
+              target = stop;
+              startLoop();
+            }
+          }
+          accum = 0;
+          peak = 0;
+        }, GAP);
+      }
     };
     const onScrollSync = () => {
       onScroll();
@@ -244,6 +256,7 @@ export function ScrollFx() {
       window.removeEventListener('scroll', onScrollSync);
       window.removeEventListener('resize', onScroll);
       window.removeEventListener('wheel', onWheel);
+      window.clearTimeout(flickTimer);
       if (raf) cancelAnimationFrame(raf);
     };
   }, [pathname]);
