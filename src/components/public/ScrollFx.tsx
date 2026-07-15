@@ -150,6 +150,10 @@ export function ScrollFx() {
     let target = window.scrollY;
     let current = window.scrollY;
     let smoothing = false;
+    let smoothRaf = 0;
+    // Route changes remount this effect; a glide still easing from the OLD
+    // page must die immediately or it drags the NEW page to the old offset.
+    let alive = true;
     let accum = 0;
     let peak = 0;
     let lastT = 0;
@@ -160,6 +164,7 @@ export function ScrollFx() {
     const maxScroll = () =>
       Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     const loop = () => {
+      if (!alive) return;
       const diff = target - current;
       if (Math.abs(diff) < 0.4) {
         current = target;
@@ -169,12 +174,12 @@ export function ScrollFx() {
       }
       current += diff * LERP;
       window.scrollTo({ top: current, behavior: 'instant' as ScrollBehavior });
-      requestAnimationFrame(loop);
+      smoothRaf = requestAnimationFrame(loop);
     };
     const startLoop = () => {
       if (!smoothing) {
         smoothing = true;
-        requestAnimationFrame(loop);
+        smoothRaf = requestAnimationFrame(loop);
       }
     };
     const adjacentStop = (dir: number, y: number): number | null => {
@@ -253,6 +258,7 @@ export function ScrollFx() {
     if (fine) window.addEventListener('wheel', onWheel, { passive: false });
 
     return () => {
+      alive = false;
       io.disconnect();
       ioCu.disconnect();
       window.removeEventListener('scroll', onScrollSync);
@@ -260,6 +266,7 @@ export function ScrollFx() {
       window.removeEventListener('wheel', onWheel);
       window.clearTimeout(flickTimer);
       if (raf) cancelAnimationFrame(raf);
+      if (smoothRaf) cancelAnimationFrame(smoothRaf);
     };
   }, [pathname]);
 
