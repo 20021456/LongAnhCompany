@@ -91,9 +91,9 @@ export const NEWS: NewsItem[] = [
       zh: '5月报价:1.6×2.4米大板和出口碳酸钙价目表',
     },
     excerpt: {
-      vi: 'Cập nhật giá FOB tháng 5/2026 cho đá Slab tấm lớn và bột đá CaCO₃ uncoated/coated với 7 cỡ hạt từ 4 đến 20 µm.',
-      en: 'May 2026 FOB pricing update for large-format Slab and uncoated/coated CaCO₃ powder in 7 particle sizes from 4 to 20 µm.',
-      zh: '2026年5月大板和未涂层/涂层碳酸钙粉的FOB报价更新,4至20微米共7种粒径。',
+      vi: 'Cập nhật giá FOB tháng 5/2026 cho đá Slab tấm lớn và bột đá CaCO₃ uncoated/coated với 7 cỡ hạt từ 3 đến 20 µm.',
+      en: 'May 2026 FOB pricing update for large-format Slab and uncoated/coated CaCO₃ powder in 7 particle sizes from 3 to 20 µm.',
+      zh: '2026年5月大板和未涂层/涂层碳酸钙粉的FOB报价更新,3至20微米共7种粒径。',
     },
   },
   {

@@ -35,13 +35,13 @@ export function ContactNoteForm({ contactId }: { contactId: string }) {
         </div>
       ) : null}
       <textarea
-        className="lac-textarea"
+        className="ad-textarea"
         placeholder="Thêm ghi chú nội bộ về lead này…"
         value={note}
         onChange={(e) => setNote(e.target.value)}
       />
       <div style={{ marginTop: 8 }}>
-        <button type="submit" className="lac-btn primary sm" disabled={busy || !note.trim()}>
+        <button type="submit" className="ad-btn primary sm" disabled={busy || !note.trim()}>
           <AdminIcon name="plus" size={13} />
           {busy ? 'Đang lưu…' : 'Thêm ghi chú'}
         </button>

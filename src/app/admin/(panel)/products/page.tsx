@@ -20,7 +20,6 @@ export default async function AdminProductsPage() {
   const rows: ProductRow[] = products.map((p) => ({
     id: p.id,
     code: p.code,
-    slug: p.slug,
     nameVi: p.nameVi,
     summaryVi: p.summaryVi ?? '',
     categoryId: p.categoryId,
@@ -41,7 +40,7 @@ export default async function AdminProductsPage() {
         title="Sản phẩm"
         sub={`${rows.length} sản phẩm · ${activeCount} đang hiển thị · ${rows.length - activeCount} đã ẩn`}
         actions={
-          <Link href="/admin/products/new" className="lac-btn primary">
+          <Link href="/admin/products/new" className="ad-btn primary">
             <AdminIcon name="plus" size={15} /> Thêm sản phẩm
           </Link>
         }

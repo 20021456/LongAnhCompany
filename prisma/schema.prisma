@@ -7,8 +7,7 @@
 //   npx prisma db seed
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -150,7 +149,7 @@ model Product {
   nameVi         String
   nameEn         String?
   nameZh         String?
-  summaryVi      String?                     // "Uncoated · 4–20 µm" — short spec line under name
+  summaryVi      String?                     // "Uncoated · 3–20 µm" — short spec line under name
   summaryEn      String?
   summaryZh      String?
   shortDescVi    String?

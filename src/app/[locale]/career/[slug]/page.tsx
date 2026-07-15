@@ -5,7 +5,6 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { getJobs } from '@/lib/queries';
 import { Icon } from '@/components/ui/Icon';
-import { ApplyForm } from '@/components/public/ApplyForm';
 import { hreflangAlternates, siteUrl } from '@/lib/site-url';
 import { JsonLd, jobPostingSchema, breadcrumbSchema } from '@/components/seo/JsonLd';
 import { db } from '@/lib/db';
@@ -315,7 +314,18 @@ export default async function JobDetailPage({
                     </div>
                     <h2>{t.howToApply}</h2>
                   </div>
-                  <ApplyForm jobSlug={params.slug} locale={loc} />
+                  <div className="jd-apply">
+                    <h3>{t.applyNow}</h3>
+                    <p>{t.applyText}</p>
+                    <div className="jd-apply-row">
+                      <a className="jd-btn jd-btn-p" href={mailto}>
+                        <Icon name="mail" size={16} /> {t.sendCv}
+                      </a>
+                      <a className="jd-btn jd-btn-g" href="mailto:hr@longanhcorp.com">
+                        hr@longanhcorp.com
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

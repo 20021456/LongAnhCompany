@@ -169,8 +169,8 @@ export function AdminSidebar({ role, permissions }: Props) {
   });
 
   return (
-    <aside className="lac-side">
-      <Link href="/admin/dashboard" className="lac-side-brand">
+    <aside className="ad-side">
+      <Link href="/admin/dashboard" className="ad-side-brand">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/assets/long-anh-logo.png" alt="Long Anh" />
         <div className="name">
@@ -178,26 +178,26 @@ export function AdminSidebar({ role, permissions }: Props) {
           <small>Admin</small>
         </div>
       </Link>
-      <nav className="lac-side-nav">
+      <nav className="ad-side-nav">
         {visible.map((entry, i) =>
           entry.type === 'section' ? (
-            <div key={`s-${i}`} className="lac-side-section">
+            <div key={`s-${i}`} className="ad-side-section">
               {entry.label}
             </div>
           ) : (
             <Link
               key={entry.id}
               href={entry.href}
-              className={'lac-side-item' + (pathname.startsWith(entry.href) ? ' active' : '')}
+              className={'ad-side-item' + (pathname.startsWith(entry.href) ? ' active' : '')}
             >
               <AdminIcon name={entry.icon} size={17} />
               <span>{entry.label}</span>
-              {entry.badge ? <span className="lac-side-badge">{entry.badge}</span> : null}
+              {entry.badge ? <span className="ad-side-badge">{entry.badge}</span> : null}
             </Link>
           ),
         )}
       </nav>
-      <div className="lac-side-foot">
+      <div className="ad-side-foot">
         <AdminIcon name="check" size={13} /> Hệ thống ổn định · v1.0
       </div>
     </aside>

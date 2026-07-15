@@ -106,8 +106,8 @@ function AddPanel({ onDone, folders }: { onDone: () => void; folders: MediaFolde
   }
 
   return (
-    <div className="lac-card" style={{ marginBottom: 14 }}>
-      <div className="lac-card-head">
+    <div className="ad-card" style={{ marginBottom: 14 }}>
+      <div className="ad-card-head">
         <div>
           <h3>Thêm ảnh vào thư viện</h3>
           <p>
@@ -115,7 +115,7 @@ function AddPanel({ onDone, folders }: { onDone: () => void; folders: MediaFolde
             <code>/public</code>).
           </p>
         </div>
-        <label className="lac-btn" style={{ cursor: uploading ? 'wait' : 'pointer' }}>
+        <label className="ad-btn" style={{ cursor: uploading ? 'wait' : 'pointer' }}>
           <AdminIcon name="upload" size={14} />
           {uploading ? 'Đang tải lên…' : 'Tải ảnh từ máy'}
           <input
@@ -127,7 +127,7 @@ function AddPanel({ onDone, folders }: { onDone: () => void; folders: MediaFolde
           />
         </label>
       </div>
-      <div className="lac-card-body">
+      <div className="ad-card-body">
         {state?.error ? (
           <div className="lg-err" style={{ marginBottom: 12 }}>
             <AdminIcon name="shield" size={14} />
@@ -138,7 +138,7 @@ function AddPanel({ onDone, folders }: { onDone: () => void; folders: MediaFolde
           <FieldRow>
             <Field label="Đường dẫn ảnh" required help="Tự điền sau khi tải ảnh từ máy.">
               <input
-                className="lac-input"
+                className="ad-input"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="/assets/products/p-01.jpg"
@@ -147,7 +147,7 @@ function AddPanel({ onDone, folders }: { onDone: () => void; folders: MediaFolde
             </Field>
             <Field label="Tên hiển thị" help="Để trống sẽ lấy theo tên tệp.">
               <input
-                className="lac-input"
+                className="ad-input"
                 value={filename}
                 onChange={(e) => setFilename(e.target.value)}
                 placeholder="Bột đá CaCO₃"
@@ -157,7 +157,7 @@ function AddPanel({ onDone, folders }: { onDone: () => void; folders: MediaFolde
           <FieldRow>
             <Field label="Folder">
               <select
-                className="lac-select"
+                className="ad-select"
                 value={folderId}
                 onChange={(e) => setFolderId(e.target.value)}
               >
@@ -171,14 +171,14 @@ function AddPanel({ onDone, folders }: { onDone: () => void; folders: MediaFolde
             </Field>
             <Field label="Mô tả ảnh (alt — VI)">
               <input
-                className="lac-input"
+                className="ad-input"
                 value={altVi}
                 onChange={(e) => setAltVi(e.target.value)}
                 placeholder="Đá nguyên liệu cao cấp Long Anh"
               />
             </Field>
           </FieldRow>
-          <button type="submit" className="lac-btn primary" disabled={busy}>
+          <button type="submit" className="ad-btn primary" disabled={busy}>
             <AdminIcon name="upload" size={15} />
             {busy ? 'Đang thêm…' : 'Thêm vào thư viện'}
           </button>
@@ -284,13 +284,13 @@ function DetailPanel({ item }: { item: MediaItem }) {
           <dd>{item.folderName ?? 'Chưa phân loại'}</dd>
           <dt>Đường dẫn</dt>
           <dd style={{ wordBreak: 'break-all' }}>
-            <span className="lac-code">{item.url}</span>
+            <span className="ad-code">{item.url}</span>
           </dd>
         </dl>
 
         <Field label="Alt text (VI)" required help="Mô tả ảnh cho SEO & screen readers">
           <input
-            className="lac-input"
+            className="ad-input"
             value={altVi}
             disabled={!editing}
             onChange={(e) => setAltVi(e.target.value)}
@@ -301,21 +301,21 @@ function DetailPanel({ item }: { item: MediaItem }) {
           <>
             <Field label="Tên hiển thị" required>
               <input
-                className="lac-input"
+                className="ad-input"
                 value={filename}
                 onChange={(e) => setFilename(e.target.value)}
               />
             </Field>
             <Field label="Alt text (EN)">
               <input
-                className="lac-input"
+                className="ad-input"
                 value={altEn}
                 onChange={(e) => setAltEn(e.target.value)}
               />
             </Field>
             <Field label="Alt text (ZH)">
               <input
-                className="lac-input"
+                className="ad-input"
                 value={altZh}
                 onChange={(e) => setAltZh(e.target.value)}
               />
@@ -333,7 +333,7 @@ function DetailPanel({ item }: { item: MediaItem }) {
         <Field label="Caption" help="Chú thích hiển thị kèm ảnh.">
           {editing ? (
             <textarea
-              className="lac-textarea"
+              className="ad-textarea"
               style={{ minHeight: 60 }}
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
@@ -352,9 +352,9 @@ function DetailPanel({ item }: { item: MediaItem }) {
           {editing ? (
             <PeTags tags={tags} onChange={setTags} />
           ) : tags.length > 0 ? (
-            <div className="lac-tags">
+            <div className="ad-tags">
               {tags.map((t) => (
-                <span key={t} className="lac-tag">
+                <span key={t} className="ad-tag">
                   {t}
                 </span>
               ))}
@@ -390,12 +390,12 @@ function DetailPanel({ item }: { item: MediaItem }) {
       <div className="actions">
         {editing ? (
           <>
-            <button type="button" className="lac-btn sm primary" disabled={busy} onClick={onSave}>
+            <button type="button" className="ad-btn sm primary" disabled={busy} onClick={onSave}>
               <AdminIcon name="check" size={12} /> {busy ? 'Đang lưu…' : 'Lưu'}
             </button>
             <button
               type="button"
-              className="lac-btn sm ghost"
+              className="ad-btn sm ghost"
               disabled={busy}
               onClick={() => setEditing(false)}
             >
@@ -406,7 +406,7 @@ function DetailPanel({ item }: { item: MediaItem }) {
           <>
             <button
               type="button"
-              className="lac-btn ghost sm"
+              className="ad-btn ghost sm"
               onClick={() => setEditing(true)}
               title="Sửa thông tin"
               aria-label="Sửa thông tin"
@@ -415,7 +415,7 @@ function DetailPanel({ item }: { item: MediaItem }) {
             </button>
             <button
               type="button"
-              className="lac-btn ghost sm"
+              className="ad-btn ghost sm"
               disabled
               title="Crop (Phase 7)"
               aria-label="Crop ảnh"
@@ -424,7 +424,7 @@ function DetailPanel({ item }: { item: MediaItem }) {
             </button>
             <button
               type="button"
-              className="lac-btn ghost sm"
+              className="ad-btn ghost sm"
               disabled
               title="Replace (Phase 7)"
               aria-label="Thay ảnh"
@@ -432,7 +432,7 @@ function DetailPanel({ item }: { item: MediaItem }) {
               <AdminIcon name="refresh" size={12} />
             </button>
             <a
-              className="lac-btn ghost sm"
+              className="ad-btn ghost sm"
               href={item.url}
               target="_blank"
               rel="noreferrer"
@@ -447,17 +447,17 @@ function DetailPanel({ item }: { item: MediaItem }) {
         <div style={{ flex: 1 }} />
         {!editing && confirming ? (
           <>
-            <button type="button" className="lac-btn sm danger" disabled={busy} onClick={onDelete}>
+            <button type="button" className="ad-btn sm danger" disabled={busy} onClick={onDelete}>
               {busy ? '…' : 'Xác nhận xoá'}
             </button>
-            <button type="button" className="lac-btn sm ghost" onClick={() => setConfirming(false)}>
+            <button type="button" className="ad-btn sm ghost" onClick={() => setConfirming(false)}>
               Huỷ
             </button>
           </>
         ) : !editing ? (
           <button
             type="button"
-            className="lac-btn ghost sm"
+            className="ad-btn ghost sm"
             onClick={() => setConfirming(true)}
             title="Xoá ảnh"
             aria-label="Xoá ảnh"
@@ -563,13 +563,13 @@ export function MediaLibrary({
         sub={`${items.length} ảnh${sizeLabel} · auto-WebP convert đang bật`}
         actions={
           <>
-            <button type="button" className="lac-btn" disabled title="Phase 7 — tạo folder mới">
+            <button type="button" className="ad-btn" disabled title="Phase 7 — tạo folder mới">
               <AdminIcon name="folder" size={13} /> Tạo folder
             </button>
             {canUpload ? (
               <button
                 type="button"
-                className="lac-btn primary"
+                className="ad-btn primary"
                 onClick={() => setShowAdd((v) => !v)}
               >
                 <AdminIcon name="upload" size={13} />
@@ -593,7 +593,7 @@ export function MediaLibrary({
       ) : null}
 
       {items.length === 0 ? (
-        <div className="lac-empty">
+        <div className="ad-empty">
           Thư viện trống. {canUpload ? 'Bấm “Upload ảnh” ở góc phải để đăng ký ảnh đầu tiên.' : ''}
         </div>
       ) : (
@@ -666,18 +666,18 @@ export function MediaLibrary({
           </div>
 
           <div className="mb-main">
-            <div className="lac-toolbar" style={{ background: '#fff' }}>
-              <div className="lac-search-box" style={{ width: 240 }}>
+            <div className="ad-toolbar" style={{ background: '#fff' }}>
+              <div className="ad-search-box" style={{ width: 240 }}>
                 <AdminIcon name="search" size={14} />
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder="Tìm theo tên, alt…"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
               </div>
               <select
-                className="lac-select"
+                className="ad-select"
                 style={{ width: 130 }}
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
@@ -689,7 +689,7 @@ export function MediaLibrary({
                 <option value="other">Khác</option>
               </select>
               <select
-                className="lac-select"
+                className="ad-select"
                 style={{ width: 130 }}
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}

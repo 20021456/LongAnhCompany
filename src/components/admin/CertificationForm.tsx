@@ -77,16 +77,16 @@ export function CertificationForm({ initial }: { initial: CertificationFormValue
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="lac-card">
-            <div className="lac-card-head">
+          <div className="ad-card">
+            <div className="ad-card-head">
               <h3>Thông tin chứng nhận</h3>
             </div>
-            <div className="lac-card-body">
+            <div className="ad-card-body">
               {/* code + name are locale-independent — only shown once. */}
               <FieldRow>
                 <Field label="Mã chứng nhận" required help="VD: iso · reach · sgs · msds">
                   <input
-                    className="lac-input"
+                    className="ad-input"
                     value={v.code}
                     onChange={(e) => set('code', e.target.value)}
                     placeholder="iso"
@@ -96,7 +96,7 @@ export function CertificationForm({ initial }: { initial: CertificationFormValue
                 </Field>
                 <Field label="Tên chứng nhận" required help="Dùng chung cho 3 ngôn ngữ.">
                   <input
-                    className="lac-input"
+                    className="ad-input"
                     value={v.name}
                     onChange={(e) => set('name', e.target.value)}
                     placeholder="ISO 9001:2015"
@@ -107,7 +107,7 @@ export function CertificationForm({ initial }: { initial: CertificationFormValue
 
               <Field label={`Mô tả (${L})`}>
                 <textarea
-                  className="lac-textarea"
+                  className="ad-textarea"
                   style={{ minHeight: 120 }}
                   value={desc}
                   onChange={(e) =>
@@ -121,11 +121,11 @@ export function CertificationForm({ initial }: { initial: CertificationFormValue
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="lac-card">
-            <div className="lac-card-head">
+          <div className="ad-card">
+            <div className="ad-card-head">
               <h3>Ảnh huy hiệu</h3>
             </div>
-            <div className="lac-card-body">
+            <div className="ad-card-body">
               <PeImg
                 src={v.badgeImageUrl}
                 alt={v.name || 'Huy hiệu chứng nhận'}
@@ -133,7 +133,7 @@ export function CertificationForm({ initial }: { initial: CertificationFormValue
               />
               <Field label="URL ảnh huy hiệu">
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   value={v.badgeImageUrl}
                   onChange={(e) => set('badgeImageUrl', e.target.value)}
                   placeholder="/assets/cert-iso.webp"
@@ -147,17 +147,17 @@ export function CertificationForm({ initial }: { initial: CertificationFormValue
             </div>
           </div>
 
-          <div className="lac-card">
-            <div className="lac-card-head">
+          <div className="ad-card">
+            <div className="ad-card-head">
               <h3>Chi tiết</h3>
             </div>
             <div
-              className="lac-card-body"
+              className="ad-card-body"
               style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
             >
               <Field label="URL tài liệu" help="Liên kết tới file PDF (tuỳ chọn).">
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   value={v.documentUrl}
                   onChange={(e) => set('documentUrl', e.target.value)}
                   placeholder="/docs/iso-9001.pdf"
@@ -170,7 +170,7 @@ export function CertificationForm({ initial }: { initial: CertificationFormValue
               </Field>
               <Field label="Thứ tự hiển thị" help="Số nhỏ hiển thị trước.">
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   type="number"
                   value={v.sortOrder}
                   onChange={(e) => set('sortOrder', Number(e.target.value) || 0)}
@@ -182,13 +182,13 @@ export function CertificationForm({ initial }: { initial: CertificationFormValue
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
-        <button type="submit" className="lac-btn primary" disabled={busy}>
+        <button type="submit" className="ad-btn primary" disabled={busy}>
           <AdminIcon name="check" size={15} />
           {busy ? 'Đang lưu…' : isNew ? 'Thêm chứng nhận' : 'Lưu chứng nhận'}
         </button>
         <button
           type="button"
-          className="lac-btn"
+          className="ad-btn"
           onClick={() => router.push('/admin/certifications')}
         >
           Huỷ

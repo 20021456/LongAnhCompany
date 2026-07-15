@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import { AdminIcon } from '@/components/admin/AdminIcon';
 
 export function LoginForm() {
   const router = useRouter();
@@ -80,12 +81,13 @@ export function LoginForm() {
           <p className="sub">Đăng nhập bằng tài khoản quản trị của bạn.</p>
 
           <form className="lg-form" onSubmit={onSubmit}>
-            <div className="lac-field">
+            <div className="ad-field">
               <label htmlFor="email">Email</label>
               <input
                 id="email"
-                className="lac-input"
+                className="ad-input"
                 type="email"
+                autoFocus
                 autoComplete="username"
                 required
                 value={email}
@@ -94,12 +96,12 @@ export function LoginForm() {
               />
             </div>
 
-            <div className="lac-field">
+            <div className="ad-field">
               <label htmlFor="password">Mật khẩu</label>
               <div className="pw-wrap">
                 <input
                   id="password"
-                  className="lac-input"
+                  className="ad-input"
                   type={showPw ? 'text' : 'password'}
                   autoComplete="current-password"
                   required
@@ -113,12 +115,17 @@ export function LoginForm() {
                   aria-label={showPw ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                   onClick={() => setShowPw((s) => !s)}
                 >
-                  {showPw ? '🙈' : '👁'}
+                  <AdminIcon name={showPw ? 'check' : 'search'} size={15} />
                 </button>
               </div>
             </div>
 
-            {error ? <div className="lg-err">{error}</div> : null}
+            {error ? (
+              <div className="lg-err">
+                <AdminIcon name="shield" size={14} />
+                {error}
+              </div>
+            ) : null}
 
             <div className="lg-options">
               <label>
@@ -126,10 +133,32 @@ export function LoginForm() {
               </label>
             </div>
 
-            <button type="submit" className="lac-btn primary" disabled={busy}>
+            <button type="submit" className="ad-btn primary" disabled={busy}>
               {busy ? 'Đang đăng nhập…' : 'Đăng nhập'}
             </button>
           </form>
+
+          <div className="lg-demo">
+            <div className="demo-head">Tài khoản mặc định (sau khi seed)</div>
+            <div className="demo-row">
+              <div>
+                <div className="demo-name">Long Anh Admin</div>
+                <div className="demo-role">
+                  <code>admin@longanhcorp.com</code> · <code>ChangeMe123!</code>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="use"
+                onClick={() => {
+                  setEmail('admin@longanhcorp.com');
+                  setPassword('ChangeMe123!');
+                }}
+              >
+                Dùng
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

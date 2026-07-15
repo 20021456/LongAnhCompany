@@ -21,8 +21,8 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // Admin pages and design-concept previews are not localized — skip intl middleware
-  if (pathname.startsWith('/admin') || pathname.startsWith('/concept')) return NextResponse.next();
+  // Admin pages are not localized — skip intl middleware
+  if (pathname.startsWith('/admin')) return NextResponse.next();
 
   return intlMiddleware(req);
 }

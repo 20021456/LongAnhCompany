@@ -10,25 +10,18 @@ interface Slide {
 }
 
 interface Props {
-  /** Small caps label above the heading row (e.g. "Kho bãi & Logistics"). */
-  eyebrow: string;
-  /** Section statement shown small on the top row's right side. */
-  note?: string;
   slides: Slide[];
 }
 
-const pad = (i: number) => String(i + 1).padStart(2, '0');
-
 /**
- * Kettal-collections layout: the caption lives ABOVE the photo — small
- * eyebrow row, then a big item title with an "(0i)" index and the item's
- * description on the right — and the photo sits in a framed panel inside
- * the page gutter (not full-bleed, not full-screen). On desktop the block
- * pins while scrolling and each step swaps TEXT + PHOTO together (photo
- * wipes in, text crossfades). Mobile / reduced-motion: a plain stacked
- * list, nothing pinned or clipped.
+ * Kettal-style scroll-driven image deck. On desktop the section pins to a
+ * full-screen stage and, as you scroll, the next PHOTO is pulled down over the
+ * previous one (scrubbed clip-path — decoration only). The caption (number +
+ * title + sub) never moves or clips: it simply crossfades to the active slide,
+ * so text always sits fully in view when you stop. On mobile / reduced-motion
+ * the effect drops to a plain stacked list (no pinning, nothing cut).
  */
-export function WarehouseDeck({ eyebrow, note, slides }: Props) {
+export function WarehouseDeck({ slides }: Props) {
   const secRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const n = slides.length;
@@ -39,7 +32,7 @@ export function WarehouseDeck({ eyebrow, note, slides }: Props) {
     if (!sec) return;
     const mqDesktop = window.matchMedia('(min-width: 981px)');
     const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const imgs = () => Array.from(sec.querySelectorAll<HTMLElement>('.va-whk-media'));
+    const imgs = () => Array.from(sec.querySelectorAll<HTMLElement>('.va-whdeck-media'));
 
     let raf = 0;
     const onScroll = () => {
@@ -55,10 +48,9 @@ export function WarehouseDeck({ eyebrow, note, slides }: Props) {
         const p = Math.min(1, Math.max(0, -sec.getBoundingClientRect().top / total));
         const f = p * (n - 1);
         const ms = imgs();
-        // Each next photo wipes in from the right edge (Kettal-style pull).
         for (let i = 1; i < n; i++) {
           const local = Math.min(1, Math.max(0, f - (i - 1)));
-          if (ms[i]) ms[i].style.clipPath = `inset(0 ${((1 - local) * 100).toFixed(2)}% 0 0)`;
+          if (ms[i]) ms[i].style.clipPath = `inset(0 0 ${((1 - local) * 100).toFixed(2)}% 0)`;
         }
         if (ms[0]) ms[0].style.clipPath = 'inset(0 0 0 0)';
         setActive(Math.round(f));
@@ -77,65 +69,28 @@ export function WarehouseDeck({ eyebrow, note, slides }: Props) {
   if (n === 0) return null;
 
   return (
-    <div className="va-whk" ref={secRef} style={{ ['--deck-n' as string]: n }}>
-      <div className="va-whk-sticky">
-        <div className="va-wrap">
-          {/* Top row — eyebrow left, quiet section statement right */}
-          <div className="va-whk-top">
-            <span className="va-whk-eyebrow">{eyebrow}</span>
-            {note ? <span className="va-whk-note">{note}</span> : null}
-          </div>
-
-          {/* Heading row — big item title + (index) left, item sub right */}
-          <div className="va-whk-head">
-            <div className="va-whk-titles">
-              {slides.map((s, i) => (
-                <h3 key={i} className={'va-whk-title' + (i === active ? ' on' : '')}>
-                  {s.title} <i>({pad(i)})</i>
-                </h3>
-              ))}
-            </div>
-            <div className="va-whk-subs">
-              {slides.map((s, i) => (
-                <p key={i} className={'va-whk-sub' + (i === active ? ' on' : '')}>
-                  {s.sub}
-                </p>
-              ))}
-            </div>
-          </div>
-
-          {/* Framed photo panel — swaps with the text while scrolling */}
-          <div className="va-whk-frame">
-            {slides.map((s, i) => (
-              <div key={i} className="va-whk-media" style={{ zIndex: i + 1 }}>
-                <SmartImage src={s.src} alt={s.title} width={2000} height={1100} sizes="90vw" />
-              </div>
-            ))}
-            <div className="va-whk-count">
-              {pad(active)} / {pad(n - 1)}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile / reduced-motion: plain stacked list with captions above */}
-      <div className="va-whk-stack va-wrap">
-        <div className="va-whk-top">
-          <span className="va-whk-eyebrow">{eyebrow}</span>
-        </div>
+    <div className="va-whdeck" ref={secRef} style={{ ['--deck-n' as string]: n }}>
+      <div className="va-whdeck-sticky">
         {slides.map((s, i) => (
-          <figure key={i} className="va-whk-item">
-            <figcaption>
-              <b>
-                {s.title} <i>({pad(i)})</i>
-              </b>
-              <span>{s.sub}</span>
-            </figcaption>
-            <div className="va-whk-item-img">
-              <SmartImage src={s.src} alt={s.title} width={1200} height={800} sizes="94vw" />
+          <div
+            key={i}
+            className={'va-whdeck-slide' + (i === active ? ' on' : '')}
+            style={{ zIndex: i + 1 }}
+          >
+            <div className="va-whdeck-media">
+              <SmartImage src={s.src} alt={s.title} width={2000} height={1300} sizes="100vw" />
+              <div className="va-whdeck-shade" />
             </div>
-          </figure>
+            <div className="va-whdeck-cap">
+              <span className="num">{String(i + 1).padStart(2, '0')}</span>
+              <b>{s.title}</b>
+              <span className="sub">{s.sub}</span>
+            </div>
+          </div>
         ))}
+        <div className="va-whdeck-count">
+          <span>{String(active + 1).padStart(2, '0')}</span> / {String(n).padStart(2, '0')}
+        </div>
       </div>
     </div>
   );

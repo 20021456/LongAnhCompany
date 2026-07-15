@@ -181,11 +181,11 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <div className="lac-crumb">
+      <div className="ad-crumb">
         <span className="cur">Dashboard</span>
       </div>
 
-      <div className="lac-phead">
+      <div className="ad-phead">
         <div>
           <h1>
             Chào {userName} <span style={{ fontSize: 22 }}>👋</span>
@@ -238,13 +238,13 @@ export default async function DashboardPage() {
 
       {/* 2-column row — chart + recent news */}
       <div className="dash-2col">
-        <div className="lac-card">
-          <div className="lac-card-head">
+        <div className="ad-card">
+          <div className="ad-card-head">
             <div>
               <h3>Lượt xem website</h3>
               <p>30 ngày gần nhất · so với kỳ trước {viewsDelta}</p>
             </div>
-            <select className="lac-select" style={{ width: 130, height: 30 }} defaultValue="30">
+            <select className="ad-select" style={{ width: 130, height: 30 }} defaultValue="30">
               <option value="30">30 ngày</option>
               <option value="7">7 ngày</option>
               <option value="90">90 ngày</option>
@@ -255,16 +255,16 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="lac-card">
-          <div className="lac-card-head">
+        <div className="ad-card">
+          <div className="ad-card-head">
             <h3>Tin tức mới đăng</h3>
-            <Link href="/admin/news" className="lac-btn ghost sm">
+            <Link href="/admin/news" className="ad-btn ghost sm">
               Xem tất cả <AdminIcon name="chevron" size={13} />
             </Link>
           </div>
           {recentArticles.length === 0 ? (
-            <div className="lac-card-body">
-              <div className="lac-empty">Chưa có bài viết nào.</div>
+            <div className="ad-card-body">
+              <div className="ad-empty">Chưa có bài viết nào.</div>
             </div>
           ) : (
             <div>
@@ -326,16 +326,16 @@ export default async function DashboardPage() {
       </div>
 
       {/* Activity timeline */}
-      <div className="lac-card">
-        <div className="lac-card-head">
+      <div className="ad-card">
+        <div className="ad-card-head">
           <h3>Hoạt động gần đây</h3>
-          <Link href="/admin/contacts" className="lac-btn ghost sm">
+          <Link href="/admin/contacts" className="ad-btn ghost sm">
             Xem liên hệ <AdminIcon name="chevron" size={13} />
           </Link>
         </div>
         {acts.length === 0 ? (
-          <div className="lac-card-body">
-            <div className="lac-empty">Chưa có hoạt động nào.</div>
+          <div className="ad-card-body">
+            <div className="ad-empty">Chưa có hoạt động nào.</div>
           </div>
         ) : (
           <div>

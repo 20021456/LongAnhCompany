@@ -9,7 +9,6 @@ import { fmtDateVn } from '@/lib/format';
 export interface ProductRow {
   id: string;
   code: string;
-  slug: string;
   nameVi: string;
   summaryVi: string;
   categoryId: string;
@@ -48,12 +47,12 @@ function TimeAgo({ iso }: { iso: string }) {
 function StatusBadges({ active, featured }: { active: boolean; featured: boolean }) {
   return (
     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-      <span className={'lac-badge ' + (active ? 'pub' : 'hide')}>
+      <span className={'ad-badge ' + (active ? 'pub' : 'hide')}>
         <span className="dot" />
         {active ? 'hiển thị' : 'đã ẩn'}
       </span>
       {featured ? (
-        <span className="lac-badge sched">
+        <span className="ad-badge sched">
           <span className="dot" />
           nổi bật
         </span>
@@ -90,19 +89,19 @@ export function ProductsBrowser({
   }, [rows, query, categoryId, status]);
 
   return (
-    <div className="lac-table-wrap">
-      <div className="lac-toolbar">
-        <div className="lac-search-box" style={{ width: 280 }}>
+    <div className="ad-table-wrap">
+      <div className="ad-toolbar">
+        <div className="ad-search-box" style={{ width: 280 }}>
           <AdminIcon name="search" size={14} />
           <input
-            className="lac-input"
+            className="ad-input"
             placeholder="Tìm theo tên sản phẩm, mã…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
         <select
-          className="lac-select"
+          className="ad-select"
           style={{ width: 180 }}
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
@@ -115,7 +114,7 @@ export function ProductsBrowser({
           ))}
         </select>
         <select
-          className="lac-select"
+          className="ad-select"
           style={{ width: 150 }}
           value={status}
           onChange={(e) => setStatus(e.target.value)}
@@ -126,7 +125,7 @@ export function ProductsBrowser({
           <option value="featured">Nổi bật</option>
         </select>
         <div className="grow" />
-        <div className="lac-seg icons">
+        <div className="ad-seg icons">
           <button
             type="button"
             className={view === 'grid' ? 'on' : ''}
@@ -147,7 +146,7 @@ export function ProductsBrowser({
       </div>
 
       {filtered.length === 0 ? (
-        <div className="lac-empty" style={{ border: 0, borderRadius: 0 }}>
+        <div className="ad-empty" style={{ border: 0, borderRadius: 0 }}>
           Không có sản phẩm nào khớp bộ lọc.
         </div>
       ) : view === 'grid' ? (
@@ -173,7 +172,7 @@ export function ProductsBrowser({
                   </div>
                 )}
                 <div className="badge-tr">
-                  <span className={'lac-badge ' + (p.isActive ? 'pub' : 'hide')}>
+                  <span className={'ad-badge ' + (p.isActive ? 'pub' : 'hide')}>
                     <span className="dot" />
                     {p.isActive ? 'hiển thị' : 'ẩn'}
                   </span>
@@ -183,7 +182,7 @@ export function ProductsBrowser({
                 <div className="cat">{p.categoryName}</div>
                 <h4>{p.nameVi}</h4>
                 <div style={{ fontSize: 12, color: 'var(--ad-text-mute)' }}>
-                  <span className="lac-code">{p.code}</span>
+                  <span className="ad-code">{p.code}</span>
                   {p.isFeatured ? (
                     <span style={{ marginLeft: 6, color: 'var(--ad-accent)' }}>★ nổi bật</span>
                   ) : null}
@@ -197,7 +196,7 @@ export function ProductsBrowser({
           ))}
         </div>
       ) : (
-        <table className="lac-table">
+        <table className="ad-table">
           <thead>
             <tr>
               <th>Sản phẩm</th>
@@ -215,14 +214,14 @@ export function ProductsBrowser({
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     {p.coverImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={p.coverImageUrl} className="lac-thumb" alt="" />
+                      <img src={p.coverImageUrl} className="ad-thumb" alt="" />
                     ) : (
-                      <div className="lac-thumb" />
+                      <div className="ad-thumb" />
                     )}
                     <div>
                       <div style={{ fontWeight: 600 }}>{p.nameVi}</div>
                       <div style={{ fontSize: 12, color: 'var(--ad-text-mute)' }}>
-                        <span className="lac-code">{p.code}</span>
+                        <span className="ad-code">{p.code}</span>
                       </div>
                     </div>
                   </div>
@@ -237,17 +236,17 @@ export function ProductsBrowser({
                   <div className="row-actions tight">
                     <Link
                       href={`/admin/products/${p.code}`}
-                      className="lac-btn ghost sm"
+                      className="ad-btn ghost sm"
                       title="Sửa sản phẩm"
                       aria-label="Sửa sản phẩm"
                     >
                       <AdminIcon name="edit" size={13} />
                     </Link>
                     <a
-                      href={`/vi/products/${p.slug}`}
+                      href={`/vi/products/${p.code}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="lac-btn ghost sm"
+                      className="ad-btn ghost sm"
                       title="Xem trên web"
                       aria-label="Xem trên web"
                     >
@@ -262,7 +261,7 @@ export function ProductsBrowser({
         </table>
       )}
 
-      <div className="lac-pag">
+      <div className="ad-pag">
         <div>
           Hiển thị {filtered.length} / {rows.length} sản phẩm
         </div>

@@ -41,7 +41,6 @@ export default async function HomePage({ params: { locale } }: { params: { local
   const productMap = await getProducts();
   const products = Object.values(productMap).map((p) => ({
     code: p.code,
-    slug: p.slug,
     cat: p.cat,
     img: p.images[0] ?? '',
     name: p.name[loc],
@@ -50,6 +49,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
     tags: p.tags[loc] ?? [],
   }));
   const S = await getHomeSections(loc);
+  const nn = (i: number) => String(i + 1).padStart(2, '0');
 
   return (
     <>
@@ -70,7 +70,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
       <section id="home" className="va-hero4" data-snap>
         <div className="va-hero4-bg">
           <SmartImage
-            src={S.hero.imageUrl || '/assets/nha-may-bot-sieu-min.webp'}
+            src="/assets/nha-may-bot-sieu-min.webp"
             alt={S.hero.imageAlt}
             width={2000}
             height={1250}
@@ -139,7 +139,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
               products.map((p, i) => (
                 <Link
                   key={`${copy}-${p.code}`}
-                  href={`/${loc}/products/${p.slug}`}
+                  href={`/${loc}/products/${p.code.toLowerCase()}`}
                   className="va-rail-card"
                   aria-hidden={copy > 0 || undefined}
                   tabIndex={copy > 0 ? -1 : undefined}
@@ -147,6 +147,8 @@ export default async function HomePage({ params: { locale } }: { params: { local
                   <SmartImage src={p.img} alt={p.name} width={900} height={1200} sizes="420px" />
                   <div className="va-rail-shade" />
                   <div className="va-rail-top">
+                    <b className="num">{nn(i)}</b>
+                    <span className="rule" />
                     <span className="lbl">
                       <b>{p.name}</b>
                       <i>{p.meta}</i>
@@ -165,10 +167,8 @@ export default async function HomePage({ params: { locale } }: { params: { local
         </div>
       </section>
 
-      {/* ABOUT — full-screen split, scroll-driven capability deck.
-          data-noflick: a fast wheel flick scrubs through the cards instead of
-          paging past the whole (tall) section. */}
-      <section id="about" className="va-section va-about4" data-snap data-noflick>
+      {/* ABOUT — full-screen split, capability cards rotate every 8s */}
+      <section id="about" className="va-section va-about4" data-snap>
         <div className="va-wrap">
           <div className="va-shead2">
             <div className="va-eyebrow" data-reveal>
@@ -221,6 +221,8 @@ export default async function HomePage({ params: { locale } }: { params: { local
                     />
                   </div>
                   <div className="va-rail-top">
+                    <b className="num">{nn(i)}</b>
+                    <span className="rule" />
                     <span className="lbl">
                       <b>{c.name}</b>
                       <i>{c.issuer}</i>
@@ -233,6 +235,16 @@ export default async function HomePage({ params: { locale } }: { params: { local
               )),
             )}
           </div>
+        </div>
+        <div className="va-wrap" style={{ textAlign: 'center', marginTop: 48 }}>
+          <Link className="va-btn va-btn-p" href={`/${loc}/about#certs`}>
+            {loc === 'zh'
+              ? '查看所有认证'
+              : loc === 'en'
+                ? 'View all certifications'
+                : 'Xem tất cả chứng chỉ'}{' '}
+            <Icon name="arrow" size={15} />
+          </Link>
         </div>
       </section>
 

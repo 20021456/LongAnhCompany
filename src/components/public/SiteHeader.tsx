@@ -43,7 +43,7 @@ export async function SiteHeader({ locale, active }: Props) {
       <div className="va-strip">
         <div className="va-wrap va-strip-in">
           <span>
-            {locale === 'zh' ? '销售热线:' : locale === 'en' ? 'Hotline:' : 'Hotline kinh doanh:'}{' '}
+            {locale === 'zh' ? '销售热线:' : locale === 'en' ? 'Sales hotline:' : 'Hotline kinh doanh:'}{' '}
             <b style={{ color: '#fff' }}>{phone}</b>
           </span>
           <div className="va-strip-r">
@@ -91,7 +91,7 @@ export async function SiteHeader({ locale, active }: Props) {
                               ? 'CaCO₃ Powder'
                               : 'Bột đá CaCO₃'}
                         </b>
-                        <span>Coated · Uncoated · 4–20 µm</span>
+                        <span>Coated · Uncoated · 3–20 µm</span>
                       </Link>
                       <Link href={`/${locale}/products#stone`}>
                         <b>

@@ -49,10 +49,10 @@ export default async function AdminNewsPage() {
         sub={`${rows.length} bài viết · ${fmtNumberVn(totalViews)} lượt xem tổng · ${numCats} danh mục`}
         actions={
           <>
-            <button type="button" className="lac-btn" disabled title="Phase 7">
+            <button type="button" className="ad-btn" disabled title="Phase 7">
               <AdminIcon name="download" size={14} /> Xuất CSV
             </button>
-            <Link href="/admin/news/new" className="lac-btn primary">
+            <Link href="/admin/news/new" className="ad-btn primary">
               <AdminIcon name="plus" size={14} /> Bài viết mới
             </Link>
           </>

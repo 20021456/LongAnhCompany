@@ -38,7 +38,7 @@ function Banner({ state }: { state: ActionResult | null }) {
     );
   if (state.ok)
     return (
-      <div className="lac-badge pub" style={{ marginBottom: 12, padding: '8px 12px' }}>
+      <div className="ad-badge pub" style={{ marginBottom: 12, padding: '8px 12px' }}>
         <span className="dot" />
         Đã lưu thành công.
       </div>
@@ -68,17 +68,17 @@ function LanguagesCard({ rows }: { rows: LangRow[] }) {
   }
 
   return (
-    <div className="lac-card">
-      <div className="lac-card-head">
+    <div className="ad-card">
+      <div className="ad-card-head">
         <div>
           <h3>Ngôn ngữ</h3>
           <p>Bật/tắt và sắp xếp ngôn ngữ hiển thị trên website.</p>
         </div>
       </div>
-      <div className="lac-card-body">
+      <div className="ad-card-body">
         <Banner state={state} />
-        <div className="lac-table-wrap">
-          <table className="lac-table">
+        <div className="ad-table-wrap">
+          <table className="ad-table">
             <thead>
               <tr>
                 <th>Mã</th>
@@ -95,14 +95,14 @@ function LanguagesCard({ rows }: { rows: LangRow[] }) {
                   <td style={{ fontWeight: 600 }}>{l.code}</td>
                   <td>
                     <input
-                      className="lac-input"
+                      className="ad-input"
                       value={l.name}
                       onChange={(e) => update(i, { name: e.target.value })}
                     />
                   </td>
                   <td style={{ width: 80 }}>
                     <input
-                      className="lac-input"
+                      className="ad-input"
                       value={l.flagEmoji}
                       onChange={(e) => update(i, { flagEmoji: e.target.value })}
                       style={{ textAlign: 'center' }}
@@ -110,7 +110,7 @@ function LanguagesCard({ rows }: { rows: LangRow[] }) {
                   </td>
                   <td style={{ width: 90 }}>
                     <input
-                      className="lac-input"
+                      className="ad-input"
                       type="number"
                       value={l.sortOrder}
                       onChange={(e) => update(i, { sortOrder: Number(e.target.value) })}
@@ -138,7 +138,7 @@ function LanguagesCard({ rows }: { rows: LangRow[] }) {
           </table>
         </div>
         <div style={{ marginTop: 14 }}>
-          <button type="button" className="lac-btn primary" disabled={busy} onClick={onSave}>
+          <button type="button" className="ad-btn primary" disabled={busy} onClick={onSave}>
             <AdminIcon name="check" size={15} />
             {busy ? 'Đang lưu…' : 'Lưu ngôn ngữ'}
           </button>
@@ -194,17 +194,17 @@ function TranslationsCard({ rows }: { rows: StringRow[] }) {
   }
 
   return (
-    <div className="lac-card">
-      <div className="lac-card-head">
+    <div className="ad-card">
+      <div className="ad-card-head">
         <div>
           <h3>Chuỗi giao diện</h3>
           <p>Ghi đè chuỗi dịch tĩnh. Để trống cả ba ô để khôi phục giá trị gốc từ tệp ngôn ngữ.</p>
         </div>
       </div>
-      <div className="lac-card-body">
+      <div className="ad-card-body">
         <Banner state={state} />
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-          <select className="lac-select" value={ns} onChange={(e) => setNs(e.target.value)}>
+          <select className="ad-select" value={ns} onChange={(e) => setNs(e.target.value)}>
             <option value="all">Tất cả nhóm</option>
             {namespaces.map((n) => (
               <option key={n} value={n}>
@@ -213,15 +213,15 @@ function TranslationsCard({ rows }: { rows: StringRow[] }) {
             ))}
           </select>
           <input
-            className="lac-input"
+            className="ad-input"
             placeholder="Tìm theo key…"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             style={{ flex: 1 }}
           />
         </div>
-        <div className="lac-table-wrap">
-          <table className="lac-table">
+        <div className="ad-table-wrap">
+          <table className="ad-table">
             <thead>
               <tr>
                 <th style={{ width: '22%' }}>Key</th>
@@ -236,7 +236,7 @@ function TranslationsCard({ rows }: { rows: StringRow[] }) {
                   <td>
                     <div style={{ fontWeight: 600, fontSize: 12.5 }}>{r.fullKey}</div>
                     {r.overridden ? (
-                      <span className="lac-badge sched" style={{ marginTop: 4 }}>
+                      <span className="ad-badge sched" style={{ marginTop: 4 }}>
                         <span className="dot" />
                         đã ghi đè
                       </span>
@@ -245,7 +245,7 @@ function TranslationsCard({ rows }: { rows: StringRow[] }) {
                   {(['vi', 'en', 'zh'] as const).map((loc) => (
                     <td key={loc}>
                       <textarea
-                        className="lac-textarea"
+                        className="ad-textarea"
                         rows={2}
                         value={r[loc]}
                         onChange={(e) => update(r.fullKey, { [loc]: e.target.value })}
@@ -265,7 +265,7 @@ function TranslationsCard({ rows }: { rows: StringRow[] }) {
           </table>
         </div>
         <div style={{ marginTop: 14 }}>
-          <button type="button" className="lac-btn primary" disabled={busy} onClick={onSave}>
+          <button type="button" className="ad-btn primary" disabled={busy} onClick={onSave}>
             <AdminIcon name="check" size={15} />
             {busy ? 'Đang lưu…' : 'Lưu bản dịch'}
           </button>

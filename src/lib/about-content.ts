@@ -26,8 +26,6 @@ export interface AboutHeaderSection {
   eyebrow: string;
   title: string;
   sub: string;
-  /** Hero banner background photo. */
-  imageUrl?: string;
 }
 
 export interface AboutStorySection {
@@ -82,8 +80,6 @@ export interface AboutWarehouseSection {
   eyebrow: string;
   title: string;
   images: string[];
-  /** Caption (title + sub) for each image card, in image order. */
-  captions?: { title: string; sub: string }[];
 }
 
 export interface AboutCertItem {
@@ -138,30 +134,27 @@ const HEADER: Record<Locale, AboutHeaderSection> = {
     eyebrow: 'Về chúng tôi',
     title: 'Khoáng đá nguyên sinh từ Nghệ An',
     sub: 'Hơn 20 năm khai thác và chế biến — chúng tôi xây dựng từng mối quan hệ qua từng container giao đúng hẹn.',
-    imageUrl: '/assets/da-nguyen-lieu-cao-cap.webp',
   },
   en: {
     eyebrow: 'About us',
     title: 'Pure mineral stone from Nghe An',
     sub: 'Over 20 years of mining and processing — we build every relationship one on-time container at a time.',
-    imageUrl: '/assets/da-nguyen-lieu-cao-cap.webp',
   },
   zh: {
     eyebrow: '关于我们',
     title: '来自义安省的原生矿石',
     sub: '20多年的开采和加工经验 — 我们通过每个按时交付的集装箱建立每段合作关系。',
-    imageUrl: '/assets/da-nguyen-lieu-cao-cap.webp',
   },
 };
 
 const STORY: Record<Locale, AboutStorySection> = {
   vi: {
     eyebrow: 'Câu chuyện',
-    title: 'Làm chủ trọn chuỗi giá trị.',
+    title: 'Khai thác bền vững. / Chế biến chính xác.',
     paragraph1:
-      'Long Anh trực tiếp khai thác và chế biến đá vôi trắng nguyên sinh từ 05 mỏ riêng tại Quỳ Hợp – Nghệ An — độ trắng vượt 98%, hàm lượng CaCO₃ trên 98,5%.',
+      'Long Anh khai thác và chế biến đá vôi trắng nguyên sinh từ mỏ riêng tại Quỳ Hợp – Nghệ An.',
     paragraph2:
-      'Hệ thống 05 nhà máy trên 12 ha vận hành 06 dây chuyền nghiền khô và 02 dây chuyền phủ Stearic Acid theo công nghệ Châu Âu — tổng công suất trên 350.000 tấn/năm.',
+      'Hệ thống 5 nhà máy với dây chuyền nghiền và phủ Stearic Acid theo công nghệ Châu Âu — tổng công suất 350,000 tấn/năm.',
     paragraph3:
       'Chúng tôi xem mỗi tấn bột đá là một cam kết — về chất lượng, thời hạn và mối quan hệ lâu dài với đối tác.',
     imageUrl: '/assets/da-nguyen-lieu-cao-cap.webp',
@@ -172,11 +165,11 @@ const STORY: Record<Locale, AboutStorySection> = {
   },
   en: {
     eyebrow: 'Our story',
-    title: 'Owning every step of the chain.',
+    title: 'Sustainable mining. / Precision processing.',
     paragraph1:
-      'Long Anh directly mines and processes pristine white limestone from 5 owned quarries in Quy Hop, Nghe An — whiteness above 98%, CaCO₃ above 98.5%.',
+      'Long Anh mines and processes pristine white limestone from our own quarry in Quy Hop, Nghe An.',
     paragraph2:
-      'Five plants on 12 ha run 6 dry-grinding lines and 2 stearic-acid coating lines built to European spec — total capacity above 350,000 tons/year.',
+      'Five plants running European-spec dry-grinding and stearic-acid coating lines — total capacity 350,000 tons/year.',
     paragraph3:
       'Every ton of stone powder is a promise — quality, schedule, and a long-term partnership.',
     imageUrl: '/assets/da-nguyen-lieu-cao-cap.webp',
@@ -187,11 +180,9 @@ const STORY: Record<Locale, AboutStorySection> = {
   },
   zh: {
     eyebrow: '我们的故事',
-    title: '掌控价值链每一环。',
-    paragraph1:
-      '龙英在义安省归合县直接开采和加工5座自有矿山的原生白色石灰岩 — 白度超过98%,碳酸钙含量超过98.5%。',
-    paragraph2:
-      '5座工厂占地12公顷,运行6条干法研磨线和2条欧洲标准硬脂酸涂层线 — 总产能超过35万吨/年。',
+    title: '可持续开采。/ 精密加工。',
+    paragraph1: '龙英在义安省归合县的自有矿场开采和加工原生白色石灰岩。',
+    paragraph2: '5个工厂运行欧洲标准的干法研磨和硬脂酸涂层生产线 — 总产能35万吨/年。',
     paragraph3: '每一吨石粉都是一个承诺 — 质量、进度和长期合作关系。',
     imageUrl: '/assets/da-nguyen-lieu-cao-cap.webp',
     imageAlt: '龙英归合矿场',
@@ -209,27 +200,27 @@ const TIMELINE: Record<Locale, AboutTimelineSection> = {
       {
         year: '2008',
         title: 'Khởi nguồn',
-        body: 'Thành lập tại Quỳ Hợp, Nghệ An với mỏ đá vôi trắng đầu tiên — đặt nền móng cho chuỗi khai thác – chế biến khép kín hôm nay.',
+        body: 'Thành lập tại Quỳ Hợp, Nghệ An — bắt đầu từ một mỏ đá vôi trắng.',
       },
       {
         year: '2013',
         title: 'Nhà máy đầu',
-        body: 'Lắp đặt dây chuyền nghiền khô đầu tiên công suất 80.000 tấn/năm — đưa Long Anh từ khai thác thô sang chế biến sâu.',
+        body: 'Lắp đặt dây chuyền nghiền khô đầu tiên, công suất 80,000 tấn/năm.',
       },
       {
         year: '2017',
         title: 'Phủ Stearic',
-        body: 'Vận hành dây chuyền phủ Stearic Acid theo công nghệ Châu Âu — mở cửa vào thị trường compound nhựa PVC, PE, PP.',
+        body: 'Đưa vào vận hành dây chuyền phủ Stearic Acid theo công nghệ EU.',
       },
       {
         year: '2020',
         title: 'ISO 9001',
-        body: 'Đạt chứng nhận ISO 9001:2015 cho hệ thống quản lý chất lượng; những container đầu tiên xuất sang Hàn Quốc và Nhật Bản.',
+        body: 'Đạt chứng nhận ISO 9001:2015. Mở rộng xuất khẩu sang Hàn Quốc, Nhật Bản.',
       },
       {
         year: '2024',
         title: 'Mở rộng',
-        body: 'Khánh thành xưởng đá Slab khổ 1.6 × 2.4 m; tổng công suất toàn hệ thống đạt 350.000 tấn/năm, xuất khẩu 12 quốc gia.',
+        body: 'Khánh thành xưởng đá Slab 1.6×2.4m. Tổng công suất đạt 350,000 tấn/năm.',
       },
     ],
   },
@@ -240,27 +231,27 @@ const TIMELINE: Record<Locale, AboutTimelineSection> = {
       {
         year: '2008',
         title: 'Founded',
-        body: 'Founded in Quy Hop, Nghe An with our first white limestone quarry — the base of today’s closed mining-to-processing chain.',
+        body: 'Founded in Quy Hop, Nghe An — starting from a single white limestone quarry.',
       },
       {
         year: '2013',
         title: 'First plant',
-        body: 'Installed our first dry-grinding line at 80,000 tons/year — moving Long Anh from raw extraction into deep processing.',
+        body: 'Installed our first dry-grinding line at 80,000 tons/year capacity.',
       },
       {
         year: '2017',
         title: 'Coating line',
-        body: 'Commissioned a European-spec stearic-acid coating line — opening the door to PVC, PE and PP compound markets.',
+        body: 'Commissioned a stearic-acid coating line built to European specs.',
       },
       {
         year: '2020',
         title: 'ISO 9001',
-        body: 'Certified ISO 9001:2015 for quality management; the first containers shipped to Korea and Japan.',
+        body: 'Certified ISO 9001:2015. Began exports to Korea and Japan.',
       },
       {
         year: '2024',
         title: 'Expansion',
-        body: 'Opened the 1.6 × 2.4 m Slab workshop; system-wide capacity reached 350,000 t/year across 12 export countries.',
+        body: 'Opened our 1.6×2.4m Slab workshop. Total capacity reached 350,000 t/y.',
       },
     ],
   },
@@ -268,31 +259,11 @@ const TIMELINE: Record<Locale, AboutTimelineSection> = {
     eyebrow: '历程',
     title: '20年 — 一脉石矿',
     items: [
-      {
-        year: '2008',
-        title: '创立',
-        body: '在义安省归合县创立,拥有首座白石灰岩矿山 — 奠定今日开采–加工一体化链条的基础。',
-      },
-      {
-        year: '2013',
-        title: '首个工厂',
-        body: '安装首条干法研磨生产线,年产能8万吨 — 从原石开采迈入深加工。',
-      },
-      {
-        year: '2017',
-        title: '涂层生产线',
-        body: '投产欧洲标准硬脂酸涂层生产线 — 打开PVC、PE、PP塑料复合材料市场。',
-      },
-      {
-        year: '2020',
-        title: 'ISO 9001',
-        body: '质量管理体系获ISO 9001:2015认证;首批集装箱出口韩国和日本。',
-      },
-      {
-        year: '2024',
-        title: '扩张',
-        body: '开设1.6×2.4米大板工坊;全系统总产能达35万吨/年,出口12个国家。',
-      },
+      { year: '2008', title: '创立', body: '在义安省归合县创立 — 从一个白石灰岩矿场起步。' },
+      { year: '2013', title: '首个工厂', body: '安装首条干法研磨生产线,年产能8万吨。' },
+      { year: '2017', title: '涂层生产线', body: '投产符合欧洲标准的硬脂酸涂层生产线。' },
+      { year: '2020', title: 'ISO 9001', body: '获得ISO 9001:2015认证。开始向韩国、日本出口。' },
+      { year: '2024', title: '扩张', body: '开设1.6×2.4米大板工坊。总产能达到35万吨/年。' },
     ],
   },
 };
@@ -304,17 +275,17 @@ const VALUES: Record<Locale, AboutValuesSection> = {
     items: [
       {
         name: 'Chất lượng nguyên sinh',
-        body: 'Chỉ dùng đá từ 05 mỏ riêng tại Quỳ Hợp — độ trắng vượt 98%, CaCO₃ trên 98,5%. Chất lượng được kiểm soát từ khâu khai thác, không phụ thuộc nguyên liệu trôi nổi.',
+        body: 'Mỏ riêng tại Quỳ Hợp với độ trắng > 98% và CaCO₃ > 98.5% — kiểm soát từ gốc.',
         icon: 'drop',
       },
       {
         name: 'Công nghệ chính xác',
-        body: 'Dây chuyền nghiền và phủ Stearic Acid theo công nghệ Châu Âu, cỡ hạt D50 kiểm soát trong dải 4–20 µm. Mỗi lô qua đủ bốn chỉ tiêu QC trước khi xuất xưởng.',
+        body: 'Dây chuyền nghiền và phủ Stearic Acid theo công nghệ Châu Âu, kiểm tra từng lô.',
         icon: 'spark',
       },
       {
         name: 'Cam kết giao hàng',
-        body: 'Giao FOB qua cảng Cửa Lò và Hải Phòng, mỗi lô kèm COA và MSDS đầy đủ. Quy cách đóng gói linh hoạt theo từng thị trường — lịch giao đã chốt là giữ.',
+        body: 'Cảng Cửa Lò & Hải Phòng — đóng gói linh hoạt, lịch giao đúng hẹn.',
         icon: 'ship',
       },
     ],
@@ -325,17 +296,17 @@ const VALUES: Record<Locale, AboutValuesSection> = {
     items: [
       {
         name: 'Pure raw material',
-        body: 'Stone comes only from our 5 owned quarries in Quy Hop — whiteness above 98%, CaCO₃ above 98.5%. Quality is controlled from extraction, never from spot-market feedstock.',
+        body: 'Owned quarry in Quy Hop · whiteness >98%, CaCO₃ >98.5% — controlled at the source.',
         icon: 'drop',
       },
       {
         name: 'Precision technology',
-        body: 'European-spec grinding and stearic-acid coating lines hold D50 particle size within 4–20 µm. Every batch passes four QC criteria before leaving the plant.',
+        body: 'EU-spec grinding and stearic-acid coating lines · per-batch QC.',
         icon: 'spark',
       },
       {
         name: 'On-time delivery',
-        body: 'FOB via Cua Lo and Hai Phong ports, every batch with full COA and MSDS. Packaging flexes by market — a confirmed schedule is a kept schedule.',
+        body: 'Cua Lo & Hai Phong ports · flexible packaging, schedules we keep.',
         icon: 'ship',
       },
     ],
@@ -346,19 +317,11 @@ const VALUES: Record<Locale, AboutValuesSection> = {
     items: [
       {
         name: '纯原料',
-        body: '石料仅来自归合5座自有矿山 — 白度超过98%,碳酸钙超过98.5%。质量从开采环节即受控,绝不依赖市场散料。',
+        body: '归合自有矿场 · 白度>98%、碳酸钙>98.5% — 从源头控制。',
         icon: 'drop',
       },
-      {
-        name: '精密技术',
-        body: '欧洲标准研磨与硬脂酸涂层生产线,D50粒径控制在4–20 µm。每批次出厂前通过四项QC指标。',
-        icon: 'spark',
-      },
-      {
-        name: '准时交付',
-        body: '经炉门港和海防港FOB交货,每批附完整COA与MSDS。包装按市场灵活调整 — 确认的交期就是履行的交期。',
-        icon: 'ship',
-      },
+      { name: '精密技术', body: '欧洲标准研磨和硬脂酸涂层生产线 · 每批次QC。', icon: 'spark' },
+      { name: '准时交付', body: '窗碧港和海防港 · 灵活包装,按期履约。', icon: 'ship' },
     ],
   },
 };
@@ -367,7 +330,7 @@ const CAPS: Record<Locale, AboutCapsSection> = {
   vi: {
     eyebrow: 'Năng lực sản xuất',
     title: 'Hệ thống nhà máy. Đo bằng con số.',
-    sub: '05 nhà máy trên 12 ha tại Quỳ Hợp vận hành 06 dây chuyền nghiền khô và 02 dây chuyền phủ Stearic — sản xuất ổn định 350.000 tấn/năm, linh hoạt theo từng đơn hàng B2B.',
+    sub: 'Hệ thống nhà máy của Long Anh được thiết kế để sản xuất ổn định, công suất lớn và linh hoạt theo từng đơn hàng B2B.',
     imageUrl: '/assets/nha-may-bot-sieu-min-3.webp',
     imageAlt: 'Nhà máy bột siêu mịn Long Anh',
     metrics: [
@@ -382,7 +345,7 @@ const CAPS: Record<Locale, AboutCapsSection> = {
   en: {
     eyebrow: 'Production capacity',
     title: 'The plants. By the numbers.',
-    sub: 'Five plants on 12 ha in Quy Hop run 6 dry-grinding and 2 stearic-coating lines — a steady 350,000 tons/year with order-by-order flexibility for B2B customers.',
+    sub: 'Long Anh plants are designed for stable, high-volume production with order-by-order flexibility for B2B customers.',
     imageUrl: '/assets/nha-may-bot-sieu-min-3.webp',
     imageAlt: 'Long Anh fine-powder plant',
     metrics: [
@@ -397,7 +360,7 @@ const CAPS: Record<Locale, AboutCapsSection> = {
   zh: {
     eyebrow: '生产能力',
     title: '工厂。用数字说话。',
-    sub: '归合5座工厂占地12公顷,运行6条干法研磨线和2条硬脂酸涂层线 — 年产35万吨稳定输出,并按B2B订单灵活调整。',
+    sub: '龙英的工厂为稳定、大批量生产而设计,可根据B2B客户的订单灵活调整。',
     imageUrl: '/assets/nha-may-bot-sieu-min-3.webp',
     imageAlt: '龙英超细粉工厂',
     metrics: [
@@ -421,24 +384,6 @@ const WAREHOUSE: Record<Locale, AboutWarehouseSection> = {
       '/assets/kho-da-nguyen-lieu.webp',
       '/assets/kho-hang-xuat-khau.webp',
     ],
-    captions: [
-      {
-        title: 'Kho thành phẩm',
-        sub: 'Thành phẩm đóng pallet, phân lô theo mã sản phẩm trước khi xuất.',
-      },
-      {
-        title: 'Bãi nguyên liệu',
-        sub: 'Đá nguyên khai tập kết theo phân vùng, sẵn sàng cho dây chuyền.',
-      },
-      {
-        title: 'Bốc xếp & vận chuyển',
-        sub: 'Thiết bị nâng hạ và đội xe vận hành liên tục trong ngày.',
-      },
-      {
-        title: 'Sẵn sàng xuất khẩu',
-        sub: 'Container niêm phong cùng chứng từ đầy đủ trước khi rời nhà máy.',
-      },
-    ],
   },
   en: {
     eyebrow: 'Warehouse & logistics',
@@ -449,21 +394,6 @@ const WAREHOUSE: Record<Locale, AboutWarehouseSection> = {
       '/assets/kho-da-nguyen-lieu.webp',
       '/assets/kho-hang-xuat-khau.webp',
     ],
-    captions: [
-      {
-        title: 'Finished-goods warehouse',
-        sub: 'Palletised lots staged by product code before dispatch.',
-      },
-      { title: 'Raw-material yard', sub: 'Quarried stone staged by zone, ready for the lines.' },
-      {
-        title: 'Loading & transport',
-        sub: 'Lifting equipment and trucks running throughout the day.',
-      },
-      {
-        title: 'Export-ready',
-        sub: 'Sealed containers with full documentation before leaving the plant.',
-      },
-    ],
   },
   zh: {
     eyebrow: '仓储与物流',
@@ -473,12 +403,6 @@ const WAREHOUSE: Record<Locale, AboutWarehouseSection> = {
       '/assets/kho-hang-2.webp',
       '/assets/kho-da-nguyen-lieu.webp',
       '/assets/kho-hang-xuat-khau.webp',
-    ],
-    captions: [
-      { title: '成品仓库', sub: '成品按产品编码分批打托,待发货。' },
-      { title: '原料堆场', sub: '原石分区堆放,随时供应生产线。' },
-      { title: '装卸与运输', sub: '装卸设备与车队全天候运转。' },
-      { title: '出口就绪', sub: '集装箱封箱,单证齐备后出厂。' },
     ],
   },
 };

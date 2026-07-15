@@ -55,4 +55,3 @@ docker/ssl/
 
 # OS
 Thumbs.db
-prisma/seed.cjs

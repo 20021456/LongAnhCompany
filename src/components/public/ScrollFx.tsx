@@ -141,19 +141,6 @@ export function ScrollFx() {
     const snapEls = Array.from(document.querySelectorAll<HTMLElement>('[data-snap]'));
     const paged = fine && snapEls.length >= 3;
 
-    // Sections that scrub internally (e.g. the pinned capability deck): while
-    // the gesture is inside their scroll span, a hard flick must NOT page to
-    // the next frame — otherwise a fast spin teleports past all the cards.
-    // Inside these, we let the wheel scrub naturally.
-    const noFlickEls = Array.from(document.querySelectorAll<HTMLElement>('[data-noflick]'));
-    const inNoFlick = (y: number) => {
-      const vh = window.innerHeight;
-      return noFlickEls.some((el) => {
-        const top = el.getBoundingClientRect().top + window.scrollY;
-        return y >= top - 4 && y <= top + el.offsetHeight - vh + 4;
-      });
-    };
-
     const LERP = 0.11; // 0..1 — lower = heavier glide
     const FLICK = 380; // accumulated |deltaY| that counts as a flick (a real hard spin)
     const PEAK = 90; // a single event must reach this (mouse notch, not trackpad drift)
@@ -163,10 +150,6 @@ export function ScrollFx() {
     let target = window.scrollY;
     let current = window.scrollY;
     let smoothing = false;
-    let smoothRaf = 0;
-    // Route changes remount this effect; a glide still easing from the OLD
-    // page must die immediately or it drags the NEW page to the old offset.
-    let alive = true;
     let accum = 0;
     let peak = 0;
     let lastT = 0;
@@ -177,7 +160,6 @@ export function ScrollFx() {
     const maxScroll = () =>
       Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     const loop = () => {
-      if (!alive) return;
       const diff = target - current;
       if (Math.abs(diff) < 0.4) {
         current = target;
@@ -187,12 +169,12 @@ export function ScrollFx() {
       }
       current += diff * LERP;
       window.scrollTo({ top: current, behavior: 'instant' as ScrollBehavior });
-      smoothRaf = requestAnimationFrame(loop);
+      requestAnimationFrame(loop);
     };
     const startLoop = () => {
       if (!smoothing) {
         smoothing = true;
-        smoothRaf = requestAnimationFrame(loop);
+        requestAnimationFrame(loop);
       }
     };
     const adjacentStop = (dir: number, y: number): number | null => {
@@ -243,7 +225,7 @@ export function ScrollFx() {
         window.clearTimeout(flickTimer);
         flickTimer = window.setTimeout(() => {
           const quickBurst = lastT - burstStart <= BURST;
-          if (quickBurst && Math.abs(accum) >= FLICK && peak >= PEAK && !inNoFlick(burstFromY)) {
+          if (quickBurst && Math.abs(accum) >= FLICK && peak >= PEAK) {
             const dir = accum > 0 ? 1 : -1;
             const stop = adjacentStop(dir, burstFromY);
             // Never pull noticeably backwards against the flick direction
@@ -271,7 +253,6 @@ export function ScrollFx() {
     if (fine) window.addEventListener('wheel', onWheel, { passive: false });
 
     return () => {
-      alive = false;
       io.disconnect();
       ioCu.disconnect();
       window.removeEventListener('scroll', onScrollSync);
@@ -279,7 +260,6 @@ export function ScrollFx() {
       window.removeEventListener('wheel', onWheel);
       window.clearTimeout(flickTimer);
       if (raf) cancelAnimationFrame(raf);
-      if (smoothRaf) cancelAnimationFrame(smoothRaf);
     };
   }, [pathname]);
 

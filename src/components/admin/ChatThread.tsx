@@ -73,12 +73,12 @@ export function ChatThread({
   }
 
   return (
-    <div className="lac-card">
-      <div className="lac-card-head">
+    <div className="ad-card">
+      <div className="ad-card-head">
         <div>
           <h3>
             Cuộc trò chuyện
-            <span className={'lac-badge ' + (closed ? 'hide' : 'pub')} style={{ marginLeft: 8 }}>
+            <span className={'ad-badge ' + (closed ? 'hide' : 'pub')} style={{ marginLeft: 8 }}>
               <span className="dot" />
               {closed ? 'đã đóng' : 'đang mở'}
             </span>
@@ -88,7 +88,7 @@ export function ChatThread({
         <div style={{ display: 'flex', gap: 6 }}>
           <button
             type="button"
-            className="lac-btn sm"
+            className="ad-btn sm"
             disabled={busy}
             onClick={() => run(() => assignSession(sessionId))}
           >
@@ -97,7 +97,7 @@ export function ChatThread({
           {closed ? (
             <button
               type="button"
-              className="lac-btn sm"
+              className="ad-btn sm"
               disabled={busy}
               onClick={() => run(() => setSessionStatus(sessionId, 'open'))}
             >
@@ -106,7 +106,7 @@ export function ChatThread({
           ) : (
             <button
               type="button"
-              className="lac-btn sm danger"
+              className="ad-btn sm danger"
               disabled={busy}
               onClick={() => run(() => setSessionStatus(sessionId, 'closed'))}
             >
@@ -115,7 +115,7 @@ export function ChatThread({
           )}
         </div>
       </div>
-      <div className="lac-card-body">
+      <div className="ad-card-body">
         {state?.error ? (
           <div className="lg-err" style={{ marginBottom: 12 }}>
             <AdminIcon name="shield" size={14} />
@@ -134,7 +134,7 @@ export function ChatThread({
           }}
         >
           {messages.length === 0 ? (
-            <div className="lac-empty">Chưa có tin nhắn nào trong phiên này.</div>
+            <div className="ad-empty">Chưa có tin nhắn nào trong phiên này.</div>
           ) : (
             messages.map((m) => {
               const isAgent = m.senderType === 'agent';
@@ -177,7 +177,7 @@ export function ChatThread({
 
         <form onSubmit={onSend} style={{ marginTop: 16 }}>
           <textarea
-            className="lac-textarea"
+            className="ad-textarea"
             value={reply}
             onChange={(e) => setReply(e.target.value)}
             placeholder={closed ? 'Phiên đã đóng — mở lại để trả lời.' : 'Nhập câu trả lời…'}
@@ -187,7 +187,7 @@ export function ChatThread({
           <div style={{ marginTop: 8 }}>
             <button
               type="submit"
-              className="lac-btn primary"
+              className="ad-btn primary"
               disabled={closed || busy || !reply.trim()}
             >
               <AdminIcon name="chat" size={15} />

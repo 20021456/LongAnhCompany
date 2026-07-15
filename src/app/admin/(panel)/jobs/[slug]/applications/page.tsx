@@ -40,8 +40,8 @@ export default async function JobApplicationsPage({ params }: { params: { slug: 
       {job.applications.length === 0 ? (
         <AdminEmpty>Chưa có đơn ứng tuyển nào cho vị trí này.</AdminEmpty>
       ) : (
-        <div className="lac-table-wrap">
-          <table className="lac-table">
+        <div className="ad-table-wrap">
+          <table className="ad-table">
             <thead>
               <tr>
                 <th>Ứng viên</th>

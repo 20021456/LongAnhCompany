@@ -44,19 +44,19 @@ export function SeoForm({ initial }: { initial: Record<string, LocaleVal> }) {
         </div>
       ) : null}
       {state?.ok ? (
-        <div className="lac-badge pub" style={{ marginBottom: 16, padding: '8px 12px' }}>
+        <div className="ad-badge pub" style={{ marginBottom: 16, padding: '8px 12px' }}>
           <span className="dot" />
           Đã lưu cài đặt SEO.
         </div>
       ) : null}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div className="lac-card">
-          <div className="lac-card-head">
+        <div className="ad-card">
+          <div className="ad-card-head">
             <h3>Thẻ meta đa ngôn ngữ</h3>
           </div>
           <div
-            className="lac-card-body"
+            className="ad-card-body"
             style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
           >
             {SEO_FIELDS.filter((f) => f.localized).map((f) => (
@@ -66,7 +66,7 @@ export function SeoForm({ initial }: { initial: Record<string, LocaleVal> }) {
                     f.type === 'textarea' ? (
                       <textarea
                         key={loc}
-                        className="lac-textarea"
+                        className="ad-textarea"
                         placeholder={loc.toUpperCase()}
                         value={values[f.key]?.[loc] ?? ''}
                         onChange={(e) => setVal(f.key, loc, e.target.value)}
@@ -74,7 +74,7 @@ export function SeoForm({ initial }: { initial: Record<string, LocaleVal> }) {
                     ) : (
                       <input
                         key={loc}
-                        className="lac-input"
+                        className="ad-input"
                         placeholder={loc.toUpperCase()}
                         value={values[f.key]?.[loc] ?? ''}
                         onChange={(e) => setVal(f.key, loc, e.target.value)}
@@ -87,12 +87,12 @@ export function SeoForm({ initial }: { initial: Record<string, LocaleVal> }) {
           </div>
         </div>
 
-        <div className="lac-card">
-          <div className="lac-card-head">
+        <div className="ad-card">
+          <div className="ad-card-head">
             <h3>Kỹ thuật & theo dõi</h3>
           </div>
           <div
-            className="lac-card-body"
+            className="ad-card-body"
             style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
           >
             {SEO_FIELDS.filter((f) => !f.localized).map((f) => (
@@ -108,7 +108,7 @@ export function SeoForm({ initial }: { initial: Record<string, LocaleVal> }) {
                   </label>
                 ) : (
                   <input
-                    className="lac-input"
+                    className="ad-input"
                     value={values[f.key]?.vi ?? ''}
                     onChange={(e) => setVal(f.key, 'vi', e.target.value)}
                   />
@@ -120,7 +120,7 @@ export function SeoForm({ initial }: { initial: Record<string, LocaleVal> }) {
       </div>
 
       <div style={{ marginTop: 20 }}>
-        <button type="submit" className="lac-btn primary" disabled={busy}>
+        <button type="submit" className="ad-btn primary" disabled={busy}>
           <AdminIcon name="check" size={15} />
           {busy ? 'Đang lưu…' : 'Lưu cài đặt SEO'}
         </button>

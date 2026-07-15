@@ -98,19 +98,19 @@ export function PagesTable({ rows }: { rows: PageRow[] }) {
   const hideCount = total - pubCount;
 
   return (
-    <div className="lac-table-wrap">
-      <div className="lac-toolbar">
-        <div className="lac-search-box" style={{ width: 280 }}>
+    <div className="ad-table-wrap">
+      <div className="ad-toolbar">
+        <div className="ad-search-box" style={{ width: 280 }}>
           <AdminIcon name="search" size={14} />
           <input
-            className="lac-input"
+            className="ad-input"
             placeholder="Tìm theo tên, slug…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
         <select
-          className="lac-select"
+          className="ad-select"
           style={{ width: 150 }}
           value={lang}
           onChange={(e) => setLang(e.target.value)}
@@ -153,12 +153,12 @@ export function PagesTable({ rows }: { rows: PageRow[] }) {
           })}
         </div>
         <div className="grow" />
-        <button className="lac-btn ghost sm" type="button" disabled>
+        <button className="ad-btn ghost sm" type="button" disabled>
           <AdminIcon name="filter" size={13} /> Lọc thêm
         </button>
       </div>
 
-      <table className="lac-table">
+      <table className="ad-table">
         <thead>
           <tr>
             <th style={{ width: 36 }}>
@@ -182,7 +182,7 @@ export function PagesTable({ rows }: { rows: PageRow[] }) {
                 </td>
                 <td>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div className="lac-iconbox">
+                    <div className="ad-iconbox">
                       <AdminIcon name="file" size={15} />
                     </div>
                     <div>
@@ -217,7 +217,7 @@ export function PagesTable({ rows }: { rows: PageRow[] }) {
                 </td>
                 <td>{p.sections} sections</td>
                 <td>
-                  <span className={'lac-badge ' + status}>
+                  <span className={'ad-badge ' + status}>
                     <span className="dot" />
                     {STATUS_LABEL[status]}
                   </span>
@@ -250,7 +250,7 @@ export function PagesTable({ rows }: { rows: PageRow[] }) {
                   <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
                     <Link
                       href={`/admin/pages/${p.key}`}
-                      className="lac-btn ghost sm"
+                      className="ad-btn ghost sm"
                       title="Sửa nội dung"
                     >
                       <AdminIcon name="edit" size={13} />
@@ -259,15 +259,15 @@ export function PagesTable({ rows }: { rows: PageRow[] }) {
                       href={p.path}
                       target="_blank"
                       rel="noreferrer"
-                      className="lac-btn ghost sm"
+                      className="ad-btn ghost sm"
                       title="Xem trên web"
                     >
                       <AdminIcon name="eye" size={13} />
                     </a>
-                    <button type="button" className="lac-btn ghost sm" title="Nhân bản" disabled>
+                    <button type="button" className="ad-btn ghost sm" title="Nhân bản" disabled>
                       <AdminIcon name="copy" size={13} />
                     </button>
-                    <button type="button" className="lac-btn ghost sm" title="Thêm" disabled>
+                    <button type="button" className="ad-btn ghost sm" title="Thêm" disabled>
                       <AdminIcon name="more" size={13} />
                     </button>
                   </div>
@@ -285,12 +285,12 @@ export function PagesTable({ rows }: { rows: PageRow[] }) {
         </tbody>
       </table>
 
-      <div className="lac-pag">
+      <div className="ad-pag">
         <div>
           Hiển thị 1 – {filtered.length} của {total} trang · {pubCount} đã xuất bản · {hideCount} đã
           ẩn
         </div>
-        <div className="lac-pag-pages">
+        <div className="ad-pag-pages">
           <button type="button" disabled>
             ‹
           </button>

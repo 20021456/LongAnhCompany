@@ -28,6 +28,58 @@ export async function generateMetadata({
   });
 }
 
+/** Captions for the warehouse image deck (images carry no CMS captions). */
+const WAREHOUSE_CAPTIONS: Record<Locale, { title: string; sub: string }[]> = {
+  vi: [
+    {
+      title: 'Kho thành phẩm',
+      sub: 'Thành phẩm đóng pallet, phân lô theo mã sản phẩm trước khi xuất.',
+    },
+    {
+      title: 'Bãi nguyên liệu',
+      sub: 'Đá nguyên khai tập kết theo phân vùng, sẵn sàng cho dây chuyền.',
+    },
+    {
+      title: 'Bốc xếp & vận chuyển',
+      sub: 'Thiết bị nâng hạ và đội xe vận hành liên tục trong ngày.',
+    },
+    {
+      title: 'Sẵn sàng xuất khẩu',
+      sub: 'Container niêm phong cùng chứng từ đầy đủ trước khi rời nhà máy.',
+    },
+  ],
+  en: [
+    {
+      title: 'Finished-goods warehouse',
+      sub: 'Palletised lots staged by product code before dispatch.',
+    },
+    { title: 'Raw-material yard', sub: 'Quarried stone staged by zone, ready for the lines.' },
+    {
+      title: 'Loading & transport',
+      sub: 'Lifting equipment and trucks running throughout the day.',
+    },
+    {
+      title: 'Export-ready',
+      sub: 'Sealed containers with full documentation before leaving the plant.',
+    },
+  ],
+  zh: [
+    { title: '成品仓库', sub: '成品按产品编码分批打托,待发货。' },
+    { title: '原料堆场', sub: '原石分区堆放,随时供应生产线。' },
+    { title: '装卸与运输', sub: '装卸设备与车队全天候运转。' },
+    { title: '出口就绪', sub: '集装箱封箱,单证齐备后出厂。' },
+  ],
+};
+
+/** Photo backdrops for the core-values cards (values have no CMS image). */
+const VALUE_IMAGES = [
+  '/assets/da-nguyen-lieu-cao-cap2.webp',
+  '/assets/nha-may-bot-sieu-min-3.webp',
+  '/assets/bao-bi-sieu-trang.jpg',
+  '/assets/kiem-dinh.jpg',
+  '/assets/co-so-ha-tang.jpg',
+];
+
 export default async function AboutPage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
   const loc = locale as Locale;
@@ -48,7 +100,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         title={S.header.title}
         sub={S.header.sub}
         breadcrumb={[{ label: homeLabel, href: `/${loc}` }, { label: C.nav[1] }]}
-        bgImage={S.header.imageUrl || '/assets/da-nguyen-lieu-cao-cap.webp'}
+        bgImage="/assets/da-nguyen-lieu-cao-cap.webp"
       />
 
       {/* STORY */}
@@ -106,40 +158,37 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
       {/* TIMELINE — rotating wheel */}
       <TimelineArc eyebrow={S.timeline.eyebrow} title={S.timeline.title} items={S.timeline.items} />
 
-      {/* VALUES — split layout: title left, borderless icon list right.
-          Same faint full-section photo backdrop as the story section. */}
-      <section className="ab-section ab-intro-wrap">
-        <div className="ab-intro-bg">
-          <SmartImage src="/assets/kho-da-nguyen-lieu.webp" alt="" width={1600} height={900} />
-        </div>
+      {/* VALUES */}
+      <section className="ab-section">
         <div className="va-wrap">
-          <div className="ab-vals3">
-            <div className="ab-vals3-head">
-              <div className="ab-eyebrow" data-reveal>
-                {S.values.eyebrow}
-              </div>
-              <h2 data-reveal="words">
-                <Words text={S.values.title} step={100} />
-              </h2>
+          <div className="va-shead2">
+            <div className="ab-eyebrow" data-reveal>
+              {S.values.eyebrow}
             </div>
-            <div className="ab-vals3-list">
-              {S.values.items.map((it, i) => (
-                <div
-                  key={i}
-                  className="ab-vals3-item"
-                  data-reveal
-                  data-reveal-delay={String(i % 3)}
-                >
-                  <div className="ab-vals3-icon">
-                    <Icon name={(it.icon || 'check') as IconName} size={22} />
-                  </div>
-                  <div>
-                    <h3>{it.name}</h3>
-                    <p>{it.body}</p>
-                  </div>
+            <h2 data-reveal="words">
+              <Words text={S.values.title} step={100} />
+            </h2>
+          </div>
+          <div className="ab-vals2">
+            {S.values.items.map((it, i) => (
+              <div key={i} className="ab-val2" data-reveal="clip" data-reveal-delay={String(i % 3)}>
+                <SmartImage
+                  src={VALUE_IMAGES[i % VALUE_IMAGES.length]}
+                  alt={it.name}
+                  width={800}
+                  height={1000}
+                  sizes="33vw"
+                />
+                <div className="ab-val2-shade" />
+                <div className="ab-val2-chip">
+                  <Icon name={(it.icon || 'check') as IconName} size={18} />
                 </div>
-              ))}
-            </div>
+                <div className="ab-val2-body">
+                  <h3>{it.name}</h3>
+                  <p>{it.body}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -162,6 +211,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
               <div className="ab-caps-list">
                 {S.caps.metrics.map((m, i) => (
                   <div key={i} className="ab-cap-row" data-reveal data-reveal-delay={String(i % 4)}>
+                    <div className="ab-cap-n">— {String(i + 1).padStart(2, '0')}</div>
                     <h4>{m.label}</h4>
                     <span data-countup>{m.value}</span>
                   </div>
@@ -172,16 +222,24 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         </div>
       </section>
 
-      {/* WAREHOUSE — Kettal-collections layout: caption above, framed photo below */}
+      {/* WAREHOUSE */}
       <section className="ab-section">
+        <div className="va-wrap">
+          <div className="va-shead2">
+            <div className="ab-eyebrow" data-reveal>
+              {S.warehouse.eyebrow}
+            </div>
+            <h2 data-reveal="words">
+              <Words text={S.warehouse.title} step={100} />
+            </h2>
+          </div>
+        </div>
         <WarehouseDeck
-          eyebrow={S.warehouse.eyebrow}
-          note={S.warehouse.title}
-          slides={S.warehouse.images.filter(Boolean).map((src, i) => {
-            const caps = S.warehouse.captions ?? [];
-            const cap = caps.length > 0 ? caps[i % caps.length] : { title: '', sub: '' };
-            return { src, title: cap.title, sub: cap.sub };
-          })}
+          slides={S.warehouse.images.filter(Boolean).map((src, i) => ({
+            src,
+            title: WAREHOUSE_CAPTIONS[loc][i % WAREHOUSE_CAPTIONS[loc].length].title,
+            sub: WAREHOUSE_CAPTIONS[loc][i % WAREHOUSE_CAPTIONS[loc].length].sub,
+          }))}
         />
       </section>
 

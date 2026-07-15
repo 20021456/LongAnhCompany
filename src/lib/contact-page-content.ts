@@ -22,8 +22,6 @@ export interface ContactHeaderSection {
   eyebrow: string;
   title: string;
   sub: string;
-  /** Hero banner background photo. */
-  imageUrl?: string;
 }
 
 export type ContactQuickChannelIcon = 'chat' | 'mail' | 'globe' | 'phone';
@@ -111,22 +109,19 @@ export type ContactPageSectionKey = (typeof CONTACT_PAGE_SECTION_KEYS)[number];
 
 const HEADER: Record<Locale, ContactHeaderSection> = {
   vi: {
-    eyebrow: 'Liên hệ với Long Anh',
+    eyebrow: '// Liên hệ với Long Anh',
     title: 'Cần báo giá hoặc tư vấn kỹ thuật?',
     sub: 'Đội ngũ kinh doanh của chúng tôi sẽ phản hồi trong vòng 4 giờ làm việc — kèm spec, COA và báo giá FOB chi tiết.',
-    imageUrl: '/assets/co-so-ha-tang.jpg',
   },
   en: {
-    eyebrow: 'Contact Long Anh',
+    eyebrow: '// Contact Long Anh',
     title: 'Need a quote or technical consultation?',
     sub: 'Our sales team replies within 4 business hours — with spec sheets, COA and a detailed FOB quote.',
-    imageUrl: '/assets/co-so-ha-tang.jpg',
   },
   zh: {
-    eyebrow: '联系龙英',
+    eyebrow: '// 联系龙英',
     title: '需要报价或技术咨询?',
     sub: '我们的销售团队将在 4 个工作小时内回复 — 附带规格表、COA 和详细的 FOB 报价。',
-    imageUrl: '/assets/co-so-ha-tang.jpg',
   },
 };
 

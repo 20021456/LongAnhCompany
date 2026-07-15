@@ -119,7 +119,7 @@ export function ToggleRow({
       <span>{label}</span>
       <button
         type="button"
-        className={'lac-switch ' + (checked ? 'on' : '')}
+        className={'ad-switch ' + (checked ? 'on' : '')}
         onClick={() => onChange(!checked)}
         aria-pressed={checked}
       />

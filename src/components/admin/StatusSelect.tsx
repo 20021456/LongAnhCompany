@@ -23,7 +23,7 @@ export function StatusSelect({
 
   return (
     <select
-      className="lac-select"
+      className="ad-select"
       style={{ height: 30, fontSize: 12.5, width: 'auto', minWidth: 130 }}
       value={value}
       disabled={pending}

@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { AdminIcon } from './AdminIcon';
 import { Field } from './FormBits';
-import { PeImg } from './PeImg';
 import { EditorSection, type Lang } from './EditorChrome';
 import { uploadImage } from '@/lib/upload-client';
 import {
@@ -69,44 +68,25 @@ export function ProductsPageSectionsEditor({
       >
         <Field label={`Eyebrow (${L})`}>
           <input
-            className="lac-input"
+            className="ad-input"
             value={C.header.eyebrow}
             onChange={(e) => onPatch('header', { eyebrow: e.target.value })}
           />
         </Field>
         <Field label={`Tiêu đề chính (${L})`}>
           <input
-            className="lac-input"
+            className="ad-input"
             value={C.header.title}
             onChange={(e) => onPatch('header', { title: e.target.value })}
           />
         </Field>
         <Field label={`Mô tả ngắn (${L})`}>
           <textarea
-            className="lac-textarea"
+            className="ad-textarea"
             value={C.header.sub}
             onChange={(e) => onPatch('header', { sub: e.target.value })}
           />
         </Field>
-        <div className="pe-imgrow" style={{ marginTop: 8 }}>
-          <PeImg
-            src={C.header.imageUrl ?? ''}
-            alt=""
-            size={C.header.imageUrl ? 'Ảnh nền hero' : undefined}
-            onChange={(dataUrl) => onPatch('header', { imageUrl: dataUrl })}
-          />
-          <div className="pe-stack">
-            <Field label="Đường dẫn ảnh nền hero">
-              <input
-                className="lac-input"
-                value={C.header.imageUrl ?? ''}
-                spellCheck={false}
-                style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
-                onChange={(e) => onPatch('header', { imageUrl: e.target.value })}
-              />
-            </Field>
-          </div>
-        </div>
       </EditorSection>
 
       {/* 02 — STATS */}
@@ -134,7 +114,7 @@ export function ProductsPageSectionsEditor({
                 STAT {i + 1}
               </span>
               <input
-                className="lac-input"
+                className="ad-input"
                 style={{ fontWeight: 700, fontSize: 18 }}
                 value={s.value}
                 onChange={(e) => {
@@ -144,7 +124,7 @@ export function ProductsPageSectionsEditor({
                 }}
               />
               <input
-                className="lac-input"
+                className="ad-input"
                 style={{ fontSize: 12 }}
                 value={s.label}
                 onChange={(e) => {
@@ -224,7 +204,7 @@ export function ProductsPageSectionsEditor({
               </div>
               <Field label={`Tiêu đề (${L})`}>
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   value={t.title}
                   onChange={(e) => {
                     const items = [...C.tiles.items];
@@ -235,7 +215,7 @@ export function ProductsPageSectionsEditor({
               </Field>
               <Field label={`Mô tả (${L})`}>
                 <textarea
-                  className="lac-textarea"
+                  className="ad-textarea"
                   style={{ minHeight: 60 }}
                   value={t.desc}
                   onChange={(e) => {
@@ -247,7 +227,7 @@ export function ProductsPageSectionsEditor({
               </Field>
               <Field label="Anchor neo">
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   value={t.anchor}
                   spellCheck={false}
                   style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
@@ -294,7 +274,7 @@ export function ProductsPageSectionsEditor({
                   {inCatalog ? (
                     <Link
                       href={`/admin/products/${code}`}
-                      className="lac-btn ghost sm"
+                      className="ad-btn ghost sm"
                       title="Sửa chi tiết SKU"
                     >
                       <AdminIcon name="edit" size={12} /> Sửa
@@ -322,7 +302,7 @@ export function ProductsPageSectionsEditor({
 
         <div style={{ marginTop: 12 }}>
           <select
-            className="lac-select"
+            className="ad-select"
             value=""
             onChange={(e) => {
               const code = e.target.value;
@@ -344,7 +324,7 @@ export function ProductsPageSectionsEditor({
 
         <Link
           href="/admin/products"
-          className="lac-btn ghost sm"
+          className="ad-btn ghost sm"
           style={{ width: 'fit-content', marginTop: 10 }}
         >
           <AdminIcon name="edit" size={12} /> Quản lý catalog sản phẩm
@@ -362,14 +342,14 @@ export function ProductsPageSectionsEditor({
         <div className="pe-row">
           <Field label={`Eyebrow (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.particle.eyebrow}
               onChange={(e) => onPatch('particle', { eyebrow: e.target.value })}
             />
           </Field>
           <Field label={`Tiêu đề (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.particle.title}
               onChange={(e) => onPatch('particle', { title: e.target.value })}
             />
@@ -378,14 +358,14 @@ export function ProductsPageSectionsEditor({
         <div className="pe-row">
           <Field label="Bột không phủ — các cỡ (µm)" help="Cách nhau bằng dấu phẩy">
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.particle.uncoatedSizes}
               onChange={(e) => onPatch('particle', { uncoatedSizes: e.target.value })}
             />
           </Field>
           <Field label="Bột phủ Stearic — các cỡ (µm)" help="Cách nhau bằng dấu phẩy">
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.particle.coatedSizes}
               onChange={(e) => onPatch('particle', { coatedSizes: e.target.value })}
             />
@@ -393,7 +373,7 @@ export function ProductsPageSectionsEditor({
         </div>
         <Field label="Tỉ lệ Stearic Acid">
           <input
-            className="lac-input"
+            className="ad-input"
             value={C.particle.stearicRatio}
             onChange={(e) => onPatch('particle', { stearicRatio: e.target.value })}
           />
@@ -410,7 +390,7 @@ export function ProductsPageSectionsEditor({
       >
         <Field label={`Tiêu đề bảng (${L})`}>
           <input
-            className="lac-input"
+            className="ad-input"
             value={C.specTable.title}
             onChange={(e) => onPatch('specTable', { title: e.target.value })}
           />
@@ -418,14 +398,14 @@ export function ProductsPageSectionsEditor({
         <div className="pe-row">
           <Field label={`Cột "Bột không phủ" (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.specTable.colUncoated}
               onChange={(e) => onPatch('specTable', { colUncoated: e.target.value })}
             />
           </Field>
           <Field label={`Cột "Bột phủ Stearic" (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.specTable.colCoated}
               onChange={(e) => onPatch('specTable', { colCoated: e.target.value })}
             />
@@ -443,7 +423,7 @@ export function ProductsPageSectionsEditor({
                 }}
               >
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder={`Chỉ tiêu (${L})`}
                   value={r.label}
                   onChange={(e) => {
@@ -453,7 +433,7 @@ export function ProductsPageSectionsEditor({
                   }}
                 />
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder="Phủ Stearic"
                   value={r.coated}
                   onChange={(e) => {
@@ -463,7 +443,7 @@ export function ProductsPageSectionsEditor({
                   }}
                 />
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder="Không phủ"
                   value={r.uncoated}
                   onChange={(e) => {
@@ -473,7 +453,7 @@ export function ProductsPageSectionsEditor({
                   }}
                 />
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder="Đơn vị"
                   value={r.unit}
                   onChange={(e) => {
@@ -500,7 +480,7 @@ export function ProductsPageSectionsEditor({
         </div>
         <button
           type="button"
-          className="lac-btn sm"
+          className="ad-btn sm"
           style={{ width: 'fit-content', marginTop: 10 }}
           onClick={() =>
             onPatch('specTable', {
@@ -512,9 +492,9 @@ export function ProductsPageSectionsEditor({
         </button>
 
         <Field label="Chip chứng nhận dưới bảng" help="Enter để thêm">
-          <div className="lac-tags">
+          <div className="ad-tags">
             {C.specTable.certBadges.map((badge, i) => (
-              <span key={`${badge}-${i}`} className="lac-tag">
+              <span key={`${badge}-${i}`} className="ad-tag">
                 {badge}
                 <button
                   type="button"
@@ -551,90 +531,23 @@ export function ProductsPageSectionsEditor({
         </Field>
       </EditorSection>
 
-      {/* 07 — PROCESS */}
-      <EditorSection
-        num={next()}
-        icon="layers"
-        title="Quy trình — 4 bước"
-        sub="Eyebrow, tiêu đề, câu statement và 4 bước sản xuất"
-      >
-        <div className="pe-row">
-          <Field label={`Eyebrow (${L})`}>
-            <input
-              className="lac-input"
-              value={C.process.eyebrow}
-              onChange={(e) => onPatch('process', { eyebrow: e.target.value })}
-            />
-          </Field>
-          <Field label={`Tiêu đề (${L})`}>
-            <input
-              className="lac-input"
-              value={C.process.title}
-              onChange={(e) => onPatch('process', { title: e.target.value })}
-            />
-          </Field>
-        </div>
-        <Field label={`Câu statement — hiện dần khi cuộn (${L})`}>
-          <textarea
-            className="lac-textarea"
-            value={C.process.statement}
-            onChange={(e) => onPatch('process', { statement: e.target.value })}
-          />
-        </Field>
-        {C.process.steps.map((s, i) => (
-          <div key={i} className="pe-row" style={{ marginBottom: 8 }}>
-            <Field label={`Bước ${s.k || i + 1} — tên (${L})`}>
-              <input
-                className="lac-input"
-                value={s.t}
-                onChange={(e) => {
-                  const steps = [...C.process.steps];
-                  steps[i] = { ...steps[i], t: e.target.value };
-                  onPatch('process', { steps });
-                }}
-              />
-            </Field>
-            <Field label={`Bước ${s.k || i + 1} — mô tả (${L})`}>
-              <input
-                className="lac-input"
-                value={s.d}
-                onChange={(e) => {
-                  const steps = [...C.process.steps];
-                  steps[i] = { ...steps[i], d: e.target.value };
-                  onPatch('process', { steps });
-                }}
-              />
-            </Field>
-          </div>
-        ))}
-      </EditorSection>
-
-      {/* 08 — QUOTE CTA */}
+      {/* 07 — QUOTE CTA */}
       <EditorSection
         num={next()}
         icon="mail"
         title="CTA — Báo giá FOB"
         sub="Banner kêu gọi liên hệ ở cuối trang"
       >
-        <div className="pe-row">
-          <Field label={`Kicker (${L})`}>
-            <input
-              className="lac-input"
-              value={C.cta.kicker ?? ''}
-              onChange={(e) => onPatch('cta', { kicker: e.target.value })}
-            />
-          </Field>
-          <Field label={`Tiêu đề (${L})`}>
-            <input
-              className="lac-input"
-              value={C.cta.title}
-              onChange={(e) => onPatch('cta', { title: e.target.value })}
-            />
-          </Field>
-        </div>
+        <Field label={`Tiêu đề (${L})`}>
+          <input
+            className="ad-input"
+            value={C.cta.title}
+            onChange={(e) => onPatch('cta', { title: e.target.value })}
+          />
+        </Field>
         <Field label={`Mô tả (${L})`}>
           <textarea
-            className="lac-textarea"
+            className="ad-textarea"
             value={C.cta.sub}
             onChange={(e) => onPatch('cta', { sub: e.target.value })}
           />
@@ -642,14 +555,14 @@ export function ProductsPageSectionsEditor({
         <div className="pe-row">
           <Field label={`Nút chính — chữ (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.cta.primaryLabel}
               onChange={(e) => onPatch('cta', { primaryLabel: e.target.value })}
             />
           </Field>
           <Field label="Nút chính — liên kết">
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.cta.primaryHref}
               spellCheck={false}
               style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
@@ -657,13 +570,6 @@ export function ProductsPageSectionsEditor({
             />
           </Field>
         </div>
-        <Field label="Nút gọi điện — số hiển thị">
-          <input
-            className="lac-input"
-            value={C.cta.phone ?? ''}
-            onChange={(e) => onPatch('cta', { phone: e.target.value })}
-          />
-        </Field>
       </EditorSection>
     </>
   );

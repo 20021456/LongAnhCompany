@@ -12,11 +12,11 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   const user = await requireAuth();
 
   return (
-    <div className="lac-app">
+    <div className="ad-app">
       <AdminSidebar role={user.role} permissions={user.permissions} />
-      <div className="lac-main">
+      <div className="ad-main">
         <AdminTopbar name={user.name ?? user.email} email={user.email} role={user.role} />
-        <div className="lac-body">{children}</div>
+        <div className="ad-body">{children}</div>
       </div>
     </div>
   );

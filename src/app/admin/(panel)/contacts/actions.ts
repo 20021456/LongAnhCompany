@@ -33,30 +33,6 @@ export async function setContactStatus(id: string, status: string): Promise<Acti
   }
 }
 
-/** Assign a contact to a user (or pass null to clear the assignment). */
-export async function setContactAssignee(id: string, userId: string | null): Promise<ActionResult> {
-  const user = await requirePermission('contacts.update');
-  try {
-    await db.contact.update({
-      where: { id },
-      data: { assignedToId: userId || null },
-    });
-    await recordAudit({
-      userId: user.id,
-      action: 'update',
-      entityType: 'contact',
-      entityId: id,
-      changes: { assignedToId: userId },
-    });
-    revalidatePath('/admin/contacts');
-    revalidatePath(`/admin/contacts/${id}`);
-    return { ok: true };
-  } catch (err) {
-    console.error('setContactAssignee error:', err);
-    return { error: 'Không gán được nhân viên phụ trách.' };
-  }
-}
-
 const noteSchema = z.object({
   contactId: z.string().min(1),
   note: z.string().min(1, 'Ghi chú không được để trống'),

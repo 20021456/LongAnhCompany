@@ -31,8 +31,8 @@ export default async function AdminLivechatPage() {
           Chưa có phiên chat nào. Các cuộc trò chuyện từ widget chat trên website sẽ hiển thị ở đây.
         </AdminEmpty>
       ) : (
-        <div className="lac-table-wrap">
-          <table className="lac-table">
+        <div className="ad-table-wrap">
+          <table className="ad-table">
             <thead>
               <tr>
                 <th>Khách</th>
@@ -69,7 +69,7 @@ export default async function AdminLivechatPage() {
                     <td>{s._count.messages}</td>
                     <td>{s.assignedAgent?.fullName ?? '— chưa gán —'}</td>
                     <td>
-                      <span className={'lac-badge ' + (s.status === 'open' ? 'pub' : 'hide')}>
+                      <span className={'ad-badge ' + (s.status === 'open' ? 'pub' : 'hide')}>
                         <span className="dot" />
                         {s.status === 'open' ? 'đang mở' : 'đã đóng'}
                       </span>
@@ -79,7 +79,7 @@ export default async function AdminLivechatPage() {
                     </td>
                     <td>
                       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <Link href={`/admin/livechat/${s.id}`} className="lac-btn sm">
+                        <Link href={`/admin/livechat/${s.id}`} className="ad-btn sm">
                           <AdminIcon name="chat" size={13} /> Mở
                         </Link>
                       </div>

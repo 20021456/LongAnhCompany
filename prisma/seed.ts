@@ -338,14 +338,6 @@ async function main() {
       group: 'brand',
     },
     {
-      key: 'site.footer_tagline',
-      valueVi: 'Nhà sản xuất bột đá Canxi Cacbonat và đá tự nhiên hàng đầu Bắc Trung Bộ.',
-      valueEn:
-        'A leading manufacturer of calcium carbonate powder and natural stone in North-Central Vietnam.',
-      valueZh: '越南北中部领先的碳酸钙粉和天然石材制造商。',
-      group: 'brand',
-    },
-    {
       key: 'site.footnote',
       valueVi: vi.footnote,
       valueEn: en.footnote,
@@ -440,10 +432,10 @@ async function main() {
       nameEn: 'CaCO₃ powder',
       nameZh: '碳酸钙粉',
       descriptionVi:
-        'Coated · Uncoated · 4–20 µm — phụ gia cho nhựa, sơn, giấy, thức ăn chăn nuôi.',
+        'Coated · Uncoated · 3–20 µm — phụ gia cho nhựa, sơn, giấy, thức ăn chăn nuôi.',
       descriptionEn:
-        'Coated · Uncoated · 4–20 µm — additive for plastics, paint, paper, animal feed.',
-      descriptionZh: '涂层 · 未涂层 · 4–20 µm — 用于塑料、涂料、纸张、动物饲料的添加剂。',
+        'Coated · Uncoated · 3–20 µm — additive for plastics, paint, paper, animal feed.',
+      descriptionZh: '涂层 · 未涂层 · 3–20 µm — 用于塑料、涂料、纸张、动物饲料的添加剂。',
       coverImageUrl: '/assets/bot-caco3-sieu-min.webp',
       sortOrder: 1,
     },
@@ -473,7 +465,7 @@ async function main() {
   // ─── 5. Products + variants/applications/packagings/specs ──────────────
   let productCount = 0;
   for (const [code, p] of Object.entries(PRODUCTS)) {
-    const slug = p.slug;
+    const slug = code.toLowerCase();
     const productData = {
       slug,
       categoryId: catBySlug[p.cat],

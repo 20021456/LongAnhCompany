@@ -30,8 +30,6 @@ export interface CareersHeroSection {
   sub: string;
   ctaLabel: string;
   stats: CareersStatItem[];
-  /** Hero banner background photo. */
-  imageUrl?: string;
 }
 
 export interface CareersJobsSection {
@@ -109,10 +107,9 @@ export type CareersPageSectionKey = (typeof CAREERS_PAGE_SECTION_KEYS)[number];
 const HERO: Record<Locale, CareersHeroSection> = {
   vi: {
     eyebrow: 'Cơ hội nghề nghiệp',
-    title: 'Gia nhập đội ngũ Long Anh.',
-    sub: 'Hơn 150 nhân sự tại 5 nhà máy và văn phòng ở Quỳ Hợp – TP. Vinh, vận hành chuỗi khai thác – chế biến – xuất khẩu đi 12 quốc gia. Chúng tôi tuyển người làm được việc, và giữ người bằng lộ trình phát triển rõ ràng.',
+    title: 'Gia nhập đội ngũ Long Anh — nơi tài năng được phát triển.',
+    sub: 'Chúng tôi xây dựng một môi trường làm việc chuyên nghiệp, năng động và minh bạch, nơi mỗi cá nhân đều có cơ hội đóng góp và trưởng thành cùng doanh nghiệp.',
     ctaLabel: 'Xem vị trí tuyển dụng',
-    imageUrl: '/assets/nha-may-bot-sieu-min-3.webp',
     stats: [
       { value: '20+', label: 'Năm kinh nghiệm' },
       { value: '150+', label: 'Cán bộ nhân viên' },
@@ -122,10 +119,9 @@ const HERO: Record<Locale, CareersHeroSection> = {
   },
   en: {
     eyebrow: 'Career opportunities',
-    title: 'Join the Long Anh team.',
-    sub: 'Over 150 people across 5 plants and offices in Quy Hop and Vinh, running a mining–processing–export chain that ships to 12 countries. We hire for capability — and keep people with a clear growth path.',
+    title: 'Join the Long Anh team — where talent grows.',
+    sub: 'A professional, dynamic and transparent workplace where everyone has room to contribute and grow alongside the business.',
     ctaLabel: 'See open positions',
-    imageUrl: '/assets/nha-may-bot-sieu-min-3.webp',
     stats: [
       { value: '20+', label: 'Years of experience' },
       { value: '150+', label: 'Team members' },
@@ -135,10 +131,9 @@ const HERO: Record<Locale, CareersHeroSection> = {
   },
   zh: {
     eyebrow: '职业机会',
-    title: '加入龙英团队。',
-    sub: '150多名员工分布于归合与荣市的5个工厂和办公室,运营面向12个国家的开采–加工–出口链条。我们以能力选人,以清晰的发展路径留人。',
+    title: '加入龙英团队 — 让人才成长的地方。',
+    sub: '专业、富有活力且透明的工作环境,每个人都有空间为业务做贡献并一同成长。',
     ctaLabel: '查看招聘职位',
-    imageUrl: '/assets/nha-may-bot-sieu-min-3.webp',
     stats: [
       { value: '20+', label: '年经验' },
       { value: '150+', label: '员工' },

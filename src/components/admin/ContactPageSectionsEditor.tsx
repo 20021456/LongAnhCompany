@@ -2,7 +2,6 @@
 
 import { AdminIcon } from './AdminIcon';
 import { Field } from './FormBits';
-import { PeImg } from './PeImg';
 import { EditorSection, type Lang } from './EditorChrome';
 import {
   CONTACT_PAGE_SECTION_KEYS,
@@ -50,14 +49,14 @@ export function ContactPageSectionsEditor({
         <div className="pe-row">
           <Field label={`Eyebrow (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.header.eyebrow}
               onChange={(e) => onPatch('header', { eyebrow: e.target.value })}
             />
           </Field>
           <Field label={`Tiêu đề chính (${L})`} required={lang === 'vi'}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.header.title}
               onChange={(e) => onPatch('header', { title: e.target.value })}
               required={lang === 'vi'}
@@ -66,30 +65,11 @@ export function ContactPageSectionsEditor({
         </div>
         <Field label={`Mô tả ngắn (${L})`}>
           <textarea
-            className="lac-textarea"
+            className="ad-textarea"
             value={C.header.sub}
             onChange={(e) => onPatch('header', { sub: e.target.value })}
           />
         </Field>
-        <div className="pe-imgrow" style={{ marginTop: 8 }}>
-          <PeImg
-            src={C.header.imageUrl ?? ''}
-            alt=""
-            size={C.header.imageUrl ? 'Ảnh nền hero' : undefined}
-            onChange={(dataUrl) => onPatch('header', { imageUrl: dataUrl })}
-          />
-          <div className="pe-stack">
-            <Field label="Đường dẫn ảnh nền hero">
-              <input
-                className="lac-input"
-                value={C.header.imageUrl ?? ''}
-                spellCheck={false}
-                style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
-                onChange={(e) => onPatch('header', { imageUrl: e.target.value })}
-              />
-            </Field>
-          </div>
-        </div>
       </EditorSection>
 
       {/* 02 — QUICK CONTACT */}
@@ -124,7 +104,7 @@ export function ContactPageSectionsEditor({
                 KÊNH 0{i + 1}
               </span>
               <select
-                className="lac-select"
+                className="ad-select"
                 value={channel.icon}
                 onChange={(e) => {
                   const items = [...C.quick.items];
@@ -138,7 +118,7 @@ export function ContactPageSectionsEditor({
                 <option value="phone">📞 Phone</option>
               </select>
               <input
-                className="lac-input"
+                className="ad-input"
                 style={{ fontSize: 13 }}
                 placeholder={`Nhãn kênh (${L})`}
                 value={channel.label}
@@ -149,7 +129,7 @@ export function ContactPageSectionsEditor({
                 }}
               />
               <input
-                className="lac-input"
+                className="ad-input"
                 style={{ fontWeight: 600 }}
                 placeholder="Giá trị (SĐT / email)"
                 value={channel.value}
@@ -191,7 +171,7 @@ export function ContactPageSectionsEditor({
               <div className="pe-row">
                 <Field label={`Tên cơ sở (${L})`}>
                   <input
-                    className="lac-input"
+                    className="ad-input"
                     value={office.name}
                     onChange={(e) => {
                       const items = [...C.offices.items];
@@ -202,7 +182,7 @@ export function ContactPageSectionsEditor({
                 </Field>
                 <Field label={`Giờ làm việc (${L})`}>
                   <input
-                    className="lac-input"
+                    className="ad-input"
                     value={office.hours}
                     onChange={(e) => {
                       const items = [...C.offices.items];
@@ -214,7 +194,7 @@ export function ContactPageSectionsEditor({
               </div>
               <Field label={`Địa chỉ (${L})`}>
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   value={office.addr}
                   onChange={(e) => {
                     const items = [...C.offices.items];
@@ -226,7 +206,7 @@ export function ContactPageSectionsEditor({
               <div className="pe-row">
                 <Field label="Điện thoại">
                   <input
-                    className="lac-input"
+                    className="ad-input"
                     value={office.phone}
                     spellCheck={false}
                     style={{
@@ -242,7 +222,7 @@ export function ContactPageSectionsEditor({
                 </Field>
                 <Field label="Email">
                   <input
-                    className="lac-input"
+                    className="ad-input"
                     value={office.email}
                     spellCheck={false}
                     style={{
@@ -259,7 +239,7 @@ export function ContactPageSectionsEditor({
               </div>
               <Field label="Google Maps embed (URL)">
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder="https://www.google.com/maps/embed?pb=…"
                   value={office.mapEmbedUrl}
                   spellCheck={false}
@@ -276,7 +256,7 @@ export function ContactPageSectionsEditor({
         </div>
         <button
           type="button"
-          className="lac-btn sm"
+          className="ad-btn sm"
           style={{ width: 'fit-content', marginTop: 10 }}
           onClick={() =>
             onPatch('offices', {
@@ -308,7 +288,7 @@ export function ContactPageSectionsEditor({
         <div className="pe-row">
           <Field label="Email nhận liên hệ" required={lang === 'vi'}>
             <input
-              className="lac-input"
+              className="ad-input"
               type="email"
               value={C.form.recipientEmail}
               spellCheck={false}
@@ -318,7 +298,7 @@ export function ContactPageSectionsEditor({
           </Field>
           <Field label="Email CC (nội bộ)">
             <input
-              className="lac-input"
+              className="ad-input"
               type="email"
               value={C.form.ccEmail}
               spellCheck={false}
@@ -329,7 +309,7 @@ export function ContactPageSectionsEditor({
         </div>
         <Field label={`Thông báo sau khi gửi (success message — ${L})`}>
           <textarea
-            className="lac-textarea"
+            className="ad-textarea"
             value={C.form.successMessage}
             onChange={(e) => onPatch('form', { successMessage: e.target.value })}
           />
@@ -360,7 +340,7 @@ export function ContactPageSectionsEditor({
                 }}
               >
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder={`Nhãn (${L})`}
                   value={f.label}
                   onChange={(e) => {
@@ -370,7 +350,7 @@ export function ContactPageSectionsEditor({
                   }}
                 />
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder="Tên trường (key)"
                   value={f.key}
                   spellCheck={false}
@@ -382,7 +362,7 @@ export function ContactPageSectionsEditor({
                   }}
                 />
                 <select
-                  className="lac-select"
+                  className="ad-select"
                   value={f.type}
                   onChange={(e) => {
                     const fields = [...C.form.fields];
@@ -434,7 +414,7 @@ export function ContactPageSectionsEditor({
         </div>
         <button
           type="button"
-          className="lac-btn sm"
+          className="ad-btn sm"
           style={{ width: 'fit-content', marginTop: 10 }}
           onClick={() =>
             onPatch('form', {
@@ -491,7 +471,7 @@ export function ContactPageSectionsEditor({
                 }}
               >
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder={`Tên hiển thị (${L})`}
                   value={s.label}
                   onChange={(e) => {
@@ -501,7 +481,7 @@ export function ContactPageSectionsEditor({
                   }}
                 />
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder={`https://… (URL ${s.platform})`}
                   value={s.url}
                   spellCheck={false}

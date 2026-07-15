@@ -37,10 +37,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const products = await db.product.findMany({
       where: { isActive: true },
-      select: { slug: true, updatedAt: true },
+      select: { code: true, updatedAt: true },
     });
     for (const p of products) {
-      const stripped = `/products/${p.slug}`;
+      const stripped = `/products/${p.code.toLowerCase()}`;
       const alts = localeAlts(stripped);
       for (const l of locales) {
         entries.push({

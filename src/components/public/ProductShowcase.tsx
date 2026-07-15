@@ -7,7 +7,6 @@ import { SmartImage } from '@/components/ui/SmartImage';
 
 interface Product {
   code: string;
-  slug: string;
   cat: number;
   img: string;
   name: string;
@@ -90,7 +89,7 @@ export function ProductShowcase({ products, locale }: Props) {
               <span key={j}>{t}</span>
             ))}
           </div>
-          <Link className="va-btn va-btn-p la-sc-cta" href={`/${locale}/products/${p.slug}`}>
+          <Link className="va-btn va-btn-p la-sc-cta" href={`/${locale}/products/${p.code.toLowerCase()}`}>
             {ctaLabel}{' '}
             <svg
               width="15"

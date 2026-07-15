@@ -107,13 +107,7 @@ export function ContactForm({ locale, source = 'contact_page', productId, varian
         />
       </div>
       <div style={{ marginBottom: 14 }}>
-        <select
-          name="product"
-          className="va-input"
-          aria-label={
-            locale === 'zh' ? '感兴趣的产品' : locale === 'en' ? 'Product of interest' : 'Sản phẩm quan tâm'
-          }
-        >
+        <select name="product" className="va-input">
           <option value="">
             {locale === 'zh'
               ? '感兴趣的产品'

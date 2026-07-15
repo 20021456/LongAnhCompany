@@ -15,7 +15,7 @@ function NewsStatusBadge({ status }: { status: string }) {
   };
   const m = meta[status] ?? { cls: 'hide', label: status };
   return (
-    <span className={'lac-badge ' + m.cls}>
+    <span className={'ad-badge ' + m.cls}>
       <span className="dot" />
       {m.label}
     </span>
@@ -69,12 +69,12 @@ export function AdminNewsList({ rows }: { rows: AdminNewsRow[] }) {
   const countByCat = (key: string) => rows.filter((p) => p.cat === key).length;
 
   return (
-    <div className="lac-table-wrap">
+    <div className="ad-table-wrap">
       {/* Toolbar — search · segmented chips · "Lọc thêm" */}
-      <div className="lac-toolbar">
+      <div className="ad-toolbar">
         <div style={{ position: 'relative', width: 280 }}>
           <input
-            className="lac-input"
+            className="ad-input"
             style={{ paddingLeft: 32 }}
             placeholder="Tìm theo tiêu đề…"
             value={search}
@@ -117,12 +117,12 @@ export function AdminNewsList({ rows }: { rows: AdminNewsRow[] }) {
         </div>
 
         <div className="grow" />
-        <button type="button" className="lac-btn ghost sm">
+        <button type="button" className="ad-btn ghost sm">
           <AdminIcon name="filter" size={13} /> Lọc thêm
         </button>
       </div>
 
-      <table className="lac-table">
+      <table className="ad-table">
         <thead>
           <tr>
             <th style={{ width: 36 }}>
@@ -175,7 +175,7 @@ export function AdminNewsList({ rows }: { rows: AdminNewsRow[] }) {
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                   <NewsStatusBadge status={p.status} />
                   {p.isFeatured ? (
-                    <span className="lac-badge sched">
+                    <span className="ad-badge sched">
                       <span className="dot" />
                       nổi bật
                     </span>
@@ -185,14 +185,14 @@ export function AdminNewsList({ rows }: { rows: AdminNewsRow[] }) {
               <td>
                 <div className="row-actions tight">
                   <Link
-                    className="lac-btn ghost sm"
+                    className="ad-btn ghost sm"
                     title="Sửa bài viết"
                     href={`/admin/news/${p.slug}`}
                   >
                     <AdminIcon name="edit" size={13} />
                   </Link>
                   <a
-                    className="lac-btn ghost sm"
+                    className="ad-btn ghost sm"
                     title="Xem trên web"
                     href={`/vi/news/${p.slug}`}
                     target="_blank"
@@ -200,10 +200,10 @@ export function AdminNewsList({ rows }: { rows: AdminNewsRow[] }) {
                   >
                     <AdminIcon name="eye" size={13} />
                   </a>
-                  <button type="button" className="lac-btn ghost sm" title="Nhân bản" disabled>
+                  <button type="button" className="ad-btn ghost sm" title="Nhân bản" disabled>
                     <AdminIcon name="copy" size={13} />
                   </button>
-                  <button type="button" className="lac-btn ghost sm" title="Thêm" disabled>
+                  <button type="button" className="ad-btn ghost sm" title="Thêm" disabled>
                     <AdminIcon name="more" size={13} />
                   </button>
                 </div>
@@ -223,11 +223,11 @@ export function AdminNewsList({ rows }: { rows: AdminNewsRow[] }) {
         </tbody>
       </table>
 
-      <div className="lac-pag">
+      <div className="ad-pag">
         <div>
           Hiển thị 1 – {filtered.length} của {filtered.length} bài
         </div>
-        <div className="lac-pag-pages">
+        <div className="ad-pag-pages">
           <button type="button" disabled aria-label="Trang trước">
             ‹
           </button>

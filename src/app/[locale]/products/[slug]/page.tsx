@@ -1,20 +1,8 @@
 import type { Metadata } from 'next';
-import { notFound, permanentRedirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { getProducts } from '@/lib/queries';
-import type { ProductDetail } from '@/data/products';
-
-/** Resolve by SEO slug, falling back to the legacy code form ('p-01'). */
-function findProduct(
-  products: Record<string, ProductDetail>,
-  slug: string,
-): { product: ProductDetail | null; legacy: boolean } {
-  const bySlug = Object.values(products).find((p) => p.slug === slug);
-  if (bySlug) return { product: bySlug, legacy: false };
-  const byCode = products[slug.toUpperCase()];
-  return { product: byCode ?? null, legacy: !!byCode };
-}
 import { ProductDetailView } from '@/components/public/ProductDetailView';
 import { hreflangAlternates, absUrl } from '@/lib/site-url';
 import { JsonLd, productSchema, breadcrumbSchema } from '@/components/seo/JsonLd';
@@ -28,20 +16,18 @@ export async function generateMetadata({
   let title = params.slug;
   let description = '';
   let ogImage: string | undefined;
-  let canonicalSlug = params.slug;
   try {
     const products = await getProducts();
-    const { product } = findProduct(products, params.slug);
+    const product = products[params.slug.toUpperCase()];
     if (product) {
       title = product.name[loc] || product.name.vi;
       description = product.desc[loc] || product.meta[loc] || '';
       ogImage = product.images[0];
-      canonicalSlug = product.slug;
     }
   } catch {
     /* DB unavailable */
   }
-  const { canonical, languages } = hreflangAlternates(loc, `/products/${canonicalSlug}`);
+  const { canonical, languages } = hreflangAlternates(loc, `/products/${params.slug}`);
   return {
     title,
     description,
@@ -68,14 +54,13 @@ export default async function ProductDetailPage({
   setRequestLocale(params.locale);
   const loc = params.locale as Locale;
 
+  const code = params.slug.toUpperCase();
   const products = await getProducts();
-  const { product, legacy } = findProduct(products, params.slug);
+  const product = products[code];
   if (!product) notFound();
-  // Old code-based URLs ('/products/p-01') permanently redirect to the SEO slug.
-  if (legacy) permanentRedirect(`/${loc}/products/${product.slug}`);
 
   const related = Object.values(products)
-    .filter((p) => p.code !== product.code && p.cat === product.cat)
+    .filter((p) => p.code !== code && p.cat === product.cat)
     .concat(
       Object.values(products)
         .filter((p) => p.cat !== product.cat)
@@ -83,7 +68,7 @@ export default async function ProductDetailPage({
     )
     .slice(0, 3);
 
-  const productUrl = `/${loc}/products/${product.slug}`;
+  const productUrl = `/${loc}/products/${params.slug}`;
   const homeLabel = loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ';
   const productsLabel = loc === 'zh' ? '产品' : loc === 'en' ? 'Products' : 'Sản phẩm';
 

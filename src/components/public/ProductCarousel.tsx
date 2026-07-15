@@ -7,7 +7,6 @@ import { SmartImage } from '@/components/ui/SmartImage';
 
 interface Product {
   code: string;
-  slug: string;
   cat: number;
   img: string;
   name: string;
@@ -69,7 +68,7 @@ export function ProductCarousel({ products, locale, accent = '#F08023', sideArro
           {slice.map((p, i) => (
             <Link
               key={`${start}-${i}-${p.code}`}
-              href={`/${locale}/products/${p.slug}`}
+              href={`/${locale}/products/${p.code.toLowerCase()}`}
               className={'la-cc ' + (i === activeIdx ? 'is-active' : '')}
               onMouseEnter={() => {
                 setHovering(true);

@@ -16,7 +16,7 @@ export function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="lac-field" style={{ marginBottom: 16 }}>
+    <div className="ad-field" style={{ marginBottom: 16 }}>
       <label>
         {label}
         {required ? <span className="req">*</span> : null}
@@ -28,13 +28,7 @@ export function Field({
 }
 
 /** A row of inputs — 2 or 3 columns. */
-export function FieldRow({
-  cols = 2,
-  children,
-}: {
-  cols?: 2 | 3;
-  children: React.ReactNode;
-}) {
+export function FieldRow({ cols = 2, children }: { cols?: 2 | 3; children: React.ReactNode }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 16 }}>
       {children}
@@ -46,7 +40,7 @@ export function FieldRow({
 export function SubmitButton({ children = 'Lưu thay đổi' }: { children?: React.ReactNode }) {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" className="lac-btn primary" disabled={pending}>
+    <button type="submit" className="ad-btn primary" disabled={pending}>
       <AdminIcon name="check" size={15} />
       {pending ? 'Đang lưu…' : children}
     </button>
@@ -54,11 +48,7 @@ export function SubmitButton({ children = 'Lưu thay đổi' }: { children?: Rea
 }
 
 /** Inline error/success banner driven by a server-action result. */
-export function FormBanner({
-  state,
-}: {
-  state?: { ok?: boolean; error?: string } | null;
-}) {
+export function FormBanner({ state }: { state?: { ok?: boolean; error?: string } | null }) {
   if (!state) return null;
   if (state.error) {
     return (
@@ -71,7 +61,7 @@ export function FormBanner({
   if (state.ok) {
     return (
       <div
-        className="lac-badge pub"
+        className="ad-badge pub"
         style={{ marginBottom: 16, padding: '8px 12px', fontSize: 12.5 }}
       >
         <span className="dot" />

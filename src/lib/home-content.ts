@@ -43,8 +43,6 @@ export interface AboutCard {
   name: string;
   body: string;
   imageUrl: string;
-  /** Optional datasheet rows shown under the body — fills the panel with hard figures. */
-  facts?: { label: string; value: string }[];
 }
 export interface AboutSection {
   eyebrow: string;
@@ -115,7 +113,7 @@ export type HomeSectionKey = (typeof HOME_SECTION_KEYS)[number];
 // ─── Static extras not present in COPY ────────────────────────────────────
 // (about cards, cert cards, export features, cert section text, captions)
 
-const HERO_IMAGE = '/assets/nha-may-bot-sieu-min.webp';
+const HERO_IMAGE = '/assets/hero-sw.png';
 const HERO_ALT: Record<Locale, string> = {
   vi: 'Bao bột đá CaCO₃ Long Anh siêu trắng',
   en: 'Long Anh super-white CaCO₃ powder bags',
@@ -126,157 +124,82 @@ const ABOUT_CARDS: Record<Locale, AboutCard[]> = {
   vi: [
     {
       name: 'Năng lực sản xuất',
-      body: 'Hệ thống 05 nhà máy trên tổng diện tích 12 ha tại Quỳ Hợp – Nghệ An, vận hành 06 dây chuyền nghiền khô và 02 dây chuyền phủ Stearic Acid theo công nghệ Châu Âu. Tổng công suất trên 350.000 tấn/năm, sản xuất ổn định theo kế hoạch giao hàng của từng đối tác.',
+      body: '05 nhà máy với tổng diện tích 12ha, dây chuyền hiện đại — công suất đạt trên 350,000 tấn/năm.',
       imageUrl: '/assets/nha-may-bot-sieu-min-3.webp',
-      facts: [
-        { label: 'Nhà máy', value: '05 · 12 ha' },
-        { label: 'Dây chuyền', value: '06 nghiền · 02 phủ' },
-        { label: 'Công suất', value: '350.000 tấn/năm' },
-      ],
     },
     {
       name: 'Nguồn nguyên liệu',
-      body: 'Long Anh trực tiếp khai thác 05 mỏ đá vôi trắng nguyên sinh tại Quỳ Hợp — vùng nguyên liệu chất lượng hàng đầu Việt Nam. Độ trắng vượt 98%, hàm lượng CaCO₃ trên 98,5%; chất lượng được kiểm soát ngay từ khâu khai thác và phân loại đá.',
+      body: 'Đá vôi trắng nguyên sinh từ Quỳ Hợp – Nghệ An, độ trắng > 98% và CaCO₃ > 98.5% — kiểm soát từ gốc.',
       imageUrl: '/assets/da-nguyen-lieu-cao-cap2.webp',
-      facts: [
-        { label: 'Mỏ vận hành', value: '05 mỏ riêng' },
-        { label: 'Độ trắng', value: '≥ 98%' },
-        { label: 'Hàm lượng CaCO₃', value: '≥ 98,5%' },
-      ],
     },
     {
       name: 'Cơ sở hạ tầng',
-      body: 'Bãi nguyên liệu tập kết theo phân vùng phẩm cấp; kho thành phẩm đóng pallet, phân lô theo mã sản phẩm. Thiết bị nâng hạ và đội xe vận hành liên tục trong ngày, thuận tuyến về cảng Cửa Lò và Hải Phòng — lịch xuất hàng luôn chủ động.',
+      body: 'Hệ thống dây chuyền nghiền và phủ Stearic Acid theo công nghệ Châu Âu, vận hành đồng bộ và ổn định.',
       imageUrl: '/assets/co-so-ha-tang.jpg',
-      facts: [
-        { label: 'Kho thành phẩm', value: 'Pallet · phân lô' },
-        { label: 'Bốc xếp', value: 'Liên tục trong ngày' },
-        { label: 'Cảng xuất', value: 'Cửa Lò · Hải Phòng' },
-      ],
     },
     {
       name: 'Kiểm định chất lượng',
-      body: 'Phòng QC kiểm tra từng lô theo bốn chỉ tiêu: độ trắng, hàm lượng CaCO₃, độ ẩm và cỡ hạt D50 (4–20 µm). Mỗi lô xuất xưởng kèm COA và MSDS theo hệ thống ISO 9001:2015; sẵn sàng kiểm định độc lập qua SGS khi khách hàng yêu cầu.',
+      body: 'Phòng QC kiểm tra từng lô — độ trắng, CaCO₃, độ ẩm, cỡ hạt — kèm COA và MSDS theo tiêu chuẩn ISO 9001:2015.',
       imageUrl: '/assets/kiem-dinh.jpg',
-      facts: [
-        { label: 'Chỉ tiêu', value: 'Trắng · CaCO₃ · Ẩm · D50' },
-        { label: 'Chứng từ mỗi lô', value: 'COA · MSDS' },
-        { label: 'Kiểm định độc lập', value: 'SGS' },
-      ],
     },
     {
       name: 'Đóng gói sản phẩm',
-      body: 'Bao PP 25 kg và 50 kg, bao jumbo 250/500/1000 kg hoặc container rời (bulk) theo yêu cầu — hỗ trợ in nhãn theo thương hiệu riêng của khách hàng. Hàng đóng container được chèn lót chống ẩm và niêm phong trước khi rời nhà máy.',
+      body: 'Đáp ứng mọi quy cách: PP 25kg/50kg, jumbo 250kg/500kg/1000kg và bulk theo yêu cầu khách hàng.',
       imageUrl: '/assets/bao-bi-sieu-trang.jpg',
-      facts: [
-        { label: 'Bao PP', value: '25 · 50 kg' },
-        { label: 'Jumbo', value: '250 · 500 · 1000 kg' },
-        { label: 'Bulk', value: 'Container rời' },
-      ],
     },
   ],
   en: [
     {
       name: 'Production capacity',
-      body: 'A five-plant complex on 12 ha in Quy Hop, Nghe An, running 6 dry-grinding lines and 2 stearic-acid coating lines built to European spec. Total capacity exceeds 350,000 tons/year, produced steadily against each partner’s delivery schedule.',
+      body: '5 plants over 12ha of modern lines — capacity exceeding 350,000 tons/year.',
       imageUrl: '/assets/nha-may-bot-sieu-min-3.webp',
-      facts: [
-        { label: 'Plants', value: '05 · 12 ha' },
-        { label: 'Lines', value: '06 grinding · 02 coating' },
-        { label: 'Capacity', value: '350,000 t/year' },
-      ],
     },
     {
       name: 'Raw material',
-      body: 'Long Anh directly operates 5 quarries of pristine white limestone in Quy Hop — one of Vietnam’s finest raw-material regions. Whiteness above 98% and CaCO₃ above 98.5%, with quality controlled from extraction and stone sorting onward.',
+      body: 'Pristine white limestone from Quy Hop · whiteness > 98%, CaCO₃ > 98.5% — controlled at the source.',
       imageUrl: '/assets/da-nguyen-lieu-cao-cap2.webp',
-      facts: [
-        { label: 'Quarries', value: '05 owned' },
-        { label: 'Whiteness', value: '≥ 98%' },
-        { label: 'CaCO₃ content', value: '≥ 98.5%' },
-      ],
     },
     {
       name: 'Infrastructure',
-      body: 'Raw stone is staged by grade zone; finished goods are palletized and lot-coded by product. Loaders and trucks run throughout the day, on convenient routes to Cua Lo and Hai Phong ports — keeping every export schedule in our control.',
+      body: 'EU-spec grinding and stearic-acid coating lines, running in stable synchronization.',
       imageUrl: '/assets/co-so-ha-tang.jpg',
-      facts: [
-        { label: 'Finished goods', value: 'Palletized · lot-coded' },
-        { label: 'Handling', value: 'Continuous daily' },
-        { label: 'Ports', value: 'Cua Lo · Hai Phong' },
-      ],
     },
     {
       name: 'Quality control',
-      body: 'In-house QC tests every batch on four criteria: whiteness, CaCO₃ content, moisture and D50 particle size (4–20 µm). Every batch ships with COA and MSDS under ISO 9001:2015 — with independent SGS verification on request.',
+      body: 'Per-batch QC — whiteness, CaCO₃, moisture, particle size — with COA and MSDS to ISO 9001:2015.',
       imageUrl: '/assets/kiem-dinh.jpg',
-      facts: [
-        { label: 'Criteria', value: 'Whiteness · CaCO₃ · Moisture · D50' },
-        { label: 'Per batch', value: 'COA · MSDS' },
-        { label: 'Independent', value: 'SGS' },
-      ],
     },
     {
       name: 'Packaging',
-      body: 'PP bags of 25 kg and 50 kg, jumbo bags of 250/500/1000 kg, or bulk containers to order — private-label printing available. Container cargo is moisture-protected and sealed before leaving the plant.',
+      body: 'Every spec covered: PP 25/50kg, jumbo 250/500/1000kg, and bulk to customer requirements.',
       imageUrl: '/assets/bao-bi-sieu-trang.jpg',
-      facts: [
-        { label: 'PP bags', value: '25 · 50 kg' },
-        { label: 'Jumbo', value: '250 · 500 · 1000 kg' },
-        { label: 'Bulk', value: 'Full container' },
-      ],
     },
   ],
   zh: [
     {
       name: '生产能力',
-      body: '位于义安省归合县的5座工厂,总占地12公顷,运行6条干法研磨生产线和2条欧洲标准硬脂酸涂层生产线。总产能超过35万吨/年,按每位合作伙伴的交货计划稳定生产。',
+      body: '5座工厂占地12公顷,配备现代化生产线 — 年产能超过35万吨。',
       imageUrl: '/assets/nha-may-bot-sieu-min-3.webp',
-      facts: [
-        { label: '工厂', value: '05座 · 12公顷' },
-        { label: '生产线', value: '06研磨 · 02涂层' },
-        { label: '产能', value: '35万吨/年' },
-      ],
     },
     {
       name: '原料来源',
-      body: '龙英在归合直接开采5座原生白石灰岩矿山 — 越南品质领先的原料产区。白度超过98%,碳酸钙含量超过98.5%,从开采和选石环节即开始质量控制。',
+      body: '源自归合-义安省的原始白石灰岩 · 白度>98%,碳酸钙>98.5% — 从源头控制。',
       imageUrl: '/assets/da-nguyen-lieu-cao-cap2.webp',
-      facts: [
-        { label: '矿山', value: '05座自有' },
-        { label: '白度', value: '≥ 98%' },
-        { label: '碳酸钙', value: '≥ 98.5%' },
-      ],
     },
     {
       name: '基础设施',
-      body: '原料按品级分区堆放;成品打托盘、按产品批号分区存放。装卸设备与车队全天运转,邻近通往炉门港和海防港的干线 — 出口排期始终可控。',
+      body: '欧洲标准的研磨和硬脂酸涂层生产线,稳定同步运行。',
       imageUrl: '/assets/co-so-ha-tang.jpg',
-      facts: [
-        { label: '成品仓', value: '托盘 · 批号分区' },
-        { label: '装卸', value: '全天运转' },
-        { label: '出口港', value: '炉门 · 海防' },
-      ],
     },
     {
       name: '质量检验',
-      body: '内部QC按四项指标检测每一批次:白度、碳酸钙含量、水分和D50粒径(4–20 µm)。每批出厂附COA与MSDS(ISO 9001:2015体系),可按客户要求提供SGS独立检验。',
+      body: '每批次QC检测 — 白度、碳酸钙、水分、粒径 — 提供符合ISO 9001:2015的COA和MSDS。',
       imageUrl: '/assets/kiem-dinh.jpg',
-      facts: [
-        { label: '检测指标', value: '白度 · 碳酸钙 · 水分 · D50' },
-        { label: '每批附', value: 'COA · MSDS' },
-        { label: '独立检验', value: 'SGS' },
-      ],
     },
     {
       name: '产品包装',
-      body: 'PP袋25公斤和50公斤,吨袋250/500/1000公斤,或按需散装集装箱 — 支持客户品牌定制印刷。集装箱货物防潮衬垫并铅封后出厂。',
+      body: '满足各种规格:PP 25/50公斤、吨袋250/500/1000公斤,以及按客户需求散装。',
       imageUrl: '/assets/bao-bi-sieu-trang.jpg',
-      facts: [
-        { label: 'PP袋', value: '25 · 50公斤' },
-        { label: '吨袋', value: '250 · 500 · 1000公斤' },
-        { label: '散装', value: '整柜' },
-      ],
     },
   ],
 };

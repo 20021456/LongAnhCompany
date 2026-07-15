@@ -6,7 +6,7 @@ import { AdminIcon } from './AdminIcon';
 /**
  * Tag chip editor — port of prototype's PeTags.
  *
- * Renders the tags as `<span class="lac-tag">` chips with an X button,
+ * Renders the tags as `<span class="ad-tag">` chips with an X button,
  * plus an inline "Thêm tag…" input. Press Enter or comma to add a tag;
  * Backspace on an empty input deletes the last tag (matching the
  * prototype's expected behaviour).
@@ -50,9 +50,9 @@ export function PeTags({
   };
 
   return (
-    <div className="lac-tags">
+    <div className="ad-tags">
       {tags.map((t, i) => (
-        <span key={`${t}-${i}`} className="lac-tag">
+        <span key={`${t}-${i}`} className="ad-tag">
           {t}
           <button type="button" aria-label={`Bỏ ${t}`} onClick={() => remove(i)}>
             <AdminIcon name="x" size={11} />

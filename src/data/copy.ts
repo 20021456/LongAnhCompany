@@ -24,7 +24,7 @@ export const COPY: Record<Locale, any> = {
     statLabels: ['Năm kinh nghiệm', 'Tấn / năm công suất', 'Quốc gia xuất khẩu', 'Mỏ đá vận hành'],
     statVals: ['20+', '350,000', '12', '5'],
     aboutEy: 'Về chúng tôi',
-    aboutH: 'Từ mỏ đá đến container.',
+    aboutH: 'Khai thác bền vững. Chế biến chính xác. Giao hàng đúng hẹn.',
     aboutP1:
       'Khởi nguồn từ vùng đá vôi trắng Quỳ Hợp – Nghệ An, Long Anh sở hữu mỏ nguyên liệu chất lượng cao với độ trắng vượt 98% và hàm lượng CaCO₃ trên 98,5%.',
     aboutP2:
@@ -139,7 +139,7 @@ export const COPY: Record<Locale, any> = {
     ],
     statVals: ['20+', '350,000', '12', '5'],
     aboutEy: 'About us',
-    aboutH: 'From quarry to container.',
+    aboutH: 'Sustainable mining. Precise milling. On-time delivery.',
     aboutP1:
       'Originating from the white limestone region of Quy Hop, Nghe An, Long Anh owns high-grade quarries with whiteness exceeding 98% and CaCO₃ content above 98.5%.',
     aboutP2:
@@ -239,7 +239,7 @@ export const COPY: Record<Locale, any> = {
     statLabels: ['年经验', '吨/年产能', '出口国家', '运营矿场'],
     statVals: ['20+', '350,000', '12', '5'],
     aboutEy: '关于我们',
-    aboutH: '从矿山到集装箱。',
+    aboutH: '可持续开采。精准加工。准时交付。',
     aboutP1:
       '源自越南义安省归合县的白色石灰岩区,龙英拥有高品质矿源,白度超过98%,碳酸钙含量超过98.5%。',
     aboutP2:

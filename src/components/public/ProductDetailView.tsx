@@ -6,6 +6,7 @@ import type { Locale } from '@/lib/i18n/config';
 import type { ProductDetail } from '@/data/products';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { SmartImage } from '@/components/ui/SmartImage';
+import { fmtNumberVn } from '@/lib/format';
 
 interface Props {
   locale: Locale;
@@ -19,16 +20,17 @@ const L = {
     products: 'Sản phẩm',
     catTitles: ['Bột đá CaCO₃', 'Đá ốp lát tự nhiên'],
     inStock: 'Sẵn hàng',
-    trustCoa: 'COA & MSDS theo từng lô',
-    trustCoaStone: 'CO/CQ & kiểm định SGS theo lô',
-    trustExport: 'Xuất khẩu 12 quốc gia',
-    termsTitle: 'Điều kiện thương mại',
-    termsNote: 'Giá FOB theo khối lượng & quy cách — báo giá trong 24h làm việc.',
-    packagingLabel: 'Đóng gói',
-    port: 'Cảng xuất hàng',
-    classification: 'Quy cách',
+    reviews: 'đánh giá',
+    soldCount: 'đã bán',
+    stockUnit: 'sẵn có',
+    estimatedPrice: 'Giá tham khảo',
+    priceNote: 'Giá tham khảo · Liên hệ để báo giá chính xác',
+    total: 'Tạm tính',
+    classification: 'Phân loại',
+    available: 'còn lại',
     popular: 'Phổ biến',
-    contactQuote: 'Nhận báo giá FOB trong 24h làm việc',
+    qty: 'Số lượng',
+    contactQuote: 'Liên hệ để báo giá chính xác',
     requestQuote: 'Yêu cầu báo giá',
     overview: 'Tổng quan',
     descTitle: 'Mô tả chi tiết',
@@ -51,16 +53,17 @@ const L = {
     products: 'Products',
     catTitles: ['CaCO₃ powder', 'Natural cladding stone'],
     inStock: 'In stock',
-    trustCoa: 'COA & MSDS with every batch',
-    trustCoaStone: 'CO/CQ & SGS inspection per lot',
-    trustExport: 'Exported to 12 countries',
-    termsTitle: 'Commercial terms',
-    termsNote: 'FOB pricing by volume & grade — quote within 24 business hours.',
-    packagingLabel: 'Packaging',
-    port: 'Loading port',
-    classification: 'Grade',
+    reviews: 'reviews',
+    soldCount: 'sold',
+    stockUnit: 'in stock',
+    estimatedPrice: 'Indicative price',
+    priceNote: 'Indicative price · Contact for accurate quote',
+    total: 'Subtotal',
+    classification: 'Classification',
+    available: 'available',
     popular: 'Popular',
-    contactQuote: 'Get an FOB quote within 24 business hours',
+    qty: 'Quantity',
+    contactQuote: 'Contact for accurate quote',
     requestQuote: 'Request a quote',
     overview: 'Overview',
     descTitle: 'Detailed description',
@@ -83,16 +86,17 @@ const L = {
     products: '产品',
     catTitles: ['碳酸钙粉', '天然石材饰面'],
     inStock: '现货',
-    trustCoa: '每批附COA与MSDS',
-    trustCoaStone: '每批附CO/CQ及SGS检验',
-    trustExport: '出口12个国家',
-    termsTitle: '商务条款',
-    termsNote: 'FOB价格按数量与规格而定 — 24个工作小时内报价。',
-    packagingLabel: '包装',
-    port: '装运港',
-    classification: '规格',
+    reviews: '评价',
+    soldCount: '已售',
+    stockUnit: '现货',
+    estimatedPrice: '参考价格',
+    priceNote: '参考价格 · 联系获取准确报价',
+    total: '小计',
+    classification: '分类',
+    available: '剩余',
     popular: '热门',
-    contactQuote: '24个工作小时内获取FOB报价',
+    qty: '数量',
+    contactQuote: '联系获取准确报价',
     requestQuote: '请求报价',
     overview: '概览',
     descTitle: '详细描述',
@@ -123,6 +127,24 @@ const SPEC_LABELS: Record<string, Record<Locale, string>> = {
   finish: { vi: 'Hoàn thiện', en: 'Finish', zh: '表面处理' },
 };
 
+function fmtPriceUsd(n: number) {
+  // Manual thousands grouping with comma, mirrors en-US numbers without
+  // depending on Intl (which differs between Node ICU and browser).
+  const s = String(Math.abs(Math.trunc(n)));
+  let out = '';
+  for (let i = 0; i < s.length; i++) {
+    if (i > 0 && (s.length - i) % 3 === 0) out += ',';
+    out += s[i];
+  }
+  return (n < 0 ? '-' : '') + out;
+}
+
+function fmtPrice(vnd: number, lang: Locale) {
+  if (lang === 'en') return '$' + fmtPriceUsd(Math.round(vnd / 25000));
+  if (lang === 'zh') return '¥' + fmtPriceUsd(Math.round(vnd / 3500));
+  return fmtNumberVn(vnd) + ' ₫';
+}
+
 /** Variant labels may be a plain string ('3 µm') or an i18n object ({ vi, en, zh }). */
 function variantLabel(label: string | Record<string, string>, lang: Locale) {
   return typeof label === 'string' ? label : label[lang] || label.vi || '';
@@ -140,8 +162,10 @@ export function ProductDetailView({ locale, product, related }: Props) {
   );
   const [activeImg, setActiveImg] = useState(0);
   const [variantIdx, setVariantIdx] = useState(initialVariant);
+  const [qty, setQty] = useState(1);
 
   const v = product.variants[variantIdx];
+  const totalStock = product.variants.reduce((s, x) => s + x.stock, 0);
 
   return (
     <div className="pd">
@@ -192,45 +216,35 @@ export function ProductDetailView({ locale, product, related }: Props) {
               <h1>{productName}</h1>
               <div className="pd-info-sub">{product.meta[locale]}</div>
 
-              <div className="pd-trust-row">
+              <div className="pd-info-rating">
+                <span className="stars">★★★★★</span>
                 <span>
-                  <Icon name="check" size={13} /> ISO 9001:2015
+                  <b>4.9</b> · 86 {t.reviews}
                 </span>
+                <span className="sep">|</span>
                 <span>
-                  <Icon name="check" size={13} /> {isPowder ? t.trustCoa : t.trustCoaStone}
+                  <b>{fmtNumberVn(120 + parseInt(product.code.slice(2)) * 47)}</b> {t.soldCount}
                 </span>
+                <span className="sep">|</span>
                 <span>
-                  <Icon name="check" size={13} /> {t.trustExport}
+                  <b>{fmtNumberVn(totalStock)}</b> {product.unit[locale]} {t.stockUnit}
                 </span>
               </div>
 
-              {/* COMMERCIAL TERMS */}
+              {/* PRICE BOX */}
               <div className="pd-price-box">
-                <div className="pd-price-label">{t.termsTitle}</div>
-                <div className="pd-terms-grid">
-                  <div className="pd-term">
-                    <span>{t.moq}</span>
-                    <b>{product.moq[locale]}</b>
-                  </div>
-                  <div className="pd-term">
-                    <span>{t.leadTime}</span>
-                    <b>{product.leadTime[locale]}</b>
-                  </div>
-                  <div className="pd-term">
-                    <span>{t.packagingLabel}</span>
-                    <b>
-                      {product.packaging
-                        .slice(0, 3)
-                        .map((pk) => pk[locale])
-                        .join(' · ')}
-                    </b>
-                  </div>
-                  <div className="pd-term">
-                    <span>{t.port}</span>
-                    <b>FOB Cửa Lò · Hải Phòng</b>
-                  </div>
+                <div className="pd-price-label">{t.estimatedPrice}</div>
+                <div>
+                  <span className="pd-price-main">{fmtPrice(v.vnd, locale)}</span>
+                  <span className="pd-price-unit">/ {product.unit[locale]}</span>
                 </div>
-                <div className="pd-price-note">{t.termsNote}</div>
+                <div className="pd-price-note">{t.priceNote}</div>
+                <div className="pd-price-subtotal">
+                  <span>
+                    {t.total} ({qty} {product.unit[locale]} × {variantLabel(v.label, locale)})
+                  </span>
+                  <b>{fmtPrice(v.vnd * qty, locale)}</b>
+                </div>
               </div>
 
               {/* VARIANTS */}
@@ -242,6 +256,9 @@ export function ProductDetailView({ locale, product, related }: Props) {
                       {variantLabel(v.label, locale)}
                     </span>
                   </div>
+                  <div className={'pd-variants-stock' + (v.stock < 200 ? ' low' : '')}>
+                    {fmtNumberVn(v.stock)} {product.unit[locale]} {t.available}
+                  </div>
                 </div>
                 <div className="pd-variants-grid">
                   {product.variants.map((variant, i) => (
@@ -249,7 +266,10 @@ export function ProductDetailView({ locale, product, related }: Props) {
                       key={variant.id}
                       type="button"
                       className={'pd-variant-chip' + (i === variantIdx ? ' on' : '')}
-                      onClick={() => setVariantIdx(i)}
+                      onClick={() => {
+                        setVariantIdx(i);
+                        setQty(1);
+                      }}
                     >
                       {variant.popular ? (
                         <span className="pd-variant-popular">{t.popular}</span>
@@ -257,6 +277,45 @@ export function ProductDetailView({ locale, product, related }: Props) {
                       {variantLabel(variant.label, locale)}
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* QUANTITY */}
+              <div className="pd-qty-row">
+                <div className="pd-qty-label">{t.qty}</div>
+                <div className="pd-qty-controls">
+                  <button
+                    type="button"
+                    className="pd-qty-btn"
+                    onClick={() => setQty(Math.max(1, qty - 1))}
+                    disabled={qty <= 1}
+                    aria-label="Decrease"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    className="pd-qty-input"
+                    value={qty}
+                    min={1}
+                    max={v.stock}
+                    onChange={(e) => {
+                      const n = parseInt(e.target.value) || 1;
+                      setQty(Math.max(1, Math.min(v.stock, n)));
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="pd-qty-btn"
+                    onClick={() => setQty(Math.min(v.stock, qty + 1))}
+                    disabled={qty >= v.stock}
+                    aria-label="Increase"
+                  >
+                    +
+                  </button>
+                </div>
+                <div className="pd-qty-stock">
+                  <b>{fmtNumberVn(v.stock)}</b> {product.unit[locale]} {t.available}
                 </div>
               </div>
 
@@ -439,7 +498,7 @@ export function ProductDetailView({ locale, product, related }: Props) {
               {related.map((r) => (
                 <Link
                   key={r.code}
-                  href={`/${locale}/products/${r.slug}`}
+                  href={`/${locale}/products/${r.code.toLowerCase()}`}
                   className="pd-related-card"
                 >
                   <div className="pd-related-img">

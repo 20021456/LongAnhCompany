@@ -69,44 +69,25 @@ export function AboutSectionsEditor({
       >
         <Field label={`Eyebrow (${L})`}>
           <input
-            className="lac-input"
+            className="ad-input"
             value={C.header.eyebrow}
             onChange={(e) => onPatch('header', { eyebrow: e.target.value })}
           />
         </Field>
         <Field label={`Tiêu đề chính (${L})`}>
           <input
-            className="lac-input"
+            className="ad-input"
             value={C.header.title}
             onChange={(e) => onPatch('header', { title: e.target.value })}
           />
         </Field>
         <Field label={`Mô tả ngắn (${L})`}>
           <textarea
-            className="lac-textarea"
+            className="ad-textarea"
             value={C.header.sub}
             onChange={(e) => onPatch('header', { sub: e.target.value })}
           />
         </Field>
-        <div className="pe-imgrow" style={{ marginTop: 8 }}>
-          <PeImg
-            src={C.header.imageUrl ?? ''}
-            alt=""
-            size={C.header.imageUrl ? 'Ảnh nền hero' : undefined}
-            onChange={(dataUrl) => onPatch('header', { imageUrl: dataUrl })}
-          />
-          <div className="pe-stack">
-            <Field label="Đường dẫn ảnh nền hero">
-              <input
-                className="lac-input"
-                value={C.header.imageUrl ?? ''}
-                spellCheck={false}
-                style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
-                onChange={(e) => onPatch('header', { imageUrl: e.target.value })}
-              />
-            </Field>
-          </div>
-        </div>
       </EditorSection>
 
       {/* 02 — STORY */}
@@ -119,14 +100,14 @@ export function AboutSectionsEditor({
         <div className="pe-row">
           <Field label={`Eyebrow (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.story.eyebrow}
               onChange={(e) => onPatch('story', { eyebrow: e.target.value })}
             />
           </Field>
           <Field label={`Tiêu đề — 2 dòng (${L})`} help="Cách hai dòng bằng dấu /">
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.story.title}
               onChange={(e) => onPatch('story', { title: e.target.value })}
             />
@@ -134,21 +115,21 @@ export function AboutSectionsEditor({
         </div>
         <Field label={`Đoạn 1 (${L})`}>
           <textarea
-            className="lac-textarea"
+            className="ad-textarea"
             value={C.story.paragraph1}
             onChange={(e) => onPatch('story', { paragraph1: e.target.value })}
           />
         </Field>
         <Field label={`Đoạn 2 (${L})`}>
           <textarea
-            className="lac-textarea"
+            className="ad-textarea"
             value={C.story.paragraph2}
             onChange={(e) => onPatch('story', { paragraph2: e.target.value })}
           />
         </Field>
         <Field label={`Đoạn 3 — kết (${L})`}>
           <textarea
-            className="lac-textarea"
+            className="ad-textarea"
             value={C.story.paragraph3}
             onChange={(e) => onPatch('story', { paragraph3: e.target.value })}
           />
@@ -183,14 +164,14 @@ export function AboutSectionsEditor({
             <div className="pe-stack">
               <Field label={`Mô tả ảnh — alt (${L})`}>
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   value={C.story.imageAlt}
                   onChange={(e) => onPatch('story', { imageAlt: e.target.value })}
                 />
               </Field>
               <Field label="Đường dẫn ảnh">
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   value={C.story.imageUrl}
                   spellCheck={false}
                   style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
@@ -222,7 +203,7 @@ export function AboutSectionsEditor({
             <div className="pe-stack">
               <Field label="Đường dẫn ảnh nền">
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   value={C.story.bgImageUrl}
                   spellCheck={false}
                   style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
@@ -236,14 +217,14 @@ export function AboutSectionsEditor({
         <div className="pe-row" style={{ marginTop: 12 }}>
           <Field label={`Tên người ký (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.story.signerName}
               onChange={(e) => onPatch('story', { signerName: e.target.value })}
             />
           </Field>
           <Field label={`Chức danh (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.story.signerTitle}
               onChange={(e) => onPatch('story', { signerTitle: e.target.value })}
             />
@@ -261,14 +242,14 @@ export function AboutSectionsEditor({
         <div className="pe-row">
           <Field label={`Eyebrow (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.timeline.eyebrow}
               onChange={(e) => onPatch('timeline', { eyebrow: e.target.value })}
             />
           </Field>
           <Field label={`Tiêu đề section (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.timeline.title}
               onChange={(e) => onPatch('timeline', { title: e.target.value })}
             />
@@ -278,7 +259,7 @@ export function AboutSectionsEditor({
           {C.timeline.items.map((row, i) => (
             <div key={i} className="pe-list-item">
               <input
-                className="lac-input"
+                className="ad-input"
                 value={row.year}
                 style={{
                   width: 70,
@@ -294,7 +275,7 @@ export function AboutSectionsEditor({
               />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 10 }}>
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder={`Tiêu đề mốc (${L})`}
                   value={row.title}
                   onChange={(e) => {
@@ -304,7 +285,7 @@ export function AboutSectionsEditor({
                   }}
                 />
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder={`Mô tả (${L})`}
                   value={row.body}
                   onChange={(e) => {
@@ -331,7 +312,7 @@ export function AboutSectionsEditor({
         </div>
         <button
           type="button"
-          className="lac-btn sm"
+          className="ad-btn sm"
           style={{ width: 'fit-content', marginTop: 10 }}
           onClick={() =>
             onPatch('timeline', {
@@ -353,14 +334,14 @@ export function AboutSectionsEditor({
         <div className="pe-row">
           <Field label={`Eyebrow (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.values.eyebrow}
               onChange={(e) => onPatch('values', { eyebrow: e.target.value })}
             />
           </Field>
           <Field label={`Tiêu đề (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.values.title}
               onChange={(e) => onPatch('values', { title: e.target.value })}
             />
@@ -385,7 +366,7 @@ export function AboutSectionsEditor({
               </div>
               <Field label={`Tên giá trị (${L})`}>
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   value={v.name}
                   onChange={(e) => {
                     const items = [...C.values.items];
@@ -396,7 +377,7 @@ export function AboutSectionsEditor({
               </Field>
               <Field label="Icon">
                 <select
-                  className="lac-select"
+                  className="ad-select"
                   value={v.icon || 'check'}
                   onChange={(e) => {
                     const items = [...C.values.items];
@@ -413,7 +394,7 @@ export function AboutSectionsEditor({
               </Field>
               <Field label={`Mô tả (${L})`}>
                 <textarea
-                  className="lac-textarea"
+                  className="ad-textarea"
                   style={{ minHeight: 70 }}
                   value={v.body}
                   onChange={(e) => {
@@ -438,14 +419,14 @@ export function AboutSectionsEditor({
         <div className="pe-row">
           <Field label={`Eyebrow (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.caps.eyebrow}
               onChange={(e) => onPatch('caps', { eyebrow: e.target.value })}
             />
           </Field>
           <Field label={`Tiêu đề (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.caps.title}
               onChange={(e) => onPatch('caps', { title: e.target.value })}
             />
@@ -453,7 +434,7 @@ export function AboutSectionsEditor({
         </div>
         <Field label={`Mô tả (${L})`}>
           <textarea
-            className="lac-textarea"
+            className="ad-textarea"
             value={C.caps.sub}
             onChange={(e) => onPatch('caps', { sub: e.target.value })}
           />
@@ -469,14 +450,14 @@ export function AboutSectionsEditor({
           <div className="pe-stack">
             <Field label={`Mô tả ảnh — alt (${L})`}>
               <input
-                className="lac-input"
+                className="ad-input"
                 value={C.caps.imageAlt}
                 onChange={(e) => onPatch('caps', { imageAlt: e.target.value })}
               />
             </Field>
             <Field label="Đường dẫn ảnh">
               <input
-                className="lac-input"
+                className="ad-input"
                 value={C.caps.imageUrl}
                 spellCheck={false}
                 style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
@@ -492,7 +473,7 @@ export function AboutSectionsEditor({
               <span className="num">— {String(i + 1).padStart(2, '0')}</span>
               <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 10 }}>
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder={`Chỉ số (${L})`}
                   value={m.label}
                   onChange={(e) => {
@@ -502,7 +483,7 @@ export function AboutSectionsEditor({
                   }}
                 />
                 <input
-                  className="lac-input"
+                  className="ad-input"
                   placeholder={`Giá trị (${L})`}
                   value={m.value}
                   onChange={(e) => {
@@ -529,7 +510,7 @@ export function AboutSectionsEditor({
         </div>
         <button
           type="button"
-          className="lac-btn sm"
+          className="ad-btn sm"
           style={{ width: 'fit-content', marginTop: 10 }}
           onClick={() =>
             onPatch('caps', { metrics: [...C.caps.metrics, { label: '', value: '' }] })
@@ -549,14 +530,14 @@ export function AboutSectionsEditor({
         <div className="pe-row">
           <Field label={`Eyebrow (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.warehouse.eyebrow}
               onChange={(e) => onPatch('warehouse', { eyebrow: e.target.value })}
             />
           </Field>
           <Field label={`Tiêu đề (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.warehouse.title}
               onChange={(e) => onPatch('warehouse', { title: e.target.value })}
             />
@@ -615,54 +596,12 @@ export function AboutSectionsEditor({
         </div>
         <button
           type="button"
-          className="lac-btn sm"
+          className="ad-btn sm"
           style={{ width: 'fit-content', marginTop: 10 }}
           onClick={() => onPatch('warehouse', { images: [...C.warehouse.images, ''] })}
         >
           <AdminIcon name="plus" size={13} /> Thêm ảnh
         </button>
-
-        <div
-          style={{
-            fontSize: 12,
-            fontWeight: 600,
-            color: 'var(--ad-text-mute)',
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            margin: '18px 0 10px',
-          }}
-        >
-          Chú thích từng ảnh (tiêu đề + mô tả)
-        </div>
-        {C.warehouse.images.map((_, i) => {
-          const caps = C.warehouse.captions ?? [];
-          const cap = caps[i] ?? { title: '', sub: '' };
-          const setCap = (field: 'title' | 'sub', value: string) => {
-            const captions = C.warehouse.images.map(
-              (__, j) => (C.warehouse.captions ?? [])[j] ?? { title: '', sub: '' },
-            );
-            captions[i] = { ...captions[i], [field]: value };
-            onPatch('warehouse', { captions });
-          };
-          return (
-            <div key={i} className="pe-row" style={{ marginBottom: 8 }}>
-              <Field label={`Ảnh ${i + 1} — tiêu đề (${L})`}>
-                <input
-                  className="lac-input"
-                  value={cap.title}
-                  onChange={(e) => setCap('title', e.target.value)}
-                />
-              </Field>
-              <Field label={`Ảnh ${i + 1} — mô tả (${L})`}>
-                <input
-                  className="lac-input"
-                  value={cap.sub}
-                  onChange={(e) => setCap('sub', e.target.value)}
-                />
-              </Field>
-            </div>
-          );
-        })}
       </EditorSection>
 
       {/* 07 — CERTS */}
@@ -675,14 +614,14 @@ export function AboutSectionsEditor({
       >
         <Field label={`Tiêu đề (${L})`}>
           <input
-            className="lac-input"
+            className="ad-input"
             value={C.certs.title}
             onChange={(e) => onPatch('certs', { title: e.target.value })}
           />
         </Field>
         <Field label={`Mô tả (${L})`}>
           <textarea
-            className="lac-textarea"
+            className="ad-textarea"
             value={C.certs.sub}
             onChange={(e) => onPatch('certs', { sub: e.target.value })}
           />
@@ -711,7 +650,7 @@ export function AboutSectionsEditor({
                 }}
               />
               <input
-                className="lac-input"
+                className="ad-input"
                 value={cert.name}
                 style={{ height: 28, fontSize: 13 }}
                 onChange={(e) => {
@@ -735,14 +674,14 @@ export function AboutSectionsEditor({
       >
         <Field label={`Tiêu đề (${L})`}>
           <input
-            className="lac-input"
+            className="ad-input"
             value={C.cta.title}
             onChange={(e) => onPatch('cta', { title: e.target.value })}
           />
         </Field>
         <Field label={`Mô tả (${L})`}>
           <textarea
-            className="lac-textarea"
+            className="ad-textarea"
             value={C.cta.sub}
             onChange={(e) => onPatch('cta', { sub: e.target.value })}
           />
@@ -750,14 +689,14 @@ export function AboutSectionsEditor({
         <div className="pe-row">
           <Field label={`Nút chính — chữ (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.cta.primaryLabel}
               onChange={(e) => onPatch('cta', { primaryLabel: e.target.value })}
             />
           </Field>
           <Field label="Nút chính — liên kết">
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.cta.primaryHref}
               spellCheck={false}
               style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
@@ -768,14 +707,14 @@ export function AboutSectionsEditor({
         <div className="pe-row">
           <Field label={`Nút phụ — chữ (${L})`}>
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.cta.secondaryLabel}
               onChange={(e) => onPatch('cta', { secondaryLabel: e.target.value })}
             />
           </Field>
           <Field label="Nút phụ — liên kết">
             <input
-              className="lac-input"
+              className="ad-input"
               value={C.cta.secondaryHref}
               spellCheck={false}
               style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Be_Vietnam_Pro } from 'next/font/google';
-// global styles
+import { Inter, Fraunces } from 'next/font/google';
 import '@/app/globals.css';
 import { siteUrl } from '@/lib/site-url';
 import { getSeoDefaults } from '@/lib/queries';
@@ -11,12 +10,9 @@ const inter = Inter({
   variable: '--font-inter',
   display: 'swap',
 });
-// Display / headline face — a geometric grotesque with more character than
-// Inter and full Vietnamese diacritics. Wired to --va-display in globals.css.
-const display = Be_Vietnam_Pro({
-  subsets: ['latin', 'vietnamese'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-display',
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-fraunces',
   display: 'swap',
 });
 
@@ -79,7 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     // `suppressHydrationWarning` on <html> covers attributes injected by dark-
     // mode / theme extensions (Dark Reader, color-scheme, etc.). The same on
     // <body> covers password-manager / autofill probes on form inputs.
-    <html lang="vi" className={`${inter.variable} ${display.variable}`} suppressHydrationWarning>
+    <html lang="vi" className={`${inter.variable} ${fraunces.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <SiteAnalytics />
         {children}
