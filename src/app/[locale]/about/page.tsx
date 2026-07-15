@@ -172,19 +172,11 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         </div>
       </section>
 
-      {/* WAREHOUSE */}
+      {/* WAREHOUSE — Kettal-collections layout: caption above, framed photo below */}
       <section className="ab-section">
-        <div className="va-wrap">
-          <div className="va-shead2">
-            <div className="ab-eyebrow" data-reveal>
-              {S.warehouse.eyebrow}
-            </div>
-            <h2 data-reveal="words">
-              <Words text={S.warehouse.title} step={100} />
-            </h2>
-          </div>
-        </div>
         <WarehouseDeck
+          eyebrow={S.warehouse.eyebrow}
+          note={S.warehouse.title}
           slides={S.warehouse.images.filter(Boolean).map((src, i) => {
             const caps = S.warehouse.captions ?? [];
             const cap = caps.length > 0 ? caps[i % caps.length] : { title: '', sub: '' };
