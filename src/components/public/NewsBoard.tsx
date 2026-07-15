@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import type { Locale } from '@/lib/i18n/config';
 import type { NewsItem } from '@/data/news';
-import { Icon } from '@/components/ui/Icon';
 import { SmartImage } from '@/components/ui/SmartImage';
+import { PageHero } from '@/components/public/PageHero';
 import { fmtNumberVn } from '@/lib/format';
 import type { NewsPageSectionsLocale } from '@/lib/news-page-content';
 
@@ -201,36 +201,14 @@ export function NewsBoard({ locale, items, sections }: Props) {
 
   return (
     <div className="nw">
-      {/* PAGE HEADER (compact) */}
-      <section className="nw-head">
-        <div className="va-wrap">
-          <nav className="nw-bcrumb">
-            <Link href={`/${locale}`}>{t.home}</Link>
-            <Icon name="chevron" size={11} />
-            <span className="now">{t.news}</span>
-          </nav>
-          {sections.hero.eyebrow ? (
-            <div
-              style={{
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: '.18em',
-                textTransform: 'uppercase',
-                color: 'var(--brand-accent,#F08023)',
-                marginBottom: 8,
-              }}
-            >
-              {sections.hero.eyebrow}
-            </div>
-          ) : null}
-          <h1>{sections.hero.title || t.pageTitle}</h1>
-          {sections.hero.sub ? (
-            <p style={{ opacity: 0.75, fontSize: 15, lineHeight: 1.6, marginTop: 10 }}>
-              {sections.hero.sub}
-            </p>
-          ) : null}
-        </div>
-      </section>
+      {/* PAGE HERO (full photo) */}
+      <PageHero
+        eyebrow={sections.hero.eyebrow || t.news}
+        title={sections.hero.title || t.pageTitle}
+        sub={sections.hero.sub || undefined}
+        breadcrumb={[{ label: t.home, href: `/${locale}` }, { label: t.news }]}
+        bgImage={sections.hero.imageUrl || '/assets/kho-hang-xuat-khau.webp'}
+      />
 
       {/* SUBNAV */}
       <div className="nw-subnav">

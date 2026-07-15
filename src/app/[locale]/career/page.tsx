@@ -3,7 +3,10 @@ import Link from 'next/link';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
-import { Icon, type IconName } from '@/components/ui/Icon';
+import { Icon } from '@/components/ui/Icon';
+import { Words } from '@/components/public/Words';
+import { PageHero } from '@/components/public/PageHero';
+import { CareerJobsGrid } from '@/components/public/CareerJobsGrid';
 import { getJobs, getCareersPageSections } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
@@ -28,7 +31,6 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
   const loc = locale as Locale;
   const C = COPY[loc];
 
-  // Job listings from the catalogue, page copy from page_sections.
   const [jobMap, S] = await Promise.all([getJobs(), getCareersPageSections(loc)]);
   const allJobs = Object.values(jobMap).map((j) => ({
     id: j.id,
@@ -48,154 +50,47 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
   return (
     <div className="cr">
       {/* HERO */}
-      <section className="cr-hero">
-        <div className="va-wrap">
-          <div className="cr-bcrumb">
-            <Link href={`/${loc}`}>
-              {loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ'}
-            </Link>
-            <Icon name="chevron" size={11} />
-            <span>{C.nav[3]}</span>
-          </div>
-          <div className="va-eyebrow" style={{ color: '#F08023' }}>
-            {S.hero.eyebrow}
-          </div>
-          <h1>{S.hero.title}</h1>
-          <p>{S.hero.sub}</p>
-          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-            <a className="va-btn va-btn-p" href="#jobs">
-              {S.hero.ctaLabel} <Icon name="arrow" size={15} />
-            </a>
-            <Link className="cr-btn-w" href={`/${loc}/contact`}>
-              {loc === 'zh'
+      <PageHero
+        eyebrow={S.hero.eyebrow}
+        title={S.hero.title}
+        sub={S.hero.sub}
+        breadcrumb={[
+          { label: loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ', href: `/${loc}` },
+          { label: C.nav[3] },
+        ]}
+        bgImage={S.hero.imageUrl || '/assets/nha-may-bot-sieu-min-3.webp'}
+        stats={S.hero.stats}
+        ctas={[
+          { label: S.hero.ctaLabel, href: '#jobs', primary: true },
+          {
+            label:
+              loc === 'zh'
                 ? '直接联系'
                 : loc === 'en'
                   ? 'Contact us directly'
-                  : 'Liên hệ trực tiếp'}
-            </Link>
-          </div>
-          {S.hero.stats.length > 0 ? (
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: `repeat(${S.hero.stats.length}, 1fr)`,
-                gap: 32,
-                marginTop: 36,
-              }}
-            >
-              {S.hero.stats.map((s, i) => (
-                <div key={i}>
-                  <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em' }}>
-                    {s.value}
-                  </div>
-                  <div style={{ fontSize: 13, opacity: 0.7 }}>{s.label}</div>
-                </div>
-              ))}
-            </div>
-          ) : null}
-        </div>
-      </section>
+                  : 'Liên hệ trực tiếp',
+            href: `/${loc}/contact`,
+          },
+        ]}
+      />
 
-      {/* JOBS */}
-      <section className="cr-section" id="jobs">
-        <div className="va-wrap">
-          <div className="cr-shead">
-            <div>
-              <div className="va-eyebrow">
-                {loc === 'zh' ? '招聘职位' : loc === 'en' ? 'Open positions' : 'Vị trí đang tuyển'}
-              </div>
-              <h2>{S.jobs.title}</h2>
-            </div>
-            <p>{S.jobs.sub}</p>
-          </div>
-          <div className="cr-jobs-grid">
-            {jobs.map((j) => (
-              <Link key={j.id} href={`/${loc}/career/${j.id}`} className="cr-job-card">
-                <div>
-                  <div className="cr-job-dept">{j.dept}</div>
-                  <div className="cr-job-title">{j.title}</div>
-                  <div className="cr-job-meta">
-                    <span className="cr-job-meta-item">
-                      <Icon name="pin" size={13} /> {j.loc}
-                    </span>
-                    <span className="cr-job-meta-item">
-                      <Icon name="check" size={13} /> {j.type}
-                    </span>
-                    <span className="cr-job-meta-item">
-                      <Icon name="spark" size={13} /> {j.exp}
-                    </span>
-                  </div>
-                  <div className="cr-job-tags">
-                    {j.tags.map((tag, i) => (
-                      <span key={i}>{tag}</span>
-                    ))}
-                  </div>
-                </div>
-                <div className="cr-job-arrow">
-                  {loc === 'zh' ? '立即申请' : loc === 'en' ? 'Apply now' : 'Ứng tuyển ngay'}
-                  <Icon name="arrow" size={14} />
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* VALUES */}
-      <section className="cr-section tight" style={{ background: 'var(--va-bg-alt)' }}>
-        <div className="va-wrap">
-          <div className="cr-shead">
-            <div>
-              <div className="va-eyebrow">{S.values.eyebrow}</div>
-              <h2>{S.values.title}</h2>
-            </div>
-            <p>{S.values.sub}</p>
-          </div>
-          <div className="cr-values-grid">
-            {S.values.items.map((v, i) => (
-              <div key={i} className="cr-value-card">
-                <div className="cr-value-icon">
-                  <Icon name={(v.icon || 'check') as IconName} size={22} />
-                </div>
-                <h3>{v.name}</h3>
-                <p>{v.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* BENEFITS */}
-      <section className="cr-section">
-        <div className="va-wrap">
-          <div className="cr-shead">
-            <div>
-              <div className="va-eyebrow">{S.benefits.eyebrow}</div>
-              <h2>{S.benefits.title}</h2>
-            </div>
-          </div>
-          <div className="cr-benefits-grid">
-            {S.benefits.items.map((b, i) => (
-              <div key={i} className="cr-benefit">
-                <div className="cr-benefit-num">{String(i + 1).padStart(2, '0')}</div>
-                <h4>{b.label}</h4>
-                <p>{b.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* JOBS — gpt-taste grid */}
+      <CareerJobsGrid locale={loc} jobs={jobs} email={S.cta.email || 'hr@longanhcorp.com'} />
 
       {/* PROCESS */}
       <section className="cr-section tight" style={{ background: 'var(--va-bg-alt)' }}>
         <div className="va-wrap">
           <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto 56px' }}>
-            <div className="va-eyebrow">{S.process.eyebrow}</div>
-            <h2 style={{ fontSize: 'clamp(26px,3vw,38px)', marginTop: 12 }}>{S.process.title}</h2>
+            <div className="va-eyebrow" data-reveal>
+              {S.process.eyebrow}
+            </div>
+            <h2 style={{ fontSize: 'clamp(26px,3vw,38px)', marginTop: 12 }} data-reveal="words">
+              <Words text={S.process.title} step={100} />
+            </h2>
           </div>
           <div className="cr-process-steps">
             {S.process.items.map((s, i) => (
-              <div key={i} className="cr-process-step">
+              <div key={i} className="cr-process-step" data-reveal data-reveal-delay={String(i)}>
                 <div className="cr-step-num">{String(i + 1).padStart(2, '0')}</div>
                 <h4>{s.title}</h4>
                 <p>{s.body}</p>
@@ -208,7 +103,7 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
       {/* CTA */}
       <section className="cr-section tight">
         <div className="va-wrap">
-          <div className="cr-cta-banner">
+          <div className="cr-cta-banner" data-reveal="scale">
             <div>
               <div className="va-eyebrow">
                 {loc === 'zh'

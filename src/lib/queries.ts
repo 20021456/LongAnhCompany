@@ -66,6 +66,7 @@ export async function getProducts(): Promise<Record<string, ProductDetail>> {
   for (const p of rows) {
     out[p.code] = {
       code: p.code,
+      slug: p.slug,
       cat: p.category.slug === 'caco3-powder' ? 0 : 1,
       name: l3(p.nameVi, p.nameEn, p.nameZh),
       meta: l3(p.summaryVi, p.summaryEn, p.summaryZh),
@@ -109,6 +110,12 @@ export async function getProducts(): Promise<Record<string, ProductDetail>> {
 export async function getProductByCode(code: string): Promise<ProductDetail | null> {
   const all = await getProducts();
   return all[code.toUpperCase()] ?? null;
+}
+
+/** Resolve a product by its SEO slug (e.g. 'bot-da-caco3-khong-phu'). */
+export async function getProductBySlug(slug: string): Promise<ProductDetail | null> {
+  const all = await getProducts();
+  return Object.values(all).find((p) => p.slug === slug) ?? null;
 }
 
 export interface ProductCategorySummary {

@@ -2,6 +2,7 @@
 
 import { AdminIcon } from './AdminIcon';
 import { Field } from './FormBits';
+import { PeImg } from './PeImg';
 import { EditorSection, type Lang } from './EditorChrome';
 import {
   CONTACT_PAGE_SECTION_KEYS,
@@ -70,6 +71,25 @@ export function ContactPageSectionsEditor({
             onChange={(e) => onPatch('header', { sub: e.target.value })}
           />
         </Field>
+        <div className="pe-imgrow" style={{ marginTop: 8 }}>
+          <PeImg
+            src={C.header.imageUrl ?? ''}
+            alt=""
+            size={C.header.imageUrl ? 'Ảnh nền hero' : undefined}
+            onChange={(dataUrl) => onPatch('header', { imageUrl: dataUrl })}
+          />
+          <div className="pe-stack">
+            <Field label="Đường dẫn ảnh nền hero">
+              <input
+                className="lac-input"
+                value={C.header.imageUrl ?? ''}
+                spellCheck={false}
+                style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
+                onChange={(e) => onPatch('header', { imageUrl: e.target.value })}
+              />
+            </Field>
+          </div>
+        </div>
       </EditorSection>
 
       {/* 02 — QUICK CONTACT */}

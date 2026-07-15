@@ -18,6 +18,8 @@ export interface ProductSpec {
 }
 export interface ProductDetail {
   code: string;
+  /** SEO-friendly URL segment, e.g. 'bot-da-caco3-khong-phu'. */
+  slug: string;
   cat: number;
   name: Record<string, string>;
   meta: Record<string, string>;
@@ -41,6 +43,7 @@ export interface ProductDetail {
 export const PRODUCTS: Record<string, ProductDetail> = {
   'P-01': {
     code: 'P-01',
+    slug: 'bot-da-caco3-khong-phu',
     cat: 0,
     name: { vi: 'Bột đá CaCO₃ không phủ', en: 'Uncoated CaCO₃ powder', zh: '未涂层碳酸钙粉' },
     meta: { vi: 'Uncoated · 4–20 µm', en: 'Uncoated · 4–20 µm', zh: '未涂层 · 4–20 µm' },
@@ -130,6 +133,7 @@ export const PRODUCTS: Record<string, ProductDetail> = {
 
   'P-02': {
     code: 'P-02',
+    slug: 'bot-da-caco3-phu-stearic-acid',
     cat: 0,
     name: {
       vi: 'Bột đá CaCO₃ phủ Stearic Acid',
@@ -217,6 +221,7 @@ export const PRODUCTS: Record<string, ProductDetail> = {
 
   'P-03': {
     code: 'P-03',
+    slug: 'da-slab',
     cat: 1,
     name: { vi: 'Đá Slab', en: 'Slab stone', zh: '大板石材' },
     meta: { vi: 'Tấm lớn · 1.6 × 2.4 m', en: 'Large slab · 1.6 × 2.4 m', zh: '大板 · 1.6 × 2.4 m' },
@@ -291,6 +296,7 @@ export const PRODUCTS: Record<string, ProductDetail> = {
 
   'P-04': {
     code: 'P-04',
+    slug: 'da-xe-quy-cach',
     cat: 1,
     name: { vi: 'Đá xẻ quy cách', en: 'Cut-to-size tile', zh: '定制规格石材' },
     meta: {
@@ -368,6 +374,7 @@ export const PRODUCTS: Record<string, ProductDetail> = {
 
   'P-05': {
     code: 'P-05',
+    slug: 'da-trang-tri',
     cat: 1,
     name: { vi: 'Đá trang trí', en: 'Decorative stone', zh: '装饰石材' },
     meta: {

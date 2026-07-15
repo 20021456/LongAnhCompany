@@ -5,7 +5,10 @@ import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { SmartImage } from '@/components/ui/SmartImage';
-import { PageHeader } from '@/components/public/PageHeader';
+import { PageHero } from '@/components/public/PageHero';
+import { TimelineArc } from '@/components/public/TimelineArc';
+import { WarehouseDeck } from '@/components/public/WarehouseDeck';
+import { Words } from '@/components/public/Words';
 import { getAboutSections, getCertifications } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
@@ -40,11 +43,12 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
 
   return (
     <div className="ab">
-      <PageHeader
+      <PageHero
         eyebrow={S.header.eyebrow}
         title={S.header.title}
         sub={S.header.sub}
         breadcrumb={[{ label: homeLabel, href: `/${loc}` }, { label: C.nav[1] }]}
+        bgImage={S.header.imageUrl || '/assets/da-nguyen-lieu-cao-cap.webp'}
       />
 
       {/* STORY */}
@@ -54,20 +58,39 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         </div>
         <div className="va-wrap">
           <div className="ab-intro">
-            <div className="ab-intro-img">
-              <SmartImage
-                src={S.story.imageUrl}
-                alt={S.story.imageAlt}
-                width={1000}
-                height={1200}
-              />
+            <div className="ab-intro-media">
+              <div className="ab-intro-img" data-reveal="clip">
+                <SmartImage
+                  src={S.story.imageUrl}
+                  alt={S.story.imageAlt}
+                  width={1000}
+                  height={1200}
+                />
+              </div>
+              <div className="ab-intro-img2" data-reveal data-reveal-delay="2">
+                <div data-parallax="0.05">
+                  <SmartImage src={S.story.bgImageUrl} alt="" width={700} height={500} />
+                </div>
+              </div>
             </div>
             <div>
-              <div className="ab-eyebrow">{S.story.eyebrow}</div>
-              <h2>{S.story.title}</h2>
-              {S.story.paragraph1 ? <p>{S.story.paragraph1}</p> : null}
-              {S.story.paragraph2 ? <p>{S.story.paragraph2}</p> : null}
-              {S.story.paragraph3 ? <p>{S.story.paragraph3}</p> : null}
+              <div className="ab-eyebrow" data-reveal>
+                {S.story.eyebrow}
+              </div>
+              <h2 data-reveal="words">
+                <Words text={S.story.title} step={100} />
+              </h2>
+              {S.story.paragraph1 ? <p data-reveal>{S.story.paragraph1}</p> : null}
+              {S.story.paragraph2 ? (
+                <p data-reveal data-reveal-delay="1">
+                  {S.story.paragraph2}
+                </p>
+              ) : null}
+              {S.story.paragraph3 ? (
+                <p data-reveal data-reveal-delay="2">
+                  {S.story.paragraph3}
+                </p>
+              ) : null}
               <div className="ab-sig">
                 <div className="ab-sig-img" />
                 <div>
@@ -80,45 +103,43 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         </div>
       </section>
 
-      {/* TIMELINE */}
-      <section className="ab-time">
-        <div className="va-wrap">
-          <div className="ab-time-head">
-            <div className="ab-eyebrow">{S.timeline.eyebrow}</div>
-            <h2>{S.timeline.title}</h2>
-          </div>
-          <div className="ab-time-grid">
-            {S.timeline.items.map((ev, i) => (
-              <div key={i} className="ab-tnode">
-                <div className="ab-tdot" />
-                <b>{ev.year}</b>
-                <h4>{ev.title}</h4>
-                <p>{ev.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* TIMELINE — rotating wheel */}
+      <TimelineArc eyebrow={S.timeline.eyebrow} title={S.timeline.title} items={S.timeline.items} />
 
-      {/* VALUES */}
-      <section className="ab-section">
+      {/* VALUES — split layout: title left, borderless icon list right.
+          Same faint full-section photo backdrop as the story section. */}
+      <section className="ab-section ab-intro-wrap">
+        <div className="ab-intro-bg">
+          <SmartImage src="/assets/kho-da-nguyen-lieu.webp" alt="" width={1600} height={900} />
+        </div>
         <div className="va-wrap">
-          <div
-            style={{ textAlign: 'center', marginBottom: 48, maxWidth: 680, marginInline: 'auto' }}
-          >
-            <div className="ab-eyebrow">{S.values.eyebrow}</div>
-            <h2 style={{ fontSize: 'clamp(30px,3.6vw,44px)' }}>{S.values.title}</h2>
-          </div>
-          <div className="ab-vals">
-            {S.values.items.map((it, i) => (
-              <div key={i} className="ab-val">
-                <div className="ab-val-i">
-                  <Icon name={(it.icon || 'check') as IconName} size={24} />
-                </div>
-                <h3>{it.name}</h3>
-                <p>{it.body}</p>
+          <div className="ab-vals3">
+            <div className="ab-vals3-head">
+              <div className="ab-eyebrow" data-reveal>
+                {S.values.eyebrow}
               </div>
-            ))}
+              <h2 data-reveal="words">
+                <Words text={S.values.title} step={100} />
+              </h2>
+            </div>
+            <div className="ab-vals3-list">
+              {S.values.items.map((it, i) => (
+                <div
+                  key={i}
+                  className="ab-vals3-item"
+                  data-reveal
+                  data-reveal-delay={String(i % 3)}
+                >
+                  <div className="ab-vals3-icon">
+                    <Icon name={(it.icon || 'check') as IconName} size={22} />
+                  </div>
+                  <div>
+                    <h3>{it.name}</h3>
+                    <p>{it.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -127,19 +148,22 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
       <section className="ab-section" style={{ background: 'var(--va-bg-alt)' }}>
         <div className="va-wrap">
           <div className="ab-caps">
-            <div className="ab-caps-img">
+            <div className="ab-caps-img" data-reveal="clip">
               <SmartImage src={S.caps.imageUrl} alt={S.caps.imageAlt} width={1000} height={1100} />
             </div>
             <div>
-              <div className="ab-eyebrow">{S.caps.eyebrow}</div>
-              <h2>{S.caps.title}</h2>
-              {S.caps.sub ? <p>{S.caps.sub}</p> : null}
+              <div className="ab-eyebrow" data-reveal>
+                {S.caps.eyebrow}
+              </div>
+              <h2 data-reveal="words">
+                <Words text={S.caps.title} step={100} />
+              </h2>
+              {S.caps.sub ? <p data-reveal>{S.caps.sub}</p> : null}
               <div className="ab-caps-list">
                 {S.caps.metrics.map((m, i) => (
-                  <div key={i} className="ab-cap-row">
-                    <div className="ab-cap-n">— {String(i + 1).padStart(2, '0')}</div>
+                  <div key={i} className="ab-cap-row" data-reveal data-reveal-delay={String(i % 4)}>
                     <h4>{m.label}</h4>
-                    <span>{m.value}</span>
+                    <span data-countup>{m.value}</span>
                   </div>
                 ))}
               </div>
@@ -151,52 +175,37 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
       {/* WAREHOUSE */}
       <section className="ab-section">
         <div className="va-wrap">
-          <div className="ab-shead-row">
-            <div>
-              <div className="ab-eyebrow">{S.warehouse.eyebrow}</div>
-              <h2 style={{ fontSize: 'clamp(28px,3.4vw,42px)', marginBottom: 0 }}>
-                {S.warehouse.title}
-              </h2>
+          <div className="va-shead2">
+            <div className="ab-eyebrow" data-reveal>
+              {S.warehouse.eyebrow}
             </div>
-          </div>
-          <div className="ab-warehouse-grid">
-            {S.warehouse.images[0] ? (
-              <div className="ab-wh-img">
-                <SmartImage src={S.warehouse.images[0]} alt="" width={1000} height={1200} />
-              </div>
-            ) : null}
-            <div className="ab-wh-col">
-              {S.warehouse.images[1] ? (
-                <div className="ab-wh-img">
-                  <SmartImage src={S.warehouse.images[1]} alt="" width={900} height={700} />
-                </div>
-              ) : null}
-              {S.warehouse.images[2] ? (
-                <div className="ab-wh-img">
-                  <SmartImage src={S.warehouse.images[2]} alt="" width={900} height={700} />
-                </div>
-              ) : null}
-            </div>
-            {S.warehouse.images[3] ? (
-              <div className="ab-wh-img">
-                <SmartImage src={S.warehouse.images[3]} alt="" width={1000} height={1200} />
-              </div>
-            ) : null}
+            <h2 data-reveal="words">
+              <Words text={S.warehouse.title} step={100} />
+            </h2>
           </div>
         </div>
+        <WarehouseDeck
+          slides={S.warehouse.images.filter(Boolean).map((src, i) => {
+            const caps = S.warehouse.captions ?? [];
+            const cap = caps.length > 0 ? caps[i % caps.length] : { title: '', sub: '' };
+            return { src, title: cap.title, sub: cap.sub };
+          })}
+        />
       </section>
 
       {/* CERTS */}
       <section className="ab-certs">
         <div className="va-wrap">
-          <div className="ab-certs-head">
-            <div>
-              <div className="ab-eyebrow">
-                {loc === 'zh' ? '认证' : loc === 'en' ? 'Certifications' : 'Chứng nhận'}
-              </div>
-              <h2>{S.certs.title}</h2>
+          <div className="va-shead2">
+            <div className="ab-eyebrow" data-reveal>
+              {loc === 'zh' ? '认证' : loc === 'en' ? 'Certifications' : 'Chứng nhận'}
             </div>
-            <p>{S.certs.sub}</p>
+            <h2 data-reveal="words">
+              <Words text={S.certs.title} step={100} />
+            </h2>
+            <p className="dim" data-reveal="words">
+              <Words text={S.certs.sub} step={40} from={500} />
+            </p>
           </div>
           <div className="ab-certs-grid">
             {S.certs.items
@@ -204,7 +213,12 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
               .map((c, i) => {
                 const cat = certByName.get(c.name.trim().toLowerCase());
                 return (
-                  <div key={i} className="ab-cert-card">
+                  <div
+                    key={i}
+                    className="ab-cert-card"
+                    data-reveal
+                    data-reveal-delay={String(i % 4)}
+                  >
                     <div className="ab-cert-img">
                       {cat?.badge ? (
                         <SmartImage
@@ -232,7 +246,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
 
       {/* CTA */}
       <div className="va-wrap">
-        <div className="ab-cta">
+        <div className="ab-cta" data-grow>
           <div>
             <div
               style={{

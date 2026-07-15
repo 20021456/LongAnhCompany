@@ -9,9 +9,7 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Protect admin routes (locale-agnostic: /admin/* and /[locale]/admin/*)
-  const isAdminRoute =
-    pathname.startsWith('/admin') ||
-    /^\/(vi|en|zh)\/admin(\/|$)/.test(pathname);
+  const isAdminRoute = pathname.startsWith('/admin') || /^\/(vi|en|zh)\/admin(\/|$)/.test(pathname);
 
   if (isAdminRoute && !pathname.includes('/admin/login')) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -23,8 +21,8 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // Admin pages are not localized — skip intl middleware
-  if (pathname.startsWith('/admin')) return NextResponse.next();
+  // Admin pages and design-concept previews are not localized — skip intl middleware
+  if (pathname.startsWith('/admin') || pathname.startsWith('/concept')) return NextResponse.next();
 
   return intlMiddleware(req);
 }

@@ -78,11 +78,12 @@ export async function SiteFooter({ locale }: Props) {
               <b style={{ color: '#fff', fontSize: 14, letterSpacing: '.04em' }}>{shortBrand}</b>
             </div>
             <p style={{ lineHeight: 1.6, opacity: 0.65, margin: 0 }}>
-              {locale === 'zh'
-                ? '越南北中部领先的碳酸钙粉和天然石材制造商。'
-                : locale === 'en'
-                  ? 'A leading manufacturer of calcium carbonate powder and natural stone in North-Central Vietnam.'
-                  : 'Nhà sản xuất bột đá Canxi Cacbonat và đá tự nhiên hàng đầu Bắc Trung Bộ.'}
+              {settings.site?.tagline?.[locale] ||
+                (locale === 'zh'
+                  ? '越南北中部领先的碳酸钙粉和天然石材制造商。'
+                  : locale === 'en'
+                    ? 'A leading manufacturer of calcium carbonate powder and natural stone in North-Central Vietnam.'
+                    : 'Nhà sản xuất bột đá Canxi Cacbonat và đá tự nhiên hàng đầu Bắc Trung Bộ.')}
             </p>
             {socials.length > 0 ? (
               <div className="va-ft-social">

@@ -9,6 +9,7 @@ import { fmtDateVn } from '@/lib/format';
 export interface ProductRow {
   id: string;
   code: string;
+  slug: string;
   nameVi: string;
   summaryVi: string;
   categoryId: string;
@@ -243,7 +244,7 @@ export function ProductsBrowser({
                       <AdminIcon name="edit" size={13} />
                     </Link>
                     <a
-                      href={`/vi/products/${p.code}`}
+                      href={`/vi/products/${p.slug}`}
                       target="_blank"
                       rel="noreferrer"
                       className="lac-btn ghost sm"
