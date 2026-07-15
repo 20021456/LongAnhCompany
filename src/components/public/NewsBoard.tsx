@@ -207,7 +207,7 @@ export function NewsBoard({ locale, items, sections }: Props) {
         title={sections.hero.title || t.pageTitle}
         sub={sections.hero.sub || undefined}
         breadcrumb={[{ label: t.home, href: `/${locale}` }, { label: t.news }]}
-        bgImage="/assets/kho-hang-xuat-khau.webp"
+        bgImage={sections.hero.imageUrl || '/assets/kho-hang-xuat-khau.webp'}
       />
 
       {/* SUBNAV */}

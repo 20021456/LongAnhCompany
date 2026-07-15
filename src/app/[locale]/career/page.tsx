@@ -3,9 +3,10 @@ import Link from 'next/link';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
-import { Icon, type IconName } from '@/components/ui/Icon';
+import { Icon } from '@/components/ui/Icon';
 import { Words } from '@/components/public/Words';
 import { PageHero } from '@/components/public/PageHero';
+import { CareerJobsGrid } from '@/components/public/CareerJobsGrid';
 import { getJobs, getCareersPageSections } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
@@ -30,7 +31,6 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
   const loc = locale as Locale;
   const C = COPY[loc];
 
-  // Job listings from the catalogue, page copy from page_sections.
   const [jobMap, S] = await Promise.all([getJobs(), getCareersPageSections(loc)]);
   const allJobs = Object.values(jobMap).map((j) => ({
     id: j.id,
@@ -58,7 +58,7 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
           { label: loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ', href: `/${loc}` },
           { label: C.nav[3] },
         ]}
-        bgImage="/assets/nha-may-bot-sieu-min-3.webp"
+        bgImage={S.hero.imageUrl || '/assets/nha-may-bot-sieu-min-3.webp'}
         stats={S.hero.stats}
         ctas={[
           { label: S.hero.ctaLabel, href: '#jobs', primary: true },
@@ -74,105 +74,8 @@ export default async function CareerPage({ params: { locale } }: { params: { loc
         ]}
       />
 
-      {/* JOBS */}
-      <section className="cr-section" id="jobs">
-        <div className="va-wrap">
-          <div className="cr-shead">
-            <div data-reveal>
-              <div className="va-eyebrow">
-                {loc === 'zh' ? '招聘职位' : loc === 'en' ? 'Open positions' : 'Vị trí đang tuyển'}
-              </div>
-              <h2 data-reveal="words">
-                <Words text={S.jobs.title} step={100} />
-              </h2>
-            </div>
-            <p data-reveal data-reveal-delay="1">
-              {S.jobs.sub}
-            </p>
-          </div>
-          <div className="cr-jobs-grid">
-            {jobs.map((j) => (
-              <Link key={j.id} href={`/${loc}/career/${j.id}`} className="cr-job-card">
-                <div>
-                  <div className="cr-job-dept">{j.dept}</div>
-                  <div className="cr-job-title">{j.title}</div>
-                  <div className="cr-job-meta">
-                    <span className="cr-job-meta-item">
-                      <Icon name="pin" size={13} /> {j.loc}
-                    </span>
-                    <span className="cr-job-meta-item">
-                      <Icon name="check" size={13} /> {j.type}
-                    </span>
-                    <span className="cr-job-meta-item">
-                      <Icon name="spark" size={13} /> {j.exp}
-                    </span>
-                  </div>
-                  <div className="cr-job-tags">
-                    {j.tags.map((tag, i) => (
-                      <span key={i}>{tag}</span>
-                    ))}
-                  </div>
-                </div>
-                <div className="cr-job-arrow">
-                  {loc === 'zh' ? '立即申请' : loc === 'en' ? 'Apply now' : 'Ứng tuyển ngay'}
-                  <Icon name="arrow" size={14} />
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* VALUES */}
-      <section className="cr-section tight" style={{ background: 'var(--va-bg-alt)' }}>
-        <div className="va-wrap">
-          <div className="cr-shead">
-            <div data-reveal>
-              <div className="va-eyebrow">{S.values.eyebrow}</div>
-              <h2 data-reveal="words">
-                <Words text={S.values.title} step={100} />
-              </h2>
-            </div>
-            <p data-reveal data-reveal-delay="1">
-              {S.values.sub}
-            </p>
-          </div>
-          <div className="cr-values-grid">
-            {S.values.items.map((v, i) => (
-              <div key={i} className="cr-value-card" data-reveal data-reveal-delay={String(i % 3)}>
-                <div className="cr-value-icon">
-                  <Icon name={(v.icon || 'check') as IconName} size={22} />
-                </div>
-                <h3>{v.name}</h3>
-                <p>{v.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* BENEFITS */}
-      <section className="cr-section">
-        <div className="va-wrap">
-          <div className="cr-shead">
-            <div data-reveal>
-              <div className="va-eyebrow">{S.benefits.eyebrow}</div>
-              <h2 data-reveal="words">
-                <Words text={S.benefits.title} step={100} />
-              </h2>
-            </div>
-          </div>
-          <div className="cr-benefits-grid">
-            {S.benefits.items.map((b, i) => (
-              <div key={i} className="cr-benefit" data-reveal data-reveal-delay={String(i % 2)}>
-                <div className="cr-benefit-num">{String(i + 1).padStart(2, '0')}</div>
-                <h4>{b.label}</h4>
-                <p>{b.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* JOBS — gpt-taste grid */}
+      <CareerJobsGrid locale={loc} jobs={jobs} email={S.cta.email || 'hr@longanhcorp.com'} />
 
       {/* PROCESS */}
       <section className="cr-section tight" style={{ background: 'var(--va-bg-alt)' }}>

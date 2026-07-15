@@ -88,6 +88,25 @@ export function AboutSectionsEditor({
             onChange={(e) => onPatch('header', { sub: e.target.value })}
           />
         </Field>
+        <div className="pe-imgrow" style={{ marginTop: 8 }}>
+          <PeImg
+            src={C.header.imageUrl ?? ''}
+            alt=""
+            size={C.header.imageUrl ? 'Ảnh nền hero' : undefined}
+            onChange={(dataUrl) => onPatch('header', { imageUrl: dataUrl })}
+          />
+          <div className="pe-stack">
+            <Field label="Đường dẫn ảnh nền hero">
+              <input
+                className="ad-input"
+                value={C.header.imageUrl ?? ''}
+                spellCheck={false}
+                style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
+                onChange={(e) => onPatch('header', { imageUrl: e.target.value })}
+              />
+            </Field>
+          </div>
+        </div>
       </EditorSection>
 
       {/* 02 — STORY */}
@@ -602,6 +621,48 @@ export function AboutSectionsEditor({
         >
           <AdminIcon name="plus" size={13} /> Thêm ảnh
         </button>
+
+        <div
+          style={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: 'var(--ad-text-mute)',
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            margin: '18px 0 10px',
+          }}
+        >
+          Chú thích từng ảnh (tiêu đề + mô tả)
+        </div>
+        {C.warehouse.images.map((_, i) => {
+          const caps = C.warehouse.captions ?? [];
+          const cap = caps[i] ?? { title: '', sub: '' };
+          const setCap = (field: 'title' | 'sub', value: string) => {
+            const captions = C.warehouse.images.map(
+              (__, j) => (C.warehouse.captions ?? [])[j] ?? { title: '', sub: '' },
+            );
+            captions[i] = { ...captions[i], [field]: value };
+            onPatch('warehouse', { captions });
+          };
+          return (
+            <div key={i} className="pe-row" style={{ marginBottom: 8 }}>
+              <Field label={`Ảnh ${i + 1} — tiêu đề (${L})`}>
+                <input
+                  className="ad-input"
+                  value={cap.title}
+                  onChange={(e) => setCap('title', e.target.value)}
+                />
+              </Field>
+              <Field label={`Ảnh ${i + 1} — mô tả (${L})`}>
+                <input
+                  className="ad-input"
+                  value={cap.sub}
+                  onChange={(e) => setCap('sub', e.target.value)}
+                />
+              </Field>
+            </div>
+          );
+        })}
       </EditorSection>
 
       {/* 07 — CERTS */}

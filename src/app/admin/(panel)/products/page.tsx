@@ -20,6 +20,7 @@ export default async function AdminProductsPage() {
   const rows: ProductRow[] = products.map((p) => ({
     id: p.id,
     code: p.code,
+    slug: p.slug,
     nameVi: p.nameVi,
     summaryVi: p.summaryVi ?? '',
     categoryId: p.categoryId,

@@ -759,6 +759,69 @@ export function PageForm({
                           }}
                         />
                       </Field>
+                      <Field label={`Số liệu — nhãn · giá trị (${L})`}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          {(card.facts ?? []).map((f, fi) => (
+                            <div key={fi} style={{ display: 'flex', gap: 6 }}>
+                              <input
+                                className="ad-input"
+                                placeholder="Nhãn (vd. Công suất)"
+                                value={f.label}
+                                onChange={(e) => {
+                                  const cards = [...C.about.cards];
+                                  const facts = [...(cards[i].facts ?? [])];
+                                  facts[fi] = { ...facts[fi], label: e.target.value };
+                                  cards[i] = { ...cards[i], facts };
+                                  patch('about', { cards });
+                                }}
+                              />
+                              <input
+                                className="ad-input"
+                                placeholder="Giá trị (vd. 350.000 tấn/năm)"
+                                value={f.value}
+                                onChange={(e) => {
+                                  const cards = [...C.about.cards];
+                                  const facts = [...(cards[i].facts ?? [])];
+                                  facts[fi] = { ...facts[fi], value: e.target.value };
+                                  cards[i] = { ...cards[i], facts };
+                                  patch('about', { cards });
+                                }}
+                              />
+                              <button
+                                type="button"
+                                className="ad-btn ghost sm"
+                                title="Xoá dòng số liệu"
+                                aria-label="Xoá dòng số liệu"
+                                onClick={() => {
+                                  const cards = [...C.about.cards];
+                                  cards[i] = {
+                                    ...cards[i],
+                                    facts: (cards[i].facts ?? []).filter((_, fj) => fj !== fi),
+                                  };
+                                  patch('about', { cards });
+                                }}
+                              >
+                                <AdminIcon name="trash" size={13} />
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            className="ad-btn ghost sm"
+                            style={{ alignSelf: 'flex-start' }}
+                            onClick={() => {
+                              const cards = [...C.about.cards];
+                              cards[i] = {
+                                ...cards[i],
+                                facts: [...(cards[i].facts ?? []), { label: '', value: '' }],
+                              };
+                              patch('about', { cards });
+                            }}
+                          >
+                            <AdminIcon name="plus" size={13} /> Thêm số liệu
+                          </button>
+                        </div>
+                      </Field>
                     </div>
                   ))}
                   <button

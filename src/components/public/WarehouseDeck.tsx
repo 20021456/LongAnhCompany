@@ -82,15 +82,11 @@ export function WarehouseDeck({ slides }: Props) {
               <div className="va-whdeck-shade" />
             </div>
             <div className="va-whdeck-cap">
-              <span className="num">{String(i + 1).padStart(2, '0')}</span>
               <b>{s.title}</b>
               <span className="sub">{s.sub}</span>
             </div>
           </div>
         ))}
-        <div className="va-whdeck-count">
-          <span>{String(active + 1).padStart(2, '0')}</span> / {String(n).padStart(2, '0')}
-        </div>
       </div>
     </div>
   );

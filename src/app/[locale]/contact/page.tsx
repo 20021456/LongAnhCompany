@@ -45,7 +45,7 @@ export default async function ContactPage({ params: { locale } }: { params: { lo
           { label: loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ', href: `/${loc}` },
           { label: loc === 'zh' ? '联系' : loc === 'en' ? 'Contact' : 'Liên hệ' },
         ]}
-        bgImage="/assets/co-so-ha-tang.jpg"
+        bgImage={S.header.imageUrl || '/assets/co-so-ha-tang.jpg'}
       />
 
       <section id="contact" className="va-wrap">

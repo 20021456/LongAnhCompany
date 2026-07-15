@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { AdminIcon } from './AdminIcon';
 import { Field } from './FormBits';
+import { PeImg } from './PeImg';
 import { EditorSection, type Lang } from './EditorChrome';
 import { uploadImage } from '@/lib/upload-client';
 import {
@@ -87,6 +88,25 @@ export function ProductsPageSectionsEditor({
             onChange={(e) => onPatch('header', { sub: e.target.value })}
           />
         </Field>
+        <div className="pe-imgrow" style={{ marginTop: 8 }}>
+          <PeImg
+            src={C.header.imageUrl ?? ''}
+            alt=""
+            size={C.header.imageUrl ? 'Ảnh nền hero' : undefined}
+            onChange={(dataUrl) => onPatch('header', { imageUrl: dataUrl })}
+          />
+          <div className="pe-stack">
+            <Field label="Đường dẫn ảnh nền hero">
+              <input
+                className="ad-input"
+                value={C.header.imageUrl ?? ''}
+                spellCheck={false}
+                style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
+                onChange={(e) => onPatch('header', { imageUrl: e.target.value })}
+              />
+            </Field>
+          </div>
+        </div>
       </EditorSection>
 
       {/* 02 — STATS */}
@@ -531,20 +551,87 @@ export function ProductsPageSectionsEditor({
         </Field>
       </EditorSection>
 
-      {/* 07 — QUOTE CTA */}
+      {/* 07 — PROCESS */}
+      <EditorSection
+        num={next()}
+        icon="layers"
+        title="Quy trình — 4 bước"
+        sub="Eyebrow, tiêu đề, câu statement và 4 bước sản xuất"
+      >
+        <div className="pe-row">
+          <Field label={`Eyebrow (${L})`}>
+            <input
+              className="ad-input"
+              value={C.process.eyebrow}
+              onChange={(e) => onPatch('process', { eyebrow: e.target.value })}
+            />
+          </Field>
+          <Field label={`Tiêu đề (${L})`}>
+            <input
+              className="ad-input"
+              value={C.process.title}
+              onChange={(e) => onPatch('process', { title: e.target.value })}
+            />
+          </Field>
+        </div>
+        <Field label={`Câu statement — hiện dần khi cuộn (${L})`}>
+          <textarea
+            className="ad-textarea"
+            value={C.process.statement}
+            onChange={(e) => onPatch('process', { statement: e.target.value })}
+          />
+        </Field>
+        {C.process.steps.map((s, i) => (
+          <div key={i} className="pe-row" style={{ marginBottom: 8 }}>
+            <Field label={`Bước ${s.k || i + 1} — tên (${L})`}>
+              <input
+                className="ad-input"
+                value={s.t}
+                onChange={(e) => {
+                  const steps = [...C.process.steps];
+                  steps[i] = { ...steps[i], t: e.target.value };
+                  onPatch('process', { steps });
+                }}
+              />
+            </Field>
+            <Field label={`Bước ${s.k || i + 1} — mô tả (${L})`}>
+              <input
+                className="ad-input"
+                value={s.d}
+                onChange={(e) => {
+                  const steps = [...C.process.steps];
+                  steps[i] = { ...steps[i], d: e.target.value };
+                  onPatch('process', { steps });
+                }}
+              />
+            </Field>
+          </div>
+        ))}
+      </EditorSection>
+
+      {/* 08 — QUOTE CTA */}
       <EditorSection
         num={next()}
         icon="mail"
         title="CTA — Báo giá FOB"
         sub="Banner kêu gọi liên hệ ở cuối trang"
       >
-        <Field label={`Tiêu đề (${L})`}>
-          <input
-            className="ad-input"
-            value={C.cta.title}
-            onChange={(e) => onPatch('cta', { title: e.target.value })}
-          />
-        </Field>
+        <div className="pe-row">
+          <Field label={`Kicker (${L})`}>
+            <input
+              className="ad-input"
+              value={C.cta.kicker ?? ''}
+              onChange={(e) => onPatch('cta', { kicker: e.target.value })}
+            />
+          </Field>
+          <Field label={`Tiêu đề (${L})`}>
+            <input
+              className="ad-input"
+              value={C.cta.title}
+              onChange={(e) => onPatch('cta', { title: e.target.value })}
+            />
+          </Field>
+        </div>
         <Field label={`Mô tả (${L})`}>
           <textarea
             className="ad-textarea"
@@ -570,6 +657,13 @@ export function ProductsPageSectionsEditor({
             />
           </Field>
         </div>
+        <Field label="Nút gọi điện — số hiển thị">
+          <input
+            className="ad-input"
+            value={C.cta.phone ?? ''}
+            onChange={(e) => onPatch('cta', { phone: e.target.value })}
+          />
+        </Field>
       </EditorSection>
     </>
   );

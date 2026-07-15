@@ -465,7 +465,7 @@ async function main() {
   // ─── 5. Products + variants/applications/packagings/specs ──────────────
   let productCount = 0;
   for (const [code, p] of Object.entries(PRODUCTS)) {
-    const slug = code.toLowerCase();
+    const slug = p.slug;
     const productData = {
       slug,
       categoryId: catBySlug[p.cat],

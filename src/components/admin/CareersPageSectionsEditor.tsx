@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { AdminIcon } from './AdminIcon';
 import { Field } from './FormBits';
+import { PeImg } from './PeImg';
 import { EditorSection, type Lang } from './EditorChrome';
 import type { IconName } from '@/components/ui/Icon';
 import {
@@ -124,6 +125,25 @@ export function CareersPageSectionsEditor({
             onChange={(e) => onPatch('hero', { sub: e.target.value })}
           />
         </Field>
+        <div className="pe-imgrow" style={{ marginTop: 8 }}>
+          <PeImg
+            src={C.hero.imageUrl ?? ''}
+            alt=""
+            size={C.hero.imageUrl ? 'Ảnh nền hero' : undefined}
+            onChange={(dataUrl) => onPatch('hero', { imageUrl: dataUrl })}
+          />
+          <div className="pe-stack">
+            <Field label="Đường dẫn ảnh nền hero">
+              <input
+                className="ad-input"
+                value={C.hero.imageUrl ?? ''}
+                spellCheck={false}
+                style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
+                onChange={(e) => onPatch('hero', { imageUrl: e.target.value })}
+              />
+            </Field>
+          </div>
+        </div>
 
         <div style={{ borderTop: '1px solid var(--ad-line-soft)', paddingTop: 14 }}>
           <div

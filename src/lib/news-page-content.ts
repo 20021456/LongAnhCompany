@@ -25,6 +25,8 @@ export interface NewsHeroSection {
   sub: string;
   searchPlaceholder: string;
   searchEnabled: boolean;
+  /** Hero banner background photo. */
+  imageUrl?: string;
 }
 
 export interface NewsCategoryRow {
@@ -98,25 +100,28 @@ export type NewsPageSectionKey = (typeof NEWS_PAGE_SECTION_KEYS)[number];
 
 const HERO: Record<Locale, NewsHeroSection> = {
   vi: {
-    eyebrow: '// Newsroom · KS Long Anh',
+    eyebrow: 'Bản tin · KS Long Anh',
     title: 'Tin tức & Cập nhật ngành khoáng sản',
     sub: 'Theo dõi hoạt động kinh doanh, sản phẩm mới, cập nhật công nghệ và phân tích thị trường xuất khẩu bột đá CaCO₃ của Long Anh.',
     searchPlaceholder: 'Tìm bài viết theo tiêu đề, danh mục…',
     searchEnabled: true,
+    imageUrl: '/assets/kho-hang-xuat-khau.webp',
   },
   en: {
-    eyebrow: '// Newsroom · Long Anh',
+    eyebrow: 'Newsroom · Long Anh',
     title: 'News & mineral-industry updates',
     sub: 'Follow Long Anh business deals, new products, technology updates and CaCO₃ export-market analysis.',
     searchPlaceholder: 'Search articles by title or category…',
     searchEnabled: true,
+    imageUrl: '/assets/kho-hang-xuat-khau.webp',
   },
   zh: {
-    eyebrow: '// 新闻室 · 龙英',
+    eyebrow: '新闻室 · 龙英',
     title: '新闻与矿业更新',
     sub: '跟踪龙英的商业活动、新产品、技术更新以及碳酸钙出口市场分析。',
     searchPlaceholder: '按标题或类别搜索文章…',
     searchEnabled: true,
+    imageUrl: '/assets/kho-hang-xuat-khau.webp',
   },
 };
 
@@ -172,19 +177,19 @@ const LIST_CONFIG_DEFAULT: NewsListConfigSection = {
 
 const BY_CATEGORY: Record<Locale, NewsByCategorySection> = {
   vi: {
-    eyebrow: '// Chuyên mục',
+    eyebrow: 'Chuyên mục',
     title: 'Tin theo chủ đề',
     mode: 'top-2',
     articlesPerCategory: 4,
   },
   en: {
-    eyebrow: '// Topics',
+    eyebrow: 'Topics',
     title: 'News by topic',
     mode: 'top-2',
     articlesPerCategory: 4,
   },
   zh: {
-    eyebrow: '// 专栏',
+    eyebrow: '专栏',
     title: '按主题分类',
     mode: 'top-2',
     articlesPerCategory: 4,

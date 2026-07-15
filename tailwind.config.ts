@@ -43,7 +43,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        serif: ['var(--font-fraunces)', 'Georgia', 'serif'],
+        display: ['var(--font-display)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
         tightest: '-0.04em',
@@ -74,4 +74,3 @@ const config: Config = {
 };
 
 export default config;
-

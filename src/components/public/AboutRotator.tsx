@@ -7,6 +7,7 @@ interface Card {
   name: string;
   body: string;
   imageUrl: string;
+  facts?: { label: string; value: string }[];
 }
 
 interface Props {
@@ -15,10 +16,11 @@ interface Props {
 
 /**
  * Scroll-pinned capability deck. The split (photo left, warm text panel right)
- * pins to a full screen; scrolling through it steps the active card. Photo and
- * text simply crossfade to the active card (with a gentle Ken-Burns settle on
- * the photo) — nothing clips, so the title + body always sit fully in view when
- * you stop, on every screen size. The segmented nav doubles as a position
+ * pins to a full screen; scrolling steps through the cards. Each new PHOTO is
+ * wiped in from the left edge rightward (scrubbed with scroll position), while
+ * the TEXT crossfades to the active card — text never clips, so the title +
+ * body always sit fully in view when you stop. On mobile / reduced-motion it
+ * drops to a plain stacked list. The segmented nav doubles as a position
  * indicator and jumps to a card.
  */
 export function AboutRotator({ cards }: Props) {
@@ -30,6 +32,7 @@ export function AboutRotator({ cards }: Props) {
     if (n < 2) return;
     const sec = secRef.current;
     if (!sec) return;
+    const slides = Array.from(sec.querySelectorAll<HTMLElement>('.va-abrot-slide'));
 
     let raf = 0;
     const onScroll = () => {
@@ -39,7 +42,17 @@ export function AboutRotator({ cards }: Props) {
         const vh = window.innerHeight;
         const total = sec.offsetHeight - vh || 1;
         const p = Math.min(1, Math.max(0, -sec.getBoundingClientRect().top / total));
-        setActive(Math.round(p * (n - 1)));
+        const f = p * (n - 1);
+        // Photo: each card above the first is wiped in from the left edge
+        // rightward as its slice of the scroll passes (clip the right side).
+        for (let i = 1; i < n; i++) {
+          const el = slides[i];
+          if (!el) continue;
+          const local = Math.min(1, Math.max(0, f - (i - 1)));
+          el.style.clipPath = `inset(0 ${((1 - local) * 100).toFixed(2)}% 0 0)`;
+        }
+        // Text + nav crossfade to the nearest card.
+        setActive(Math.round(f));
       });
     };
     onScroll();
@@ -67,7 +80,11 @@ export function AboutRotator({ cards }: Props) {
       <div className="va-abrot">
         <div className="va-abrot-media">
           {cards.map((it, i) => (
-            <div key={i} className={'va-abrot-slide' + (i === active ? ' on' : '')}>
+            <div
+              key={i}
+              className="va-abrot-slide"
+              style={{ zIndex: i + 1, ...(i > 0 ? { clipPath: 'inset(0 100% 0 0)' } : null) }}
+            >
               <SmartImage src={it.imageUrl} alt={it.name} width={1400} height={1200} sizes="55vw" />
             </div>
           ))}
@@ -77,9 +94,18 @@ export function AboutRotator({ cards }: Props) {
           <div className="va-abrot-stack">
             {cards.map((it, i) => (
               <div key={i} className={'va-abrot-story' + (i === active ? ' on' : '')}>
-                <div className="va-abrot-num">{String(i + 1).padStart(2, '0')}</div>
                 <h3>{it.name}</h3>
                 <p>{it.body}</p>
+                {it.facts && it.facts.length > 0 ? (
+                  <div className="va-abrot-facts">
+                    {it.facts.map((f, j) => (
+                      <div key={j} className="va-abrot-fact">
+                        <span>{f.label}</span>
+                        <b>{f.value}</b>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             ))}
           </div>

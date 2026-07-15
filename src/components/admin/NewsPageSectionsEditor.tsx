@@ -2,6 +2,7 @@
 
 import { AdminIcon } from './AdminIcon';
 import { Field } from './FormBits';
+import { PeImg } from './PeImg';
 import { EditorSection, type Lang } from './EditorChrome';
 import { fmtNumberVn } from '@/lib/format';
 import {
@@ -99,6 +100,25 @@ export function NewsPageSectionsEditor({
             onChange={(e) => onPatch('hero', { sub: e.target.value })}
           />
         </Field>
+        <div className="pe-imgrow" style={{ marginTop: 8 }}>
+          <PeImg
+            src={C.hero.imageUrl ?? ''}
+            alt=""
+            size={C.hero.imageUrl ? 'Ảnh nền hero' : undefined}
+            onChange={(dataUrl) => onPatch('hero', { imageUrl: dataUrl })}
+          />
+          <div className="pe-stack">
+            <Field label="Đường dẫn ảnh nền hero">
+              <input
+                className="ad-input"
+                value={C.hero.imageUrl ?? ''}
+                spellCheck={false}
+                style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
+                onChange={(e) => onPatch('hero', { imageUrl: e.target.value })}
+              />
+            </Field>
+          </div>
+        </div>
         <div className="pe-row">
           <Field label={`Placeholder ô tìm kiếm (${L})`}>
             <input
