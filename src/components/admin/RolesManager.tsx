@@ -73,7 +73,7 @@ function Banner({ state }: { state: ActionResult | null }) {
     );
   if (state.ok)
     return (
-      <div className="ad-badge pub" style={{ marginBottom: 12, padding: '8px 12px' }}>
+      <div className="lac-badge pub" style={{ marginBottom: 12, padding: '8px 12px' }}>
         <span className="dot" />
         Đã lưu thành công.
       </div>
@@ -110,7 +110,7 @@ function AddUserForm({ roles, onDone }: { roles: RoleOption[]; onDone: () => voi
       <FieldRow cols={2}>
         <Field label="Email" required>
           <input
-            className="ad-input"
+            className="lac-input"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -119,7 +119,7 @@ function AddUserForm({ roles, onDone }: { roles: RoleOption[]; onDone: () => voi
         </Field>
         <Field label="Họ tên" required>
           <input
-            className="ad-input"
+            className="lac-input"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
@@ -129,7 +129,7 @@ function AddUserForm({ roles, onDone }: { roles: RoleOption[]; onDone: () => voi
       <FieldRow cols={2}>
         <Field label="Mật khẩu" required help="Tối thiểu 8 ký tự.">
           <input
-            className="ad-input"
+            className="lac-input"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -138,7 +138,7 @@ function AddUserForm({ roles, onDone }: { roles: RoleOption[]; onDone: () => voi
         </Field>
         <Field label="Vai trò" required>
           <select
-            className="ad-select"
+            className="lac-select"
             value={roleId}
             onChange={(e) => setRoleId(e.target.value)}
             required
@@ -151,7 +151,7 @@ function AddUserForm({ roles, onDone }: { roles: RoleOption[]; onDone: () => voi
           </select>
         </Field>
       </FieldRow>
-      <button type="submit" className="ad-btn primary" disabled={busy}>
+      <button type="submit" className="lac-btn primary" disabled={busy}>
         <AdminIcon name="plus" size={15} />
         {busy ? 'Đang tạo…' : 'Tạo người dùng'}
       </button>
@@ -209,7 +209,7 @@ function UserRowItem({
         <td>
           <div style={{ fontWeight: 600 }}>{user.email}</div>
           <input
-            className="ad-input"
+            className="lac-input"
             style={{ marginTop: 4 }}
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
@@ -217,7 +217,7 @@ function UserRowItem({
           />
         </td>
         <td>
-          <select className="ad-select" value={roleId} onChange={(e) => setRoleId(e.target.value)}>
+          <select className="lac-select" value={roleId} onChange={(e) => setRoleId(e.target.value)}>
             {roles.map((r) => (
               <option key={r.id} value={r.id}>
                 {r.name}
@@ -238,19 +238,19 @@ function UserRowItem({
         </td>
         <td colSpan={2}>
           <input
-            className="ad-input"
+            className="lac-input"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mật khẩu mới (để trống = giữ nguyên)"
           />
           <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
-            <button type="button" className="ad-btn sm primary" disabled={busy} onClick={onSave}>
+            <button type="button" className="lac-btn sm primary" disabled={busy} onClick={onSave}>
               {busy ? '…' : 'Lưu'}
             </button>
             <button
               type="button"
-              className="ad-btn sm ghost"
+              className="lac-btn sm ghost"
               disabled={busy}
               onClick={() => {
                 setEditing(false);
@@ -271,7 +271,7 @@ function UserRowItem({
         <div style={{ fontWeight: 600 }}>
           {user.fullName}
           {isSelf ? (
-            <span className="ad-badge sched" style={{ marginLeft: 6 }}>
+            <span className="lac-badge sched" style={{ marginLeft: 6 }}>
               <span className="dot" />
               bạn
             </span>
@@ -281,7 +281,7 @@ function UserRowItem({
       </td>
       <td>{user.roleName}</td>
       <td>
-        <span className={'ad-badge ' + (user.isActive ? 'pub' : 'hide')}>
+        <span className={'lac-badge ' + (user.isActive ? 'pub' : 'hide')}>
           <span className="dot" />
           {user.isActive ? 'hoạt động' : 'khoá'}
         </span>
@@ -291,17 +291,22 @@ function UserRowItem({
       </td>
       <td>
         <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
-          <button type="button" className="ad-btn sm" onClick={() => setEditing(true)}>
+          <button type="button" className="lac-btn sm" onClick={() => setEditing(true)}>
             <AdminIcon name="file" size={13} /> Sửa
           </button>
           {confirming ? (
             <>
-              <button type="button" className="ad-btn sm danger" disabled={busy} onClick={onDelete}>
+              <button
+                type="button"
+                className="lac-btn sm danger"
+                disabled={busy}
+                onClick={onDelete}
+              >
                 {busy ? '…' : 'Xác nhận'}
               </button>
               <button
                 type="button"
-                className="ad-btn sm ghost"
+                className="lac-btn sm ghost"
                 onClick={() => setConfirming(false)}
               >
                 Huỷ
@@ -310,7 +315,7 @@ function UserRowItem({
           ) : (
             <button
               type="button"
-              className="ad-btn sm danger"
+              className="lac-btn sm danger"
               disabled={isSelf}
               title={isSelf ? 'Không thể xoá chính bạn' : 'Xoá người dùng'}
               onClick={() => setConfirming(true)}
@@ -343,13 +348,13 @@ function RolePermissionsCard({ role }: { role: RoleRow }) {
   }
 
   return (
-    <div className="ad-card">
-      <div className="ad-card-head">
+    <div className="lac-card">
+      <div className="lac-card-head">
         <div>
           <h3>
             {role.name}
             {isSuper ? (
-              <span className="ad-badge pub" style={{ marginLeft: 8 }}>
+              <span className="lac-badge pub" style={{ marginLeft: 8 }}>
                 <span className="dot" />
                 toàn quyền
               </span>
@@ -360,7 +365,7 @@ function RolePermissionsCard({ role }: { role: RoleRow }) {
           </p>
         </div>
       </div>
-      <div className="ad-card-body">
+      <div className="lac-card-body">
         <Banner state={state} />
         {isSuper ? (
           <p style={{ fontSize: 13, color: 'var(--ad-text-mute)' }}>
@@ -402,7 +407,7 @@ function RolePermissionsCard({ role }: { role: RoleRow }) {
               ))}
             </div>
             <div style={{ marginTop: 14 }}>
-              <button type="button" className="ad-btn primary" disabled={busy} onClick={onSave}>
+              <button type="button" className="lac-btn primary" disabled={busy} onClick={onSave}>
                 <AdminIcon name="check" size={15} />
                 {busy ? 'Đang lưu…' : `Lưu quyền cho ${role.name}`}
               </button>
@@ -428,17 +433,17 @@ export function RolesManager({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div className="ad-card">
-        <div className="ad-card-head">
+      <div className="lac-card">
+        <div className="lac-card-head">
           <div>
             <h3>Người dùng</h3>
             <p>{users.length} tài khoản quản trị</p>
           </div>
         </div>
-        <div className="ad-card-body">
+        <div className="lac-card-body">
           <AddUserForm roles={roleOptions} onDone={() => router.refresh()} />
-          <div className="ad-table-wrap">
-            <table className="ad-table">
+          <div className="lac-table-wrap">
+            <table className="lac-table">
               <thead>
                 <tr>
                   <th>Người dùng</th>

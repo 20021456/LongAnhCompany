@@ -299,7 +299,7 @@ export function PageForm({
           <AdminIcon name="file" size={16} />
           <span>{label}</span>
           <code className="slug-chip">{path}</code>
-          <span className={'ad-badge ' + (v.isPublished ? 'pub' : 'draft')}>
+          <span className={'lac-badge ' + (v.isPublished ? 'pub' : 'draft')}>
             <span className="dot" />
             {v.isPublished ? 'Đã xuất bản' : 'Đã ẩn'}
           </span>
@@ -307,10 +307,10 @@ export function PageForm({
         <span className="auto" suppressHydrationWarning>
           {dirty ? 'Có thay đổi chưa lưu' : 'Đã đồng bộ với cơ sở dữ liệu'}
         </span>
-        <a href={path} target="_blank" rel="noreferrer" className="ad-btn sm">
+        <a href={path} target="_blank" rel="noreferrer" className="lac-btn sm">
           <AdminIcon name="eye" size={12} /> Xem
         </a>
-        <button type="submit" className="ad-btn primary sm" disabled={busy}>
+        <button type="submit" className="lac-btn primary sm" disabled={busy}>
           <AdminIcon name="check" size={12} />
           {busy ? 'Đang lưu…' : 'Lưu & Xuất bản'}
         </button>
@@ -367,7 +367,7 @@ export function PageForm({
               >
                 <Field label={`Eyebrow — chữ cam nhỏ phía trên (${L})`}>
                   <input
-                    className="ad-input"
+                    className="lac-input"
                     value={C.hero.eyebrow}
                     onChange={(e) => patch('hero', { eyebrow: e.target.value })}
                   />
@@ -375,14 +375,14 @@ export function PageForm({
                 <div className="pe-row">
                   <Field label={`Tiêu đề dòng 1 — đen (${L})`}>
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.hero.titleLine1}
                       onChange={(e) => patch('hero', { titleLine1: e.target.value })}
                     />
                   </Field>
                   <Field label={`Tiêu đề dòng 2 — cam (${L})`}>
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.hero.titleLine2}
                       onChange={(e) => patch('hero', { titleLine2: e.target.value })}
                     />
@@ -390,7 +390,7 @@ export function PageForm({
                 </div>
                 <Field label={`Mô tả ngắn dưới tiêu đề (${L})`}>
                   <textarea
-                    className="ad-textarea"
+                    className="lac-textarea"
                     value={C.hero.sub}
                     onChange={(e) => patch('hero', { sub: e.target.value })}
                   />
@@ -398,14 +398,14 @@ export function PageForm({
                 <div className="pe-row">
                   <Field label={`Nút chính — chữ (${L})`} help="Liên kết tới trang Sản phẩm.">
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.hero.ctaPrimary}
                       onChange={(e) => patch('hero', { ctaPrimary: e.target.value })}
                     />
                   </Field>
                   <Field label={`Nút phụ — chữ (${L})`} help="Liên kết tới trang Liên hệ.">
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.hero.ctaSecondary}
                       onChange={(e) => patch('hero', { ctaSecondary: e.target.value })}
                     />
@@ -443,14 +443,14 @@ export function PageForm({
                         help="Quan trọng cho SEO & screen readers."
                       >
                         <input
-                          className="ad-input"
+                          className="lac-input"
                           value={C.hero.imageAlt}
                           onChange={(e) => patch('hero', { imageAlt: e.target.value })}
                         />
                       </Field>
                       <Field label="Đường dẫn / URL ảnh" help="Tự cập nhật khi bạn chọn file mới.">
                         <input
-                          className="ad-input"
+                          className="lac-input"
                           value={C.hero.imageUrl}
                           onChange={(e) => patch('hero', { imageUrl: e.target.value })}
                           placeholder="/assets/hero-sw.png"
@@ -464,7 +464,7 @@ export function PageForm({
                       <div style={{ display: 'flex', gap: 8 }}>
                         <button
                           type="button"
-                          className="ad-btn sm"
+                          className="lac-btn sm"
                           onClick={() => {
                             // Trigger the same file picker the PeImg overlay uses
                             (
@@ -476,7 +476,7 @@ export function PageForm({
                         >
                           <AdminIcon name="upload" size={13} /> Đổi ảnh
                         </button>
-                        <button type="button" className="ad-btn sm" disabled>
+                        <button type="button" className="lac-btn sm" disabled>
                           <AdminIcon name="image" size={13} /> Thư viện
                         </button>
                       </div>
@@ -513,7 +513,7 @@ export function PageForm({
                         STAT {i + 1}
                       </span>
                       <input
-                        className="ad-input"
+                        className="lac-input"
                         style={{ fontWeight: 700, fontSize: 18 }}
                         value={s.value}
                         onChange={(e) => {
@@ -523,7 +523,7 @@ export function PageForm({
                         }}
                       />
                       <input
-                        className="ad-input"
+                        className="lac-input"
                         style={{ fontSize: 12 }}
                         value={s.label}
                         onChange={(e) => {
@@ -547,14 +547,14 @@ export function PageForm({
                 <div className="pe-row">
                   <Field label={`Eyebrow (${L})`}>
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.products.eyebrow}
                       onChange={(e) => patch('products', { eyebrow: e.target.value })}
                     />
                   </Field>
                   <Field label={`Tiêu đề (${L})`}>
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.products.title}
                       onChange={(e) => patch('products', { title: e.target.value })}
                     />
@@ -562,13 +562,13 @@ export function PageForm({
                 </div>
                 <Field label={`Phụ đề (${L})`}>
                   <textarea
-                    className="ad-textarea"
+                    className="lac-textarea"
                     value={C.products.sub}
                     onChange={(e) => patch('products', { sub: e.target.value })}
                   />
                 </Field>
                 <Field label="Cách hiển thị">
-                  <select className="ad-select" defaultValue="auto">
+                  <select className="lac-select" defaultValue="auto">
                     <option value="auto">
                       Tự động — {currentProducts?.length ?? 5} dòng sản phẩm chính
                     </option>
@@ -599,7 +599,7 @@ export function PageForm({
                     {(currentProducts ?? []).map((p) => {
                       const name = lang === 'en' ? p.nameEn : lang === 'zh' ? p.nameZh : p.nameVi;
                       return (
-                        <span key={p.code} className="ad-tag">
+                        <span key={p.code} className="lac-tag">
                           {p.code} · {name}
                           <button
                             type="button"
@@ -648,14 +648,14 @@ export function PageForm({
                 <div className="pe-row">
                   <Field label={`Eyebrow (${L})`}>
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.about.eyebrow}
                       onChange={(e) => patch('about', { eyebrow: e.target.value })}
                     />
                   </Field>
                   <Field label={`Tiêu đề (${L})`}>
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.about.title}
                       onChange={(e) => patch('about', { title: e.target.value })}
                     />
@@ -663,7 +663,7 @@ export function PageForm({
                 </div>
                 <Field label={`Đoạn intro (${L})`}>
                   <textarea
-                    className="ad-textarea"
+                    className="lac-textarea"
                     value={C.about.intro}
                     onChange={(e) => patch('about', { intro: e.target.value })}
                   />
@@ -738,7 +738,7 @@ export function PageForm({
                       </div>
                       <Field label={`Tên card (${L})`}>
                         <input
-                          className="ad-input"
+                          className="lac-input"
                           value={card.name}
                           onChange={(e) => {
                             const cards = [...C.about.cards];
@@ -749,7 +749,7 @@ export function PageForm({
                       </Field>
                       <Field label={`Mô tả (${L})`}>
                         <textarea
-                          className="ad-textarea"
+                          className="lac-textarea"
                           style={{ minHeight: 60 }}
                           value={card.body}
                           onChange={(e) => {
@@ -786,14 +786,14 @@ export function PageForm({
                 <div className="pe-row">
                   <Field label={`Eyebrow (${L})`}>
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.certs.eyebrow}
                       onChange={(e) => patch('certs', { eyebrow: e.target.value })}
                     />
                   </Field>
                   <Field label={`Tiêu đề (${L})`}>
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.certs.title}
                       onChange={(e) => patch('certs', { title: e.target.value })}
                     />
@@ -801,7 +801,7 @@ export function PageForm({
                 </div>
                 <Field label={`Phụ đề (${L})`}>
                   <textarea
-                    className="ad-textarea"
+                    className="lac-textarea"
                     value={C.certs.sub}
                     onChange={(e) => patch('certs', { sub: e.target.value })}
                   />
@@ -818,7 +818,7 @@ export function PageForm({
                         }}
                       >
                         <input
-                          className="ad-input"
+                          className="lac-input"
                           placeholder="Tên cert"
                           value={cert.name}
                           onChange={(e) => {
@@ -828,7 +828,7 @@ export function PageForm({
                           }}
                         />
                         <input
-                          className="ad-input"
+                          className="lac-input"
                           placeholder={`Mô tả (${L})`}
                           value={cert.desc}
                           onChange={(e) => {
@@ -838,7 +838,7 @@ export function PageForm({
                           }}
                         />
                         <input
-                          className="ad-input"
+                          className="lac-input"
                           placeholder="Đường dẫn logo"
                           value={cert.logoUrl}
                           onChange={(e) => {
@@ -870,7 +870,7 @@ export function PageForm({
                 </div>
                 <button
                   type="button"
-                  className="ad-btn sm"
+                  className="lac-btn sm"
                   style={{ width: 'fit-content' }}
                   onClick={() =>
                     patch('certs', {
@@ -892,14 +892,14 @@ export function PageForm({
                 <div className="pe-row">
                   <Field label={`Eyebrow (${L})`}>
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.exportCap.eyebrow}
                       onChange={(e) => patch('exportCap', { eyebrow: e.target.value })}
                     />
                   </Field>
                   <Field label={`Tiêu đề (${L})`}>
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.exportCap.title}
                       onChange={(e) => patch('exportCap', { title: e.target.value })}
                     />
@@ -907,7 +907,7 @@ export function PageForm({
                 </div>
                 <Field label={`Phụ đề (${L})`}>
                   <textarea
-                    className="ad-textarea"
+                    className="lac-textarea"
                     value={C.exportCap.sub}
                     onChange={(e) => patch('exportCap', { sub: e.target.value })}
                   />
@@ -941,7 +941,7 @@ export function PageForm({
                         EF {String(i + 1).padStart(2, '0')}
                       </span>
                       <input
-                        className="ad-input"
+                        className="lac-input"
                         value={f.title}
                         onChange={(e) => {
                           const features = [...C.exportCap.features];
@@ -950,7 +950,7 @@ export function PageForm({
                         }}
                       />
                       <input
-                        className="ad-input"
+                        className="lac-input"
                         style={{ fontSize: 12 }}
                         value={f.body}
                         onChange={(e) => {
@@ -1006,7 +1006,7 @@ export function PageForm({
                           const pin = WORLD_PINS_BY_SLUG[slug];
                           const label = pin ? pin.name[lang] : slug;
                           return (
-                            <span key={`${slug}-${i}`} className="ad-tag">
+                            <span key={`${slug}-${i}`} className="lac-tag">
                               {label}
                               {pin ? (
                                 <span
@@ -1050,7 +1050,7 @@ export function PageForm({
                   {/* Picker — add a country */}
                   <div style={{ marginTop: 12 }}>
                     <select
-                      className="ad-select"
+                      className="lac-select"
                       value=""
                       onChange={(e) => {
                         const slug = e.target.value;
@@ -1087,7 +1087,7 @@ export function PageForm({
                 </div>
                 <Field label={`Caption dưới map (${L})`}>
                   <input
-                    className="ad-input"
+                    className="lac-input"
                     value={C.exportCap.mapCaption}
                     onChange={(e) => patch('exportCap', { mapCaption: e.target.value })}
                   />
@@ -1104,14 +1104,14 @@ export function PageForm({
                 <div className="pe-row">
                   <Field label={`Eyebrow (${L})`}>
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.contact.eyebrow}
                       onChange={(e) => patch('contact', { eyebrow: e.target.value })}
                     />
                   </Field>
                   <Field label={`Tiêu đề (${L})`}>
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.contact.title}
                       onChange={(e) => patch('contact', { title: e.target.value })}
                     />
@@ -1119,14 +1119,14 @@ export function PageForm({
                 </div>
                 <Field label={`Phụ đề (${L})`}>
                   <textarea
-                    className="ad-textarea"
+                    className="lac-textarea"
                     value={C.contact.sub}
                     onChange={(e) => patch('contact', { sub: e.target.value })}
                   />
                 </Field>
                 <Field label={`Địa chỉ trụ sở (${L})`}>
                   <input
-                    className="ad-input"
+                    className="lac-input"
                     value={C.contact.address}
                     onChange={(e) => patch('contact', { address: e.target.value })}
                   />
@@ -1134,21 +1134,21 @@ export function PageForm({
                 <div className="pe-row three">
                   <Field label="Điện thoại 1">
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.contact.phone1}
                       onChange={(e) => patch('contact', { phone1: e.target.value })}
                     />
                   </Field>
                   <Field label="Điện thoại 2">
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.contact.phone2}
                       onChange={(e) => patch('contact', { phone2: e.target.value })}
                     />
                   </Field>
                   <Field label="Email">
                     <input
-                      className="ad-input"
+                      className="lac-input"
                       value={C.contact.email}
                       onChange={(e) => patch('contact', { email: e.target.value })}
                     />
@@ -1170,7 +1170,7 @@ export function PageForm({
                 help="Dùng cho tiêu đề tab trình duyệt và breadcrumb."
               >
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={v[titleKey] as string}
                   onChange={(e) => set(titleKey, e.target.value)}
                   required={lang === 'vi'}
@@ -1189,7 +1189,7 @@ export function PageForm({
             {C ? (
               <Field label={`Tiêu đề trang (${L})`} required={lang === 'vi'}>
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={v[titleKey] as string}
                   onChange={(e) => set(titleKey, e.target.value)}
                   required={lang === 'vi'}
@@ -1198,7 +1198,7 @@ export function PageForm({
             ) : null}
             <Field label={`Meta title (${L})`} help="50–60 ký tự là tối ưu.">
               <input
-                className="ad-input"
+                className="lac-input"
                 value={v[metaTitleKey] as string}
                 onChange={(e) => set(metaTitleKey, e.target.value)}
                 placeholder="Để trống → dùng tiêu đề trang"
@@ -1206,7 +1206,7 @@ export function PageForm({
             </Field>
             <Field label={`Meta description (${L})`} help="150–160 ký tự là tối ưu.">
               <textarea
-                className="ad-textarea"
+                className="lac-textarea"
                 value={v[metaDescKey] as string}
                 onChange={(e) => set(metaDescKey, e.target.value)}
               />
@@ -1224,7 +1224,7 @@ export function PageForm({
                 />
                 <div className="pe-stack">
                   <input
-                    className="ad-input"
+                    className="lac-input"
                     value={v.ogImageUrl}
                     onChange={(e) => set('ogImageUrl', e.target.value)}
                     placeholder="/assets/og-home.jpg"
@@ -1249,8 +1249,8 @@ export function PageForm({
         </div>
 
         <aside className="pe-side">
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Trạng thái</h3>
             </div>
             <div style={{ padding: 14 }}>
@@ -1271,12 +1271,12 @@ export function PageForm({
             </div>
           </div>
 
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Đường dẫn</h3>
             </div>
             <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <span className="ad-code" style={{ display: 'inline-block', width: 'fit-content' }}>
+              <span className="lac-code" style={{ display: 'inline-block', width: 'fit-content' }}>
                 {path}
               </span>
               <div style={{ fontSize: 12, color: 'var(--ad-text-mute)' }}>
@@ -1285,8 +1285,8 @@ export function PageForm({
             </div>
           </div>
 
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Lịch sử thay đổi</h3>
             </div>
             <div className="pe-versions">
@@ -1302,7 +1302,7 @@ export function PageForm({
                     <div className="when">{vv.when}</div>
                   </div>
                   {vv.cur ? (
-                    <span className="ad-badge pub" style={{ fontSize: 10 }}>
+                    <span className="lac-badge pub" style={{ fontSize: 10 }}>
                       <span className="dot" /> Hiện tại
                     </span>
                   ) : (
@@ -1318,8 +1318,8 @@ export function PageForm({
             </div>
           </div>
 
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Thông tin</h3>
             </div>
             <div
@@ -1333,7 +1333,7 @@ export function PageForm({
               }}
             >
               <div>
-                Mã trang: <span className="ad-code">{v.key}</span>
+                Mã trang: <span className="lac-code">{v.key}</span>
               </div>
               <div>
                 {C
@@ -1352,11 +1352,11 @@ export function PageForm({
       ) : null}
 
       <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
-        <button type="submit" className="ad-btn primary" disabled={busy}>
+        <button type="submit" className="lac-btn primary" disabled={busy}>
           <AdminIcon name="check" size={15} />
           {busy ? 'Đang lưu…' : 'Lưu trang'}
         </button>
-        <button type="button" className="ad-btn" onClick={() => router.push('/admin/pages')}>
+        <button type="button" className="lac-btn" onClick={() => router.push('/admin/pages')}>
           Huỷ
         </button>
       </div>

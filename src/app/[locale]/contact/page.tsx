@@ -3,7 +3,6 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { ContactForm } from '@/components/public/ContactForm';
-import { PageHero } from '@/components/public/PageHero';
 import { getContactPageSections } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
@@ -37,20 +36,24 @@ export default async function ContactPage({ params: { locale } }: { params: { lo
 
   return (
     <>
-      <PageHero
-        eyebrow={S.header.eyebrow}
-        title={S.header.title}
-        sub={S.header.sub}
-        breadcrumb={[
-          { label: loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ', href: `/${loc}` },
-          { label: loc === 'zh' ? '联系' : loc === 'en' ? 'Contact' : 'Liên hệ' },
-        ]}
-        bgImage="/assets/co-so-ha-tang.jpg"
-      />
+      <section className="va-hero" style={{ background: 'var(--va-bg-alt)' }}>
+        <div
+          className="va-wrap"
+          style={{ padding: '90px 0', textAlign: 'center', maxWidth: 920, margin: '0 auto' }}
+        >
+          <div className="va-eyebrow">{S.header.eyebrow}</div>
+          <h1 style={{ fontSize: 'clamp(36px,4.4vw,58px)', margin: '16px 0 22px' }}>
+            {S.header.title}
+          </h1>
+          <p className="va-hero-sub" style={{ margin: '0 auto', maxWidth: 680 }}>
+            {S.header.sub}
+          </p>
+        </div>
+      </section>
 
       <section id="contact" className="va-wrap">
         <div className="va-contact" style={{ borderTop: 0 }}>
-          <div data-reveal>
+          <div>
             <div className="va-eyebrow">
               {loc === 'vi' ? 'Kênh liên lạc' : loc === 'en' ? 'Channels' : '联系渠道'}
             </div>

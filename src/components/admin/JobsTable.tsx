@@ -45,18 +45,18 @@ export function JobsTable({
   }, [rows, query, filter]);
 
   return (
-    <div className="ad-table-wrap">
-      <div className="ad-toolbar">
-        <div className="ad-search-box" style={{ width: 280 }}>
+    <div className="lac-table-wrap">
+      <div className="lac-toolbar">
+        <div className="lac-search-box" style={{ width: 280 }}>
           <AdminIcon name="search" size={14} />
           <input
-            className="ad-input"
+            className="lac-input"
             placeholder="Tìm theo vị trí, phòng ban…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
-        <div className="ad-seg">
+        <div className="lac-seg">
           {FILTERS.map((f) => (
             <button
               key={f.id}
@@ -70,7 +70,7 @@ export function JobsTable({
         </div>
       </div>
 
-      <table className="ad-table">
+      <table className="lac-table">
         <thead>
           <tr>
             <th>Vị trí</th>
@@ -86,7 +86,7 @@ export function JobsTable({
             <tr key={j.id}>
               <td>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div className="ad-iconbox">
+                  <div className="lac-iconbox">
                     <AdminIcon name="users" size={15} />
                   </div>
                   <div>
@@ -112,7 +112,7 @@ export function JobsTable({
                 )}
               </td>
               <td>
-                <span className={'ad-badge ' + (j.isActive ? 'pub' : 'hide')}>
+                <span className={'lac-badge ' + (j.isActive ? 'pub' : 'hide')}>
                   <span className="dot" />
                   {j.isActive ? 'đang tuyển' : 'đã đóng'}
                 </span>
@@ -121,7 +121,7 @@ export function JobsTable({
                 <div className="row-actions tight">
                   <Link
                     href={`/admin/jobs/${j.slug}`}
-                    className="ad-btn ghost sm"
+                    className="lac-btn ghost sm"
                     title="Sửa vị trí"
                     aria-label="Sửa vị trí"
                   >
@@ -131,7 +131,7 @@ export function JobsTable({
                     href={`/vi/career#job-${j.slug}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="ad-btn ghost sm"
+                    className="lac-btn ghost sm"
                     title="Xem trên web"
                     aria-label="Xem trên web"
                   >
@@ -139,7 +139,7 @@ export function JobsTable({
                   </a>
                   <Link
                     href={`/admin/jobs/${j.slug}/applications`}
-                    className="ad-btn ghost sm"
+                    className="lac-btn ghost sm"
                     title="Đơn ứng tuyển"
                     aria-label="Đơn ứng tuyển"
                   >
@@ -160,7 +160,7 @@ export function JobsTable({
         </tbody>
       </table>
 
-      <div className="ad-pag">
+      <div className="lac-pag">
         <div>
           Hiển thị {filtered.length} / {rows.length} vị trí
         </div>

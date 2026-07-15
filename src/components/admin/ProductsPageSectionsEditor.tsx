@@ -68,21 +68,21 @@ export function ProductsPageSectionsEditor({
       >
         <Field label={`Eyebrow (${L})`}>
           <input
-            className="ad-input"
+            className="lac-input"
             value={C.header.eyebrow}
             onChange={(e) => onPatch('header', { eyebrow: e.target.value })}
           />
         </Field>
         <Field label={`Tiêu đề chính (${L})`}>
           <input
-            className="ad-input"
+            className="lac-input"
             value={C.header.title}
             onChange={(e) => onPatch('header', { title: e.target.value })}
           />
         </Field>
         <Field label={`Mô tả ngắn (${L})`}>
           <textarea
-            className="ad-textarea"
+            className="lac-textarea"
             value={C.header.sub}
             onChange={(e) => onPatch('header', { sub: e.target.value })}
           />
@@ -114,7 +114,7 @@ export function ProductsPageSectionsEditor({
                 STAT {i + 1}
               </span>
               <input
-                className="ad-input"
+                className="lac-input"
                 style={{ fontWeight: 700, fontSize: 18 }}
                 value={s.value}
                 onChange={(e) => {
@@ -124,7 +124,7 @@ export function ProductsPageSectionsEditor({
                 }}
               />
               <input
-                className="ad-input"
+                className="lac-input"
                 style={{ fontSize: 12 }}
                 value={s.label}
                 onChange={(e) => {
@@ -204,7 +204,7 @@ export function ProductsPageSectionsEditor({
               </div>
               <Field label={`Tiêu đề (${L})`}>
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={t.title}
                   onChange={(e) => {
                     const items = [...C.tiles.items];
@@ -215,7 +215,7 @@ export function ProductsPageSectionsEditor({
               </Field>
               <Field label={`Mô tả (${L})`}>
                 <textarea
-                  className="ad-textarea"
+                  className="lac-textarea"
                   style={{ minHeight: 60 }}
                   value={t.desc}
                   onChange={(e) => {
@@ -227,7 +227,7 @@ export function ProductsPageSectionsEditor({
               </Field>
               <Field label="Anchor neo">
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={t.anchor}
                   spellCheck={false}
                   style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}
@@ -274,7 +274,7 @@ export function ProductsPageSectionsEditor({
                   {inCatalog ? (
                     <Link
                       href={`/admin/products/${code}`}
-                      className="ad-btn ghost sm"
+                      className="lac-btn ghost sm"
                       title="Sửa chi tiết SKU"
                     >
                       <AdminIcon name="edit" size={12} /> Sửa
@@ -302,7 +302,7 @@ export function ProductsPageSectionsEditor({
 
         <div style={{ marginTop: 12 }}>
           <select
-            className="ad-select"
+            className="lac-select"
             value=""
             onChange={(e) => {
               const code = e.target.value;
@@ -324,7 +324,7 @@ export function ProductsPageSectionsEditor({
 
         <Link
           href="/admin/products"
-          className="ad-btn ghost sm"
+          className="lac-btn ghost sm"
           style={{ width: 'fit-content', marginTop: 10 }}
         >
           <AdminIcon name="edit" size={12} /> Quản lý catalog sản phẩm
@@ -342,14 +342,14 @@ export function ProductsPageSectionsEditor({
         <div className="pe-row">
           <Field label={`Eyebrow (${L})`}>
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.particle.eyebrow}
               onChange={(e) => onPatch('particle', { eyebrow: e.target.value })}
             />
           </Field>
           <Field label={`Tiêu đề (${L})`}>
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.particle.title}
               onChange={(e) => onPatch('particle', { title: e.target.value })}
             />
@@ -358,14 +358,14 @@ export function ProductsPageSectionsEditor({
         <div className="pe-row">
           <Field label="Bột không phủ — các cỡ (µm)" help="Cách nhau bằng dấu phẩy">
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.particle.uncoatedSizes}
               onChange={(e) => onPatch('particle', { uncoatedSizes: e.target.value })}
             />
           </Field>
           <Field label="Bột phủ Stearic — các cỡ (µm)" help="Cách nhau bằng dấu phẩy">
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.particle.coatedSizes}
               onChange={(e) => onPatch('particle', { coatedSizes: e.target.value })}
             />
@@ -373,7 +373,7 @@ export function ProductsPageSectionsEditor({
         </div>
         <Field label="Tỉ lệ Stearic Acid">
           <input
-            className="ad-input"
+            className="lac-input"
             value={C.particle.stearicRatio}
             onChange={(e) => onPatch('particle', { stearicRatio: e.target.value })}
           />
@@ -390,7 +390,7 @@ export function ProductsPageSectionsEditor({
       >
         <Field label={`Tiêu đề bảng (${L})`}>
           <input
-            className="ad-input"
+            className="lac-input"
             value={C.specTable.title}
             onChange={(e) => onPatch('specTable', { title: e.target.value })}
           />
@@ -398,14 +398,14 @@ export function ProductsPageSectionsEditor({
         <div className="pe-row">
           <Field label={`Cột "Bột không phủ" (${L})`}>
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.specTable.colUncoated}
               onChange={(e) => onPatch('specTable', { colUncoated: e.target.value })}
             />
           </Field>
           <Field label={`Cột "Bột phủ Stearic" (${L})`}>
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.specTable.colCoated}
               onChange={(e) => onPatch('specTable', { colCoated: e.target.value })}
             />
@@ -423,7 +423,7 @@ export function ProductsPageSectionsEditor({
                 }}
               >
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   placeholder={`Chỉ tiêu (${L})`}
                   value={r.label}
                   onChange={(e) => {
@@ -433,7 +433,7 @@ export function ProductsPageSectionsEditor({
                   }}
                 />
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   placeholder="Phủ Stearic"
                   value={r.coated}
                   onChange={(e) => {
@@ -443,7 +443,7 @@ export function ProductsPageSectionsEditor({
                   }}
                 />
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   placeholder="Không phủ"
                   value={r.uncoated}
                   onChange={(e) => {
@@ -453,7 +453,7 @@ export function ProductsPageSectionsEditor({
                   }}
                 />
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   placeholder="Đơn vị"
                   value={r.unit}
                   onChange={(e) => {
@@ -480,7 +480,7 @@ export function ProductsPageSectionsEditor({
         </div>
         <button
           type="button"
-          className="ad-btn sm"
+          className="lac-btn sm"
           style={{ width: 'fit-content', marginTop: 10 }}
           onClick={() =>
             onPatch('specTable', {
@@ -492,9 +492,9 @@ export function ProductsPageSectionsEditor({
         </button>
 
         <Field label="Chip chứng nhận dưới bảng" help="Enter để thêm">
-          <div className="ad-tags">
+          <div className="lac-tags">
             {C.specTable.certBadges.map((badge, i) => (
-              <span key={`${badge}-${i}`} className="ad-tag">
+              <span key={`${badge}-${i}`} className="lac-tag">
                 {badge}
                 <button
                   type="button"
@@ -540,14 +540,14 @@ export function ProductsPageSectionsEditor({
       >
         <Field label={`Tiêu đề (${L})`}>
           <input
-            className="ad-input"
+            className="lac-input"
             value={C.cta.title}
             onChange={(e) => onPatch('cta', { title: e.target.value })}
           />
         </Field>
         <Field label={`Mô tả (${L})`}>
           <textarea
-            className="ad-textarea"
+            className="lac-textarea"
             value={C.cta.sub}
             onChange={(e) => onPatch('cta', { sub: e.target.value })}
           />
@@ -555,14 +555,14 @@ export function ProductsPageSectionsEditor({
         <div className="pe-row">
           <Field label={`Nút chính — chữ (${L})`}>
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.cta.primaryLabel}
               onChange={(e) => onPatch('cta', { primaryLabel: e.target.value })}
             />
           </Field>
           <Field label="Nút chính — liên kết">
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.cta.primaryHref}
               spellCheck={false}
               style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}

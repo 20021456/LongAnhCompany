@@ -4,9 +4,8 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { Icon } from '@/components/ui/Icon';
-import { PageHero } from '@/components/public/PageHero';
+import { PageHeader } from '@/components/public/PageHeader';
 import { ProductsBrowser } from '@/components/public/ProductsBrowser';
-import { Words } from '@/components/public/Words';
 import { getProducts, getProductsPageSections } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
@@ -58,7 +57,7 @@ export default async function ProductsPage({ params: { locale } }: { params: { l
 
   return (
     <div className="pr">
-      <PageHero
+      <PageHeader
         eyebrow={S.header.eyebrow}
         title={S.header.title}
         sub={S.header.sub}
@@ -66,9 +65,17 @@ export default async function ProductsPage({ params: { locale } }: { params: { l
           { label: loc === 'zh' ? '首页' : loc === 'en' ? 'Home' : 'Trang chủ', href: `/${loc}` },
           { label: C.nav[2] },
         ]}
-        bgImage="/assets/nha-may-bot-sieu-min-1.webp"
-        stats={S.stats.items}
       />
+
+      {/* STATS STRIP */}
+      <section className="pr-stats">
+        {S.stats.items.map((s, i) => (
+          <div key={i} className="pr-stat">
+            <b>{s.value}</b>
+            <span>{s.label}</span>
+          </div>
+        ))}
+      </section>
 
       {/* CATEGORY TILES + FILTERED PRODUCT BLOCKS + PARTICLE SIZE (client) */}
       <ProductsBrowser
@@ -84,18 +91,16 @@ export default async function ProductsPage({ params: { locale } }: { params: { l
       <section className="pr-spec-section">
         <div className="va-wrap">
           <div className="pr-spec-head">
-            <div className="pr-eyebrow" data-reveal>
+            <div className="pr-eyebrow">
               {loc === 'zh'
                 ? '技术规格'
                 : loc === 'en'
                   ? 'Technical specifications'
                   : 'Thông số kỹ thuật'}
             </div>
-            <h2 data-reveal="words">
-              <Words text={S.specTable.title} step={100} />
-            </h2>
+            <h2>{S.specTable.title}</h2>
           </div>
-          <div className="pr-spec-card" data-reveal>
+          <div className="pr-spec-card">
             <div className="pr-spec-table">
               <div className="pr-spec-cell h">
                 {loc === 'zh' ? '指标' : loc === 'en' ? 'Property' : 'Chỉ tiêu'}
@@ -136,7 +141,7 @@ export default async function ProductsPage({ params: { locale } }: { params: { l
       {/* QUOTE CTA */}
       <section className="pr-quote-section">
         <div className="va-wrap">
-          <div className="pr-quote" data-reveal="scale">
+          <div className="pr-quote">
             <div>
               <div className="pr-eyebrow">
                 {loc === 'zh' ? '快速报价' : loc === 'en' ? 'Quick quote' : 'Báo giá nhanh'}

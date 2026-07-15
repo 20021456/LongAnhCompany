@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { AdminIcon } from '@/components/admin/AdminIcon';
 
 export function LoginForm() {
   const router = useRouter();
@@ -81,13 +80,12 @@ export function LoginForm() {
           <p className="sub">Đăng nhập bằng tài khoản quản trị của bạn.</p>
 
           <form className="lg-form" onSubmit={onSubmit}>
-            <div className="ad-field">
+            <div className="lac-field">
               <label htmlFor="email">Email</label>
               <input
                 id="email"
-                className="ad-input"
+                className="lac-input"
                 type="email"
-                autoFocus
                 autoComplete="username"
                 required
                 value={email}
@@ -96,12 +94,12 @@ export function LoginForm() {
               />
             </div>
 
-            <div className="ad-field">
+            <div className="lac-field">
               <label htmlFor="password">Mật khẩu</label>
               <div className="pw-wrap">
                 <input
                   id="password"
-                  className="ad-input"
+                  className="lac-input"
                   type={showPw ? 'text' : 'password'}
                   autoComplete="current-password"
                   required
@@ -115,17 +113,12 @@ export function LoginForm() {
                   aria-label={showPw ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                   onClick={() => setShowPw((s) => !s)}
                 >
-                  <AdminIcon name={showPw ? 'check' : 'search'} size={15} />
+                  {showPw ? '🙈' : '👁'}
                 </button>
               </div>
             </div>
 
-            {error ? (
-              <div className="lg-err">
-                <AdminIcon name="shield" size={14} />
-                {error}
-              </div>
-            ) : null}
+            {error ? <div className="lg-err">{error}</div> : null}
 
             <div className="lg-options">
               <label>
@@ -133,7 +126,7 @@ export function LoginForm() {
               </label>
             </div>
 
-            <button type="submit" className="ad-btn primary" disabled={busy}>
+            <button type="submit" className="lac-btn primary" disabled={busy}>
               {busy ? 'Đang đăng nhập…' : 'Đăng nhập'}
             </button>
           </form>

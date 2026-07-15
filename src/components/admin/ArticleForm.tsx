@@ -262,7 +262,7 @@ export function ArticleForm({
           <code className="slug-chip">/tin-tuc/{v.slug || 'bai-moi'}</code>
           <span
             className={
-              'ad-badge ' +
+              'lac-badge ' +
               (v.status === 'published' ? 'pub' : v.status === 'draft' ? 'draft' : 'hide')
             }
           >
@@ -278,11 +278,11 @@ export function ArticleForm({
           {state?.ok ? 'Đã lưu' : 'Chưa lưu'}
         </span>
         {!isNew ? (
-          <a href={`/vi/news/${v.slug}`} target="_blank" rel="noreferrer" className="ad-btn sm">
+          <a href={`/vi/news/${v.slug}`} target="_blank" rel="noreferrer" className="lac-btn sm">
             <AdminIcon name="eye" size={12} /> Xem
           </a>
         ) : null}
-        <button type="submit" className="ad-btn primary sm" disabled={busy}>
+        <button type="submit" className="lac-btn primary sm" disabled={busy}>
           <AdminIcon name="check" size={12} />
           {busy ? 'Đang lưu…' : 'Lưu bài viết'}
         </button>
@@ -331,7 +331,7 @@ export function ArticleForm({
               <div className="ne-cover-over">
                 <button
                   type="button"
-                  className="ad-btn"
+                  className="lac-btn"
                   onClick={(e) => {
                     e.stopPropagation();
                     pickCoverFromDevice();
@@ -342,7 +342,7 @@ export function ArticleForm({
                 {v.coverImageUrl ? (
                   <button
                     type="button"
-                    className="ad-btn danger"
+                    className="lac-btn danger"
                     onClick={(e) => {
                       e.stopPropagation();
                       set('coverImageUrl', '');
@@ -372,7 +372,7 @@ export function ArticleForm({
               <AdminIcon name="globe" size={13} />
               long-anh.com/tin-tuc/<code>{v.slug || 'bai-moi'}</code>
               <input
-                className="ad-input"
+                className="lac-input"
                 value={v.slug}
                 onChange={(e) => set('slug', e.target.value)}
                 placeholder="bai-viet-moi"
@@ -386,7 +386,7 @@ export function ArticleForm({
               />
               <button
                 type="button"
-                className="ad-btn ghost sm"
+                className="lac-btn ghost sm"
                 onClick={regenSlug}
                 style={{ marginLeft: 'auto' }}
                 title="Tạo lại từ tiêu đề tiếng Việt"
@@ -397,7 +397,7 @@ export function ArticleForm({
 
             <Field label="URL ảnh bìa (paste link)">
               <input
-                className="ad-input"
+                className="lac-input"
                 value={v.coverImageUrl}
                 onChange={(e) => set('coverImageUrl', e.target.value)}
                 placeholder="/assets/nha-may-bot-sieu-min.webp"
@@ -423,7 +423,7 @@ export function ArticleForm({
               help={`${excerpt.length}/200 ký tự · 140-180 là tối ưu`}
             >
               <textarea
-                className="ad-textarea"
+                className="lac-textarea"
                 style={{ minHeight: 80 }}
                 value={excerpt}
                 onChange={(e) =>
@@ -499,7 +499,7 @@ export function ArticleForm({
                   <div className="over">
                     <button
                       type="button"
-                      className="ad-btn sm"
+                      className="lac-btn sm"
                       title="Đặt làm ảnh bìa"
                       onClick={() => gMakeFeatured(i)}
                     >
@@ -507,7 +507,7 @@ export function ArticleForm({
                     </button>
                     <button
                       type="button"
-                      className="ad-btn sm"
+                      className="lac-btn sm"
                       title="Sửa mô tả (alt)"
                       onClick={() => gOpenAlt(i)}
                     >
@@ -515,7 +515,7 @@ export function ArticleForm({
                     </button>
                     <button
                       type="button"
-                      className="ad-btn sm"
+                      className="lac-btn sm"
                       title="Chèn vào nội dung"
                       onClick={() => gInsertIntoBody(g.src)}
                     >
@@ -523,7 +523,7 @@ export function ArticleForm({
                     </button>
                     <button
                       type="button"
-                      className="ad-btn sm"
+                      className="lac-btn sm"
                       title="Đẩy lên"
                       onClick={() => gMoveUp(i)}
                       disabled={i === 0}
@@ -532,7 +532,7 @@ export function ArticleForm({
                     </button>
                     <button
                       type="button"
-                      className="ad-btn sm"
+                      className="lac-btn sm"
                       title="Đẩy xuống"
                       onClick={() => gMoveDown(i)}
                       disabled={i === v.gallery.length - 1}
@@ -541,7 +541,7 @@ export function ArticleForm({
                     </button>
                     <button
                       type="button"
-                      className="ad-btn sm danger"
+                      className="lac-btn sm danger"
                       title="Xoá"
                       onClick={() => gDelete(i)}
                     >
@@ -565,10 +565,10 @@ export function ArticleForm({
                 marginTop: 12,
               }}
             >
-              <button type="button" className="ad-btn" onClick={gPickFromDevice}>
+              <button type="button" className="lac-btn" onClick={gPickFromDevice}>
                 <AdminIcon name="upload" size={13} /> Thêm ảnh
               </button>
-              <button type="button" className="ad-btn" disabled title="Phase 7">
+              <button type="button" className="lac-btn" disabled title="Phase 7">
                 <AdminIcon name="image" size={13} /> Chọn từ thư viện chung
               </button>
               <div
@@ -598,7 +598,7 @@ export function ArticleForm({
                   help="Quan trọng cho SEO và screen reader. Mô tả ngắn gọn nội dung ảnh."
                 >
                   <input
-                    className="ad-input"
+                    className="lac-input"
                     autoFocus
                     value={altDraft}
                     onChange={(e) => setAltDraft(e.target.value)}
@@ -606,10 +606,10 @@ export function ArticleForm({
                   />
                 </Field>
                 <div className="actions">
-                  <button type="button" className="ad-btn" onClick={() => setEditAltIdx(-1)}>
+                  <button type="button" className="lac-btn" onClick={() => setEditAltIdx(-1)}>
                     Huỷ
                   </button>
-                  <button type="button" className="ad-btn primary" onClick={gSaveAlt}>
+                  <button type="button" className="lac-btn primary" onClick={gSaveAlt}>
                     <AdminIcon name="check" size={13} /> Lưu
                   </button>
                 </div>
@@ -669,7 +669,7 @@ export function ArticleForm({
           >
             <Field label="Meta title (VI)" help="50–60 ký tự là tối ưu.">
               <input
-                className="ad-input"
+                className="lac-input"
                 value={v.metaTitleVi}
                 onChange={(e) => set('metaTitleVi', e.target.value)}
                 placeholder="Để trống → dùng tiêu đề bài viết"
@@ -677,7 +677,7 @@ export function ArticleForm({
             </Field>
             <Field label="Meta description (VI)" help="150–160 ký tự là tối ưu.">
               <textarea
-                className="ad-textarea"
+                className="lac-textarea"
                 value={v.metaDescVi}
                 onChange={(e) => set('metaDescVi', e.target.value)}
                 placeholder="Để trống → dùng đoạn tóm tắt"
@@ -697,8 +697,8 @@ export function ArticleForm({
 
         <aside className="pe-side">
           {/* Trạng thái */}
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Trạng thái</h3>
             </div>
             <div style={{ padding: 14 }}>
@@ -715,8 +715,8 @@ export function ArticleForm({
           </div>
 
           {/* Danh mục */}
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Danh mục</h3>
             </div>
             <div style={{ padding: 14 }}>
@@ -751,8 +751,8 @@ export function ArticleForm({
           </div>
 
           {/* Cờ & hiển thị */}
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Cờ &amp; hiển thị</h3>
             </div>
             <div
@@ -792,8 +792,8 @@ export function ArticleForm({
           </div>
 
           {/* Tác giả & ngày đăng */}
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Tác giả &amp; ngày đăng</h3>
             </div>
             <div
@@ -806,7 +806,7 @@ export function ArticleForm({
             >
               <Field label="Tác giả">
                 <select
-                  className="ad-select"
+                  className="lac-select"
                   value={v.authorId}
                   onChange={(e) => set('authorId', e.target.value)}
                 >
@@ -820,7 +820,7 @@ export function ArticleForm({
               </Field>
               <Field label="Ngày xuất bản">
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   type="date"
                   value={v.publishedDate}
                   onChange={(e) => set('publishedDate', e.target.value)}
@@ -828,7 +828,7 @@ export function ArticleForm({
               </Field>
               <Field label="Thời gian đọc (phút)">
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   type="number"
                   min={1}
                   max={60}
@@ -856,11 +856,11 @@ export function ArticleForm({
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
-        <button type="submit" className="ad-btn primary" disabled={busy}>
+        <button type="submit" className="lac-btn primary" disabled={busy}>
           <AdminIcon name="check" size={15} />
           {busy ? 'Đang lưu…' : 'Lưu bài viết'}
         </button>
-        <button type="button" className="ad-btn" onClick={() => router.push('/admin/news')}>
+        <button type="button" className="lac-btn" onClick={() => router.push('/admin/news')}>
           Huỷ
         </button>
       </div>

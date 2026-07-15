@@ -106,16 +106,16 @@ export function JobForm({
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Thông tin vị trí</h3>
             </div>
-            <div className="ad-card-body">
+            <div className="lac-card-body">
               {/* slug + dept are locale-independent — only shown once. */}
               <FieldRow>
                 <Field label="Slug" required help="VD: 9 hoặc ky-su-moi">
                   <input
-                    className="ad-input"
+                    className="lac-input"
                     value={v.slug}
                     onChange={(e) => set('slug', e.target.value)}
                     required
@@ -123,7 +123,7 @@ export function JobForm({
                 </Field>
                 <Field label="Phòng ban" required>
                   <select
-                    className="ad-select"
+                    className="lac-select"
                     value={v.departmentId}
                     onChange={(e) => set('departmentId', e.target.value)}
                     required
@@ -140,7 +140,7 @@ export function JobForm({
 
               <Field label={`Tên vị trí (${L})`} required={lang === 'vi'}>
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={getStr('title')}
                   onChange={(e) => setStr('title', e.target.value)}
                   required={lang === 'vi'}
@@ -149,7 +149,7 @@ export function JobForm({
 
               <Field label={`Mô tả công việc (${L})`}>
                 <textarea
-                  className="ad-textarea"
+                  className="lac-textarea"
                   value={getStr('description')}
                   onChange={(e) => setStr('description', e.target.value)}
                 />
@@ -164,17 +164,17 @@ export function JobForm({
               { key: 'ben', label: 'Quyền lợi & phúc lợi' },
             ] as const
           ).map(({ key, label }) => (
-            <div key={key} className="ad-card">
-              <div className="ad-card-head">
+            <div key={key} className="lac-card">
+              <div className="lac-card-head">
                 <div>
                   <h3>{label}</h3>
                   <p>Mỗi dòng là một mục.</p>
                 </div>
               </div>
-              <div className="ad-card-body">
+              <div className="lac-card-body">
                 <Field label={`Nội dung (${L})`}>
                   <textarea
-                    className="ad-textarea"
+                    className="lac-textarea"
                     style={{ minHeight: 120 }}
                     value={getStr(key)}
                     onChange={(e) => setStr(key, e.target.value)}
@@ -186,12 +186,12 @@ export function JobForm({
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Trạng thái</h3>
             </div>
             <div
-              className="ad-card-body"
+              className="lac-card-body"
               style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
             >
               <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}>
@@ -204,7 +204,7 @@ export function JobForm({
               </label>
               <Field label="Số lượng tuyển">
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   type="number"
                   value={v.slots}
                   onChange={(e) => set('slots', Number(e.target.value))}
@@ -212,7 +212,7 @@ export function JobForm({
               </Field>
               <Field label="Hạn nộp" help="Định dạng DD/MM/YYYY">
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={v.deadlineText}
                   onChange={(e) => set('deadlineText', e.target.value)}
                   placeholder="30/06/2026"
@@ -221,17 +221,17 @@ export function JobForm({
             </div>
           </div>
 
-          <div className="ad-card">
-            <div className="ad-card-head">
+          <div className="lac-card">
+            <div className="lac-card-head">
               <h3>Chi tiết</h3>
             </div>
             <div
-              className="ad-card-body"
+              className="lac-card-body"
               style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
             >
               <Field label="Địa điểm" help="Locale-independent — dùng chung cho 3 ngôn ngữ.">
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={v.location}
                   onChange={(e) => set('location', e.target.value)}
                   placeholder="Quỳ Hợp, Nghệ An"
@@ -239,7 +239,7 @@ export function JobForm({
               </Field>
               <Field label={`Mức lương (${L})`}>
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={getStr('salaryText')}
                   onChange={(e) => setStr('salaryText', e.target.value)}
                   placeholder={
@@ -253,7 +253,7 @@ export function JobForm({
               </Field>
               <Field label={`Kinh nghiệm (${L})`}>
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={getStr('experience')}
                   onChange={(e) => setStr('experience', e.target.value)}
                   placeholder={lang === 'vi' ? '2–5 năm' : lang === 'en' ? '2–5 years' : '2–5年'}
@@ -261,7 +261,7 @@ export function JobForm({
               </Field>
               <Field label={`Cấp bậc (${L})`}>
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={getStr('level')}
                   onChange={(e) => setStr('level', e.target.value)}
                   placeholder={
@@ -271,7 +271,7 @@ export function JobForm({
               </Field>
               <Field label={`Loại hình (${L})`}>
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={getStr('type')}
                   onChange={(e) => setStr('type', e.target.value)}
                   placeholder={
@@ -281,7 +281,7 @@ export function JobForm({
               </Field>
               <Field label="Tags" help="Phân tách bằng dấu phẩy. Dùng chung cho 3 ngôn ngữ.">
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   value={v.tagsText}
                   onChange={(e) => set('tagsText', e.target.value)}
                   placeholder="Cơ khí, ISO, PLC"
@@ -293,11 +293,11 @@ export function JobForm({
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
-        <button type="submit" className="ad-btn primary" disabled={busy}>
+        <button type="submit" className="lac-btn primary" disabled={busy}>
           <AdminIcon name="check" size={15} />
           {busy ? 'Đang lưu…' : 'Lưu vị trí'}
         </button>
-        <button type="button" className="ad-btn" onClick={() => router.push('/admin/jobs')}>
+        <button type="button" className="lac-btn" onClick={() => router.push('/admin/jobs')}>
           Huỷ
         </button>
       </div>

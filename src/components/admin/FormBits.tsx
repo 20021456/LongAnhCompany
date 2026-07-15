@@ -16,7 +16,7 @@ export function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="ad-field" style={{ marginBottom: 16 }}>
+    <div className="lac-field" style={{ marginBottom: 16 }}>
       <label>
         {label}
         {required ? <span className="req">*</span> : null}
@@ -40,7 +40,7 @@ export function FieldRow({ cols = 2, children }: { cols?: 2 | 3; children: React
 export function SubmitButton({ children = 'Lưu thay đổi' }: { children?: React.ReactNode }) {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" className="ad-btn primary" disabled={pending}>
+    <button type="submit" className="lac-btn primary" disabled={pending}>
       <AdminIcon name="check" size={15} />
       {pending ? 'Đang lưu…' : children}
     </button>
@@ -61,7 +61,7 @@ export function FormBanner({ state }: { state?: { ok?: boolean; error?: string }
   if (state.ok) {
     return (
       <div
-        className="ad-badge pub"
+        className="lac-badge pub"
         style={{ marginBottom: 16, padding: '8px 12px', fontSize: 12.5 }}
       >
         <span className="dot" />

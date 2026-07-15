@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 import { AdminPageHead } from '@/components/admin/AdminPageHead';
 import { StatusSelect } from '@/components/admin/StatusSelect';
 import { ContactNoteForm } from '@/components/admin/ContactNoteForm';
-import { setContactStatus } from '../actions';
+import { setContactStatus, setContactAssignee } from '../actions';
 
 const STATUS_OPTIONS = [
   { value: 'new', label: 'Mới' },
@@ -35,15 +35,28 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 export default async function ContactDetailPage({ params }: { params: { id: string } }) {
   await requirePermission('contacts.read');
 
-  const contact = await db.contact.findUnique({
-    where: { id: params.id },
-    include: {
-      notes: { orderBy: { createdAt: 'desc' }, include: { user: true } },
-      productInterest: true,
-      variant: true,
-    },
-  });
+  const [contact, users] = await Promise.all([
+    db.contact.findUnique({
+      where: { id: params.id },
+      include: {
+        notes: { orderBy: { createdAt: 'desc' }, include: { user: true } },
+        productInterest: true,
+        variant: true,
+        assignedTo: { select: { id: true, fullName: true, email: true } },
+      },
+    }),
+    db.user.findMany({
+      where: { isActive: true },
+      orderBy: { fullName: 'asc' },
+      select: { id: true, fullName: true, email: true },
+    }),
+  ]);
   if (!contact) notFound();
+
+  const assigneeOptions = [
+    { value: '', label: '— Chưa gán —' },
+    ...users.map((u) => ({ value: u.id, label: u.fullName || u.email })),
+  ];
 
   return (
     <>
@@ -68,17 +81,28 @@ export default async function ContactDetailPage({ params }: { params: { id: stri
         style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20, alignItems: 'start' }}
       >
         {/* Lead detail */}
-        <div className="ad-card">
-          <div className="ad-card-head">
+        <div className="lac-card">
+          <div className="lac-card-head">
             <h3>Thông tin liên hệ</h3>
           </div>
-          <div className="ad-card-body">
+          <div className="lac-card-body">
             <Row label="Họ tên" value={contact.fullName} />
             <Row label="Email" value={<a href={`mailto:${contact.email}`}>{contact.email}</a>} />
             <Row label="Điện thoại" value={contact.phone} />
             <Row label="Công ty" value={contact.company} />
             <Row label="Quốc gia" value={contact.country} />
             <Row label="Nguồn" value={contact.source} />
+            <Row
+              label="Phụ trách"
+              value={
+                <StatusSelect
+                  id={contact.id}
+                  value={contact.assignedToId ?? ''}
+                  options={assigneeOptions}
+                  action={setContactAssignee}
+                />
+              }
+            />
             <Row
               label="Sản phẩm quan tâm"
               value={contact.productInterest ? contact.productInterest.nameVi : null}
@@ -95,14 +119,14 @@ export default async function ContactDetailPage({ params }: { params: { id: stri
         </div>
 
         {/* Internal notes */}
-        <div className="ad-card">
-          <div className="ad-card-head">
+        <div className="lac-card">
+          <div className="lac-card-head">
             <div>
               <h3>Ghi chú nội bộ</h3>
               <p>{contact.notes.length} ghi chú</p>
             </div>
           </div>
-          <div className="ad-card-body">
+          <div className="lac-card-body">
             <ContactNoteForm contactId={contact.id} />
             <div style={{ marginTop: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
               {contact.notes.length === 0 ? (

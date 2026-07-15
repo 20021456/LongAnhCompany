@@ -78,14 +78,14 @@ export function NewsPageSectionsEditor({
         <div className="pe-row">
           <Field label={`Eyebrow (${L})`}>
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.hero.eyebrow}
               onChange={(e) => onPatch('hero', { eyebrow: e.target.value })}
             />
           </Field>
           <Field label={`Tiêu đề chính (${L})`} required={lang === 'vi'}>
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.hero.title}
               onChange={(e) => onPatch('hero', { title: e.target.value })}
               required={lang === 'vi'}
@@ -94,7 +94,7 @@ export function NewsPageSectionsEditor({
         </div>
         <Field label={`Mô tả ngắn (${L})`}>
           <textarea
-            className="ad-textarea"
+            className="lac-textarea"
             value={C.hero.sub}
             onChange={(e) => onPatch('hero', { sub: e.target.value })}
           />
@@ -102,7 +102,7 @@ export function NewsPageSectionsEditor({
         <div className="pe-row">
           <Field label={`Placeholder ô tìm kiếm (${L})`}>
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.hero.searchPlaceholder}
               onChange={(e) => onPatch('hero', { searchPlaceholder: e.target.value })}
             />
@@ -151,7 +151,7 @@ export function NewsPageSectionsEditor({
                 }}
               >
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   placeholder={`Tên hiển thị (${L})`}
                   value={cat.label}
                   onChange={(e) => {
@@ -161,7 +161,7 @@ export function NewsPageSectionsEditor({
                   }}
                 />
                 <input
-                  className="ad-input"
+                  className="lac-input"
                   placeholder="Slug (URL)"
                   value={cat.slug}
                   spellCheck={false}
@@ -193,7 +193,7 @@ export function NewsPageSectionsEditor({
         </div>
         <button
           type="button"
-          className="ad-btn sm"
+          className="lac-btn sm"
           style={{ width: 'fit-content', marginTop: 10 }}
           onClick={() =>
             onPatch('categories', {
@@ -214,7 +214,7 @@ export function NewsPageSectionsEditor({
       >
         <Field label="Cách chọn">
           <select
-            className="ad-select"
+            className="lac-select"
             value={C.featured.mode}
             onChange={(e) => onPatch('featured', { mode: e.target.value as NewsFeaturedMode })}
           >
@@ -324,7 +324,7 @@ export function NewsPageSectionsEditor({
 
             <div style={{ marginTop: 12 }}>
               <select
-                className="ad-select"
+                className="lac-select"
                 value=""
                 onChange={(e) => {
                   const id = e.target.value;
@@ -438,7 +438,7 @@ export function NewsPageSectionsEditor({
         <div className="pe-row">
           <Field label="Số bài/trang">
             <input
-              className="ad-input"
+              className="lac-input"
               type="number"
               min={3}
               max={48}
@@ -448,7 +448,7 @@ export function NewsPageSectionsEditor({
           </Field>
           <Field label="Sắp xếp mặc định">
             <select
-              className="ad-select"
+              className="lac-select"
               value={C.listConfig.sort}
               onChange={(e) => onPatch('listConfig', { sort: e.target.value as NewsListSort })}
             >
@@ -558,14 +558,14 @@ export function NewsPageSectionsEditor({
         <div className="pe-row">
           <Field label={`Eyebrow (${L})`}>
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.byCategory.eyebrow}
               onChange={(e) => onPatch('byCategory', { eyebrow: e.target.value })}
             />
           </Field>
           <Field label={`Tiêu đề (${L})`}>
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.byCategory.title}
               onChange={(e) => onPatch('byCategory', { title: e.target.value })}
             />
@@ -573,7 +573,7 @@ export function NewsPageSectionsEditor({
         </div>
         <Field label="Số danh mục hiển thị bên dưới featured">
           <select
-            className="ad-select"
+            className="lac-select"
             value={C.byCategory.mode}
             onChange={(e) => onPatch('byCategory', { mode: e.target.value as NewsByCategoryMode })}
           >
@@ -584,7 +584,7 @@ export function NewsPageSectionsEditor({
         </Field>
         <Field label="Số bài hiển thị mỗi danh mục">
           <input
-            className="ad-input"
+            className="lac-input"
             type="number"
             min={2}
             max={8}
@@ -608,14 +608,14 @@ export function NewsPageSectionsEditor({
       >
         <Field label={`Tiêu đề (${L})`}>
           <input
-            className="ad-input"
+            className="lac-input"
             value={C.newsletter.title}
             onChange={(e) => onPatch('newsletter', { title: e.target.value })}
           />
         </Field>
         <Field label={`Mô tả (${L})`}>
           <textarea
-            className="ad-textarea"
+            className="lac-textarea"
             value={C.newsletter.sub}
             onChange={(e) => onPatch('newsletter', { sub: e.target.value })}
           />
@@ -623,14 +623,14 @@ export function NewsPageSectionsEditor({
         <div className="pe-row">
           <Field label={`Placeholder ô email (${L})`}>
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.newsletter.inputPlaceholder}
               onChange={(e) => onPatch('newsletter', { inputPlaceholder: e.target.value })}
             />
           </Field>
           <Field label={`Chữ trên nút (${L})`}>
             <input
-              className="ad-input"
+              className="lac-input"
               value={C.newsletter.buttonLabel}
               onChange={(e) => onPatch('newsletter', { buttonLabel: e.target.value })}
             />
@@ -638,14 +638,14 @@ export function NewsPageSectionsEditor({
         </div>
         <Field label={`Ghi chú dưới form (${L})`}>
           <input
-            className="ad-input"
+            className="lac-input"
             value={C.newsletter.footer}
             onChange={(e) => onPatch('newsletter', { footer: e.target.value })}
           />
         </Field>
         <Field label="Mailing list (Mailchimp / Brevo / nội bộ)">
           <input
-            className="ad-input"
+            className="lac-input"
             value={C.newsletter.mailingListId}
             spellCheck={false}
             style={{ fontFamily: 'JetBrains Mono, ui-monospace, monospace', fontSize: 12 }}

@@ -5,10 +5,7 @@ import type { Locale } from '@/lib/i18n/config';
 import { COPY } from '@/data/copy';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { SmartImage } from '@/components/ui/SmartImage';
-import { PageHero } from '@/components/public/PageHero';
-import { TimelineArc } from '@/components/public/TimelineArc';
-import { WarehouseDeck } from '@/components/public/WarehouseDeck';
-import { Words } from '@/components/public/Words';
+import { PageHeader } from '@/components/public/PageHeader';
 import { getAboutSections, getCertifications } from '@/lib/queries';
 import { buildPageMetadata } from '@/lib/page-metadata';
 
@@ -28,58 +25,6 @@ export async function generateMetadata({
   });
 }
 
-/** Captions for the warehouse image deck (images carry no CMS captions). */
-const WAREHOUSE_CAPTIONS: Record<Locale, { title: string; sub: string }[]> = {
-  vi: [
-    {
-      title: 'Kho thành phẩm',
-      sub: 'Thành phẩm đóng pallet, phân lô theo mã sản phẩm trước khi xuất.',
-    },
-    {
-      title: 'Bãi nguyên liệu',
-      sub: 'Đá nguyên khai tập kết theo phân vùng, sẵn sàng cho dây chuyền.',
-    },
-    {
-      title: 'Bốc xếp & vận chuyển',
-      sub: 'Thiết bị nâng hạ và đội xe vận hành liên tục trong ngày.',
-    },
-    {
-      title: 'Sẵn sàng xuất khẩu',
-      sub: 'Container niêm phong cùng chứng từ đầy đủ trước khi rời nhà máy.',
-    },
-  ],
-  en: [
-    {
-      title: 'Finished-goods warehouse',
-      sub: 'Palletised lots staged by product code before dispatch.',
-    },
-    { title: 'Raw-material yard', sub: 'Quarried stone staged by zone, ready for the lines.' },
-    {
-      title: 'Loading & transport',
-      sub: 'Lifting equipment and trucks running throughout the day.',
-    },
-    {
-      title: 'Export-ready',
-      sub: 'Sealed containers with full documentation before leaving the plant.',
-    },
-  ],
-  zh: [
-    { title: '成品仓库', sub: '成品按产品编码分批打托,待发货。' },
-    { title: '原料堆场', sub: '原石分区堆放,随时供应生产线。' },
-    { title: '装卸与运输', sub: '装卸设备与车队全天候运转。' },
-    { title: '出口就绪', sub: '集装箱封箱,单证齐备后出厂。' },
-  ],
-};
-
-/** Photo backdrops for the core-values cards (values have no CMS image). */
-const VALUE_IMAGES = [
-  '/assets/da-nguyen-lieu-cao-cap2.webp',
-  '/assets/nha-may-bot-sieu-min-3.webp',
-  '/assets/bao-bi-sieu-trang.jpg',
-  '/assets/kiem-dinh.jpg',
-  '/assets/co-so-ha-tang.jpg',
-];
-
 export default async function AboutPage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
   const loc = locale as Locale;
@@ -95,12 +40,11 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
 
   return (
     <div className="ab">
-      <PageHero
+      <PageHeader
         eyebrow={S.header.eyebrow}
         title={S.header.title}
         sub={S.header.sub}
         breadcrumb={[{ label: homeLabel, href: `/${loc}` }, { label: C.nav[1] }]}
-        bgImage="/assets/da-nguyen-lieu-cao-cap.webp"
       />
 
       {/* STORY */}
@@ -110,39 +54,20 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         </div>
         <div className="va-wrap">
           <div className="ab-intro">
-            <div className="ab-intro-media">
-              <div className="ab-intro-img" data-reveal="clip">
-                <SmartImage
-                  src={S.story.imageUrl}
-                  alt={S.story.imageAlt}
-                  width={1000}
-                  height={1200}
-                />
-              </div>
-              <div className="ab-intro-img2" data-reveal data-reveal-delay="2">
-                <div data-parallax="0.05">
-                  <SmartImage src={S.story.bgImageUrl} alt="" width={700} height={500} />
-                </div>
-              </div>
+            <div className="ab-intro-img">
+              <SmartImage
+                src={S.story.imageUrl}
+                alt={S.story.imageAlt}
+                width={1000}
+                height={1200}
+              />
             </div>
             <div>
-              <div className="ab-eyebrow" data-reveal>
-                {S.story.eyebrow}
-              </div>
-              <h2 data-reveal="words">
-                <Words text={S.story.title} step={100} />
-              </h2>
-              {S.story.paragraph1 ? <p data-reveal>{S.story.paragraph1}</p> : null}
-              {S.story.paragraph2 ? (
-                <p data-reveal data-reveal-delay="1">
-                  {S.story.paragraph2}
-                </p>
-              ) : null}
-              {S.story.paragraph3 ? (
-                <p data-reveal data-reveal-delay="2">
-                  {S.story.paragraph3}
-                </p>
-              ) : null}
+              <div className="ab-eyebrow">{S.story.eyebrow}</div>
+              <h2>{S.story.title}</h2>
+              {S.story.paragraph1 ? <p>{S.story.paragraph1}</p> : null}
+              {S.story.paragraph2 ? <p>{S.story.paragraph2}</p> : null}
+              {S.story.paragraph3 ? <p>{S.story.paragraph3}</p> : null}
               <div className="ab-sig">
                 <div className="ab-sig-img" />
                 <div>
@@ -155,38 +80,43 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
         </div>
       </section>
 
-      {/* TIMELINE — rotating wheel */}
-      <TimelineArc eyebrow={S.timeline.eyebrow} title={S.timeline.title} items={S.timeline.items} />
+      {/* TIMELINE */}
+      <section className="ab-time">
+        <div className="va-wrap">
+          <div className="ab-time-head">
+            <div className="ab-eyebrow">{S.timeline.eyebrow}</div>
+            <h2>{S.timeline.title}</h2>
+          </div>
+          <div className="ab-time-grid">
+            {S.timeline.items.map((ev, i) => (
+              <div key={i} className="ab-tnode">
+                <div className="ab-tdot" />
+                <b>{ev.year}</b>
+                <h4>{ev.title}</h4>
+                <p>{ev.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* VALUES */}
       <section className="ab-section">
         <div className="va-wrap">
-          <div className="va-shead2">
-            <div className="ab-eyebrow" data-reveal>
-              {S.values.eyebrow}
-            </div>
-            <h2 data-reveal="words">
-              <Words text={S.values.title} step={100} />
-            </h2>
+          <div
+            style={{ textAlign: 'center', marginBottom: 48, maxWidth: 680, marginInline: 'auto' }}
+          >
+            <div className="ab-eyebrow">{S.values.eyebrow}</div>
+            <h2 style={{ fontSize: 'clamp(30px,3.6vw,44px)' }}>{S.values.title}</h2>
           </div>
-          <div className="ab-vals2">
+          <div className="ab-vals">
             {S.values.items.map((it, i) => (
-              <div key={i} className="ab-val2" data-reveal="clip" data-reveal-delay={String(i % 3)}>
-                <SmartImage
-                  src={VALUE_IMAGES[i % VALUE_IMAGES.length]}
-                  alt={it.name}
-                  width={800}
-                  height={1000}
-                  sizes="33vw"
-                />
-                <div className="ab-val2-shade" />
-                <div className="ab-val2-chip">
-                  <Icon name={(it.icon || 'check') as IconName} size={18} />
+              <div key={i} className="ab-val">
+                <div className="ab-val-i">
+                  <Icon name={(it.icon || 'check') as IconName} size={24} />
                 </div>
-                <div className="ab-val2-body">
-                  <h3>{it.name}</h3>
-                  <p>{it.body}</p>
-                </div>
+                <h3>{it.name}</h3>
+                <p>{it.body}</p>
               </div>
             ))}
           </div>
@@ -197,23 +127,19 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
       <section className="ab-section" style={{ background: 'var(--va-bg-alt)' }}>
         <div className="va-wrap">
           <div className="ab-caps">
-            <div className="ab-caps-img" data-reveal="clip">
+            <div className="ab-caps-img">
               <SmartImage src={S.caps.imageUrl} alt={S.caps.imageAlt} width={1000} height={1100} />
             </div>
             <div>
-              <div className="ab-eyebrow" data-reveal>
-                {S.caps.eyebrow}
-              </div>
-              <h2 data-reveal="words">
-                <Words text={S.caps.title} step={100} />
-              </h2>
-              {S.caps.sub ? <p data-reveal>{S.caps.sub}</p> : null}
+              <div className="ab-eyebrow">{S.caps.eyebrow}</div>
+              <h2>{S.caps.title}</h2>
+              {S.caps.sub ? <p>{S.caps.sub}</p> : null}
               <div className="ab-caps-list">
                 {S.caps.metrics.map((m, i) => (
-                  <div key={i} className="ab-cap-row" data-reveal data-reveal-delay={String(i % 4)}>
+                  <div key={i} className="ab-cap-row">
                     <div className="ab-cap-n">— {String(i + 1).padStart(2, '0')}</div>
                     <h4>{m.label}</h4>
-                    <span data-countup>{m.value}</span>
+                    <span>{m.value}</span>
                   </div>
                 ))}
               </div>
@@ -225,37 +151,52 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
       {/* WAREHOUSE */}
       <section className="ab-section">
         <div className="va-wrap">
-          <div className="va-shead2">
-            <div className="ab-eyebrow" data-reveal>
-              {S.warehouse.eyebrow}
+          <div className="ab-shead-row">
+            <div>
+              <div className="ab-eyebrow">{S.warehouse.eyebrow}</div>
+              <h2 style={{ fontSize: 'clamp(28px,3.4vw,42px)', marginBottom: 0 }}>
+                {S.warehouse.title}
+              </h2>
             </div>
-            <h2 data-reveal="words">
-              <Words text={S.warehouse.title} step={100} />
-            </h2>
+          </div>
+          <div className="ab-warehouse-grid">
+            {S.warehouse.images[0] ? (
+              <div className="ab-wh-img">
+                <SmartImage src={S.warehouse.images[0]} alt="" width={1000} height={1200} />
+              </div>
+            ) : null}
+            <div className="ab-wh-col">
+              {S.warehouse.images[1] ? (
+                <div className="ab-wh-img">
+                  <SmartImage src={S.warehouse.images[1]} alt="" width={900} height={700} />
+                </div>
+              ) : null}
+              {S.warehouse.images[2] ? (
+                <div className="ab-wh-img">
+                  <SmartImage src={S.warehouse.images[2]} alt="" width={900} height={700} />
+                </div>
+              ) : null}
+            </div>
+            {S.warehouse.images[3] ? (
+              <div className="ab-wh-img">
+                <SmartImage src={S.warehouse.images[3]} alt="" width={1000} height={1200} />
+              </div>
+            ) : null}
           </div>
         </div>
-        <WarehouseDeck
-          slides={S.warehouse.images.filter(Boolean).map((src, i) => ({
-            src,
-            title: WAREHOUSE_CAPTIONS[loc][i % WAREHOUSE_CAPTIONS[loc].length].title,
-            sub: WAREHOUSE_CAPTIONS[loc][i % WAREHOUSE_CAPTIONS[loc].length].sub,
-          }))}
-        />
       </section>
 
       {/* CERTS */}
       <section className="ab-certs">
         <div className="va-wrap">
-          <div className="va-shead2">
-            <div className="ab-eyebrow" data-reveal>
-              {loc === 'zh' ? '认证' : loc === 'en' ? 'Certifications' : 'Chứng nhận'}
+          <div className="ab-certs-head">
+            <div>
+              <div className="ab-eyebrow">
+                {loc === 'zh' ? '认证' : loc === 'en' ? 'Certifications' : 'Chứng nhận'}
+              </div>
+              <h2>{S.certs.title}</h2>
             </div>
-            <h2 data-reveal="words">
-              <Words text={S.certs.title} step={100} />
-            </h2>
-            <p className="dim" data-reveal="words">
-              <Words text={S.certs.sub} step={40} from={500} />
-            </p>
+            <p>{S.certs.sub}</p>
           </div>
           <div className="ab-certs-grid">
             {S.certs.items
@@ -263,12 +204,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
               .map((c, i) => {
                 const cat = certByName.get(c.name.trim().toLowerCase());
                 return (
-                  <div
-                    key={i}
-                    className="ab-cert-card"
-                    data-reveal
-                    data-reveal-delay={String(i % 4)}
-                  >
+                  <div key={i} className="ab-cert-card">
                     <div className="ab-cert-img">
                       {cat?.badge ? (
                         <SmartImage
@@ -296,7 +232,7 @@ export default async function AboutPage({ params: { locale } }: { params: { loca
 
       {/* CTA */}
       <div className="va-wrap">
-        <div className="ab-cta" data-grow>
+        <div className="ab-cta">
           <div>
             <div
               style={{
