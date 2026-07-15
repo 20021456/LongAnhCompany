@@ -17,13 +17,16 @@ interface Props {
   slides: Slide[];
 }
 
+const pad = (i: number) => String(i + 1).padStart(2, '0');
+
 /**
  * Kettal-collections layout: the caption lives ABOVE the photo — small
- * eyebrow row, then a big item title with its description underneath —
- * and the photo fills nearly the full screen width in a framed panel.
- * On desktop the block pins while scrolling and each step swaps TEXT +
- * PHOTO together (photo wipes in, text crossfades). Mobile /
- * reduced-motion: a plain stacked list, nothing pinned or clipped.
+ * eyebrow row, then a big item title with an "(0i)" index and the item's
+ * description on the right — and the photo sits in a framed panel inside
+ * the page gutter (not full-bleed, not full-screen). On desktop the block
+ * pins while scrolling and each step swaps TEXT + PHOTO together (photo
+ * wipes in, text crossfades). Mobile / reduced-motion: a plain stacked
+ * list, nothing pinned or clipped.
  */
 export function WarehouseDeck({ eyebrow, note, slides }: Props) {
   const secRef = useRef<HTMLDivElement>(null);
@@ -76,19 +79,19 @@ export function WarehouseDeck({ eyebrow, note, slides }: Props) {
   return (
     <div className="va-whk" ref={secRef} style={{ ['--deck-n' as string]: n }}>
       <div className="va-whk-sticky">
-        <div className="va-whk-in">
+        <div className="va-wrap">
           {/* Top row — eyebrow left, quiet section statement right */}
           <div className="va-whk-top">
             <span className="va-whk-eyebrow">{eyebrow}</span>
             {note ? <span className="va-whk-note">{note}</span> : null}
           </div>
 
-          {/* Heading — big item title, its description right below */}
+          {/* Heading row — big item title + (index) left, item sub right */}
           <div className="va-whk-head">
             <div className="va-whk-titles">
               {slides.map((s, i) => (
                 <h3 key={i} className={'va-whk-title' + (i === active ? ' on' : '')}>
-                  {s.title}
+                  {s.title} <i>({pad(i)})</i>
                 </h3>
               ))}
             </div>
@@ -101,13 +104,16 @@ export function WarehouseDeck({ eyebrow, note, slides }: Props) {
             </div>
           </div>
 
-          {/* Near-fullscreen framed photo — swaps with the text while scrolling */}
+          {/* Framed photo panel — swaps with the text while scrolling */}
           <div className="va-whk-frame">
             {slides.map((s, i) => (
               <div key={i} className="va-whk-media" style={{ zIndex: i + 1 }}>
-                <SmartImage src={s.src} alt={s.title} width={2000} height={1100} sizes="96vw" />
+                <SmartImage src={s.src} alt={s.title} width={2000} height={1100} sizes="90vw" />
               </div>
             ))}
+            <div className="va-whk-count">
+              {pad(active)} / {pad(n - 1)}
+            </div>
           </div>
         </div>
       </div>
@@ -120,7 +126,9 @@ export function WarehouseDeck({ eyebrow, note, slides }: Props) {
         {slides.map((s, i) => (
           <figure key={i} className="va-whk-item">
             <figcaption>
-              <b>{s.title}</b>
+              <b>
+                {s.title} <i>({pad(i)})</i>
+              </b>
               <span>{s.sub}</span>
             </figcaption>
             <div className="va-whk-item-img">

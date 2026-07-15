@@ -6186,8 +6186,8 @@ html.fx [data-reveal='words'].dim.in .wd {
    ============================================================= */
 
 /* Warehouse — Kettal-collections layout (V26): caption ABOVE the photo
-   (eyebrow row → big item title → sub right below it), photo panel nearly
-   screen-wide. Scrolling pins the block and swaps text + photo together. */
+   (eyebrow row → big item title + index → sub right), photo framed inside
+   the page gutter. Scrolling pins the block and swaps text + photo together. */
 .va-whk {
   position: relative;
 }
@@ -6202,11 +6202,7 @@ html.fx [data-reveal='words'].dim.in .wd {
 }
 .va-whk-sticky {
   position: sticky;
-  top: 84px;
-}
-/* Near-fullscreen container: thin gutters, no max-width (Kettal-style) */
-.va-whk-in {
-  padding-inline: clamp(16px, 2.5vw, 44px);
+  top: 88px;
 }
 .va-whk-top {
   display: flex;
@@ -6215,27 +6211,31 @@ html.fx [data-reveal='words'].dim.in .wd {
   gap: 24px;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--va-line);
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 .va-whk-eyebrow {
   font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--va-text);
 }
 .va-whk-note {
   font-size: 12.5px;
   opacity: 0.55;
 }
 .va-whk-head {
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  margin-bottom: 22px;
 }
 /* Title/sub stacks: absolute layers crossfade to the active slide */
 .va-whk-titles {
   position: relative;
-  min-height: 1.12em;
-  font-size: clamp(32px, 3.6vw, 56px);
+  flex: 1;
+  min-height: 1.15em;
+  font-size: clamp(30px, 3.4vw, 52px);
 }
 .va-whk-title {
   position: absolute;
@@ -6246,7 +6246,6 @@ html.fx [data-reveal='words'].dim.in .wd {
   letter-spacing: -0.015em;
   line-height: 1.1;
   white-space: nowrap;
-  color: var(--va-text);
   opacity: 0;
   transform: translateY(10px);
   transition:
@@ -6257,30 +6256,37 @@ html.fx [data-reveal='words'].dim.in .wd {
   opacity: 1;
   transform: none;
 }
-/* Sub sits right below the title line, left-aligned */
+.va-whk-title i {
+  font-style: italic;
+  font-size: 0.38em;
+  vertical-align: super;
+  opacity: 0.6;
+  letter-spacing: 0;
+}
 .va-whk-subs {
   position: relative;
-  margin-top: 8px;
-  max-width: 62ch;
-  min-height: 2.2em;
+  width: min(360px, 38%);
+  min-height: 3em;
 }
 .va-whk-sub {
   position: absolute;
-  inset: 0 auto auto 0;
+  inset: auto 0 0 0;
   margin: 0;
   font-size: 13.5px;
   line-height: 1.65;
   opacity: 0;
+  text-align: right;
   transition: opacity 0.55s cubic-bezier(0.2, 0.65, 0.25, 1);
 }
 .va-whk-sub.on {
   opacity: 0.72;
 }
-/* Photo panel — nearly full screen, height driven by the viewport */
+/* Framed photo panel — wide editorial ratio, inside the gutter */
 .va-whk-frame {
   position: relative;
-  height: calc(100svh - 330px);
-  min-height: 340px;
+  aspect-ratio: 16 / 7.2;
+  min-height: 320px;
+  max-height: calc(100svh - 300px);
   overflow: hidden;
   background: #e8e5df;
 }
@@ -6294,6 +6300,17 @@ html.fx [data-reveal='words'].dim.in .wd {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+.va-whk-count {
+  position: absolute;
+  right: 18px;
+  bottom: 14px;
+  z-index: 9;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
 }
 /* Mobile / reduced-motion: swap the pinned stage for a plain stacked list */
 .va-whk-stack {
@@ -6313,6 +6330,12 @@ html.fx [data-reveal='words'].dim.in .wd {
   letter-spacing: -0.015em;
   line-height: 1.12;
   margin-bottom: 6px;
+}
+.va-whk-item figcaption b i {
+  font-style: italic;
+  font-size: 0.4em;
+  vertical-align: super;
+  opacity: 0.6;
 }
 .va-whk-item figcaption span {
   font-size: 13.5px;
