@@ -338,6 +338,14 @@ async function main() {
       group: 'brand',
     },
     {
+      key: 'site.footer_tagline',
+      valueVi: 'Nhà sản xuất bột đá Canxi Cacbonat và đá tự nhiên hàng đầu Bắc Trung Bộ.',
+      valueEn:
+        'A leading manufacturer of calcium carbonate powder and natural stone in North-Central Vietnam.',
+      valueZh: '越南北中部领先的碳酸钙粉和天然石材制造商。',
+      group: 'brand',
+    },
+    {
       key: 'site.footnote',
       valueVi: vi.footnote,
       valueEn: en.footnote,

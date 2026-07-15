@@ -78,7 +78,7 @@ export async function SiteFooter({ locale }: Props) {
               <b style={{ color: '#fff', fontSize: 14, letterSpacing: '.04em' }}>{shortBrand}</b>
             </div>
             <p style={{ lineHeight: 1.6, opacity: 0.65, margin: 0 }}>
-              {settings.site?.tagline?.[locale] ||
+              {settings.site?.footer_tagline?.[locale] ||
                 (locale === 'zh'
                   ? '越南北中部领先的碳酸钙粉和天然石材制造商。'
                   : locale === 'en'

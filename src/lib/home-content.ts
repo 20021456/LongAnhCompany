@@ -115,7 +115,7 @@ export type HomeSectionKey = (typeof HOME_SECTION_KEYS)[number];
 // ─── Static extras not present in COPY ────────────────────────────────────
 // (about cards, cert cards, export features, cert section text, captions)
 
-const HERO_IMAGE = '/assets/hero-sw.png';
+const HERO_IMAGE = '/assets/nha-may-bot-sieu-min.webp';
 const HERO_ALT: Record<Locale, string> = {
   vi: 'Bao bột đá CaCO₃ Long Anh siêu trắng',
   en: 'Long Anh super-white CaCO₃ powder bags',
