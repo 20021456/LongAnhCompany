@@ -11,6 +11,11 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
+// Public locale pages query Postgres at render time. Build-time prerender
+// would need DB access (not available in Docker build stage), so render
+// per-request instead. Acceptable for CMS-driven content.
+export const dynamic = 'force-dynamic';
+
 /**
  * Locale layout — wraps the public site. The <html>/<body> live in the
  * root layout; this layer adds the i18n provider + public chrome.
